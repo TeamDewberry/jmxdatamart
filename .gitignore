@@ -6,3 +6,8 @@
 *.ear
 
 *.~*
+
+# IntelliJ Files should not be committed #
+*.iml
+*.ipr
+*.iws
