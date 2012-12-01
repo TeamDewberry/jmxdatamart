@@ -1,18 +1,22 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jmxdatamart</groupId>
   <artifactId>jmxdatamart</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>jmxdatamart</name>
+  <modules>
+    <module>jmx-extractor</module>
+  </modules>
   <description>Tools to populate a Data Mart that is optimized for reporting on statistics from sources such as JMX.</description>
   <url>https://github.com/TeamDewberry/jmxdatamart</url>
   <licenses>
-    <name>The BSD 2-Clause License</name>
-    <url>http://opensource.org/licenses/BSD-2-Clause</url>
-    <dstribution>repo</distribution>
-    <comments>
+    <license>
+      <name>The BSD 2-Clause License</name>
+      <url>http://opensource.org/licenses/BSD-2-Clause</url>
+      <distribution>repo</distribution>
+      <comments>
 Copyright (c) 2012, Tripwire, Inc.
 All rights reserved.
 
@@ -38,7 +42,8 @@ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-</comments>
+      </comments>
+    </license>
   </licenses>
   <organization>
     <name>Tripwire, Inc.</name>
