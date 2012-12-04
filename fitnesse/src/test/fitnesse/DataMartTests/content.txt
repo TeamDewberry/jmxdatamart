@@ -1,0 +1,5 @@
+!contents
+
+The Maven plugin sets the value of the maven.classpath Java system property to contain all of the jars files on which the Maven project depends.  It also includes the directory into which class files are compiled.  
+
+${maven.classpath}
