@@ -73,6 +73,17 @@
                         <classifier>tests</classifier>
                     </dependency>
                 </dependencies>
+                <executions>
+                    <execution>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>set-up</goal>
+                            <goal>run-tests</goal>
+                            <goal>tear-down</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
@@ -90,27 +101,6 @@
                                 <goals>
                                     <goal>set-up</goal>
                                     <goal>wiki</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>auto</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>uk.co.javahelp.fitnesse</groupId>
-                        <artifactId>fitnesse-launcher-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>set-up</goal>
-                                    <goal>run-tests</goal>
-                                    <goal>tear-down</goal>
-                                    <goal>verify</goal>
                                 </goals>
                             </execution>
                         </executions>
