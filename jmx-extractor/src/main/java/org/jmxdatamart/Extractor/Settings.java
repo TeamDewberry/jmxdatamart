@@ -143,7 +143,7 @@ public class Settings {
     
     @Override
     public String toString() {
-        String nl = System.lineSeparator();
+        String nl = System.getProperty("line.separator");
         return  "Rate = " + pollingRate + nl +
                 "Loc = " + folderLocation + nl +
                 "URL = " + url + nl +
@@ -164,11 +164,12 @@ public class Settings {
         bd.getAttributes().add(new Attribute("CacheSize", "", DataType.INT));
         s.getBeans().add(bd);
         s.sanitize();
+       System.out.println(s.toString());
         
         String sXML = s.toXML();
         System.out.println(sXML);
-        FileWriter out = new FileWriter("settings.cfg");
-        out.write(sXML);
-        out.close();
+        //FileWriter out = new FileWriter("settings.cfg");
+        //out.write(sXML);
+        //out.close();
     }
 }
