@@ -74,7 +74,7 @@ public class BeanData {
     
     @Override
     public String toString() {
-        String nl = System.lineSeparator();
+        String nl = System.getProperty("line.separator");
         return  this.name + " -> " + this.alias + nl +
                 attributes.toString() + nl;
     }
