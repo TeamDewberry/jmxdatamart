@@ -3,3 +3,7 @@
 !| eg.Division |
 | numerator | denominator | quotient? |
 | 10 | 5 | 2 |
+
+!| org.jmxdatamart.StringLengthColumnFixture |
+| string | length? |
+| Hello | 5 |
