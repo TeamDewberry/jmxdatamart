@@ -1,0 +1,25 @@
+!contents
+
+!| eg.Division |
+| numerator | denominator | quotient? |
+| 10 | 5 | 2 |
+
+
+This test verifies an end-to-end extract and load of JMX Statistics into the Data Mart.
+
+First we set up a simple JMX MBean with one attribute.
+
+
+Then we configure the collector
+   * What beans should it collect?
+   * How often should it collect them?
+   * Where should it write the statistics file?
+
+
+Then we give the collector some time to do its thing
+
+collect statistics for 5 seconds
+
+Then we load the statistics file into the data mart
+
+Finally, we verify that the statistics were loaded as expected
