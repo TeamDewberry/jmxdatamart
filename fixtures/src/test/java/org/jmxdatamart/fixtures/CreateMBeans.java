@@ -1,13 +1,15 @@
 package org.jmxdatamart.fixtures;
 
+import com.google.inject.Inject;
 import fitlibrary.SetUpFixture;
 
 import javax.management.*;
 import java.lang.management.ManagementFactory;
 
-public class CreateMBeans extends SetUpFixture {
+public class CreateMBeans extends GuicySetUpFixture {
 
-  private MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+  @Inject
+  private MBeanServer mBeanServer;
 
   public void beanClassBeanName(String beanClass, String beanName) throws MalformedObjectNameException, MBeanRegistrationException, InstanceAlreadyExistsException, ClassNotFoundException, NotCompliantMBeanException, InstantiationException, IllegalAccessException {
     ObjectName name = new ObjectName(beanName);
@@ -18,7 +20,5 @@ public class CreateMBeans extends SetUpFixture {
     Class beanClass = Class.forName(beanClassName);
     mBeanServer.registerMBean(beanClass.newInstance(), name);
   }
-
-
 
 }

@@ -1,16 +1,17 @@
 package org.jmxdatamart.fixtures;
 
+import com.google.inject.Inject;
 import fitlibrary.SetUpFixture;
 
 import javax.management.*;
-import java.lang.management.ManagementFactory;
 
 /**
  * A FitNesse fixture that configures the attributes of MBeans
  */
-public class ConfigureMBeans extends SetUpFixture {
+public class ConfigureMBeans extends GuicySetUpFixture {
 
-  private MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
+  @Inject
+  private MBeanServer mBeanServer;
 
   public void beanNameAttributeValue(String beanName, String attribute, String value) throws MalformedObjectNameException, InstanceNotFoundException, ClassNotFoundException, MBeanException, InstanceAlreadyExistsException, NotCompliantMBeanException, IllegalAccessException, InstantiationException, InvalidAttributeValueException, AttributeNotFoundException, ReflectionException {
     ObjectInstance bean = getMBean(beanName);
