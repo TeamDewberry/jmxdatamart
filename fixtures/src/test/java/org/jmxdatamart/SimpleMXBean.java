@@ -9,4 +9,8 @@ public interface SimpleMXBean {
   String getStringAttribute();
 
   void setStringAttribute(String stringAttribute);
+
+  long getLongAttribute();
+
+  void setLongAttribute(long longAttribute);
 }

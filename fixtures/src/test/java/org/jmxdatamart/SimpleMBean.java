@@ -4,6 +4,7 @@ public class SimpleMBean implements SimpleMXBean {
 
   private String stringAttribute;
   private int intAttribute;
+  private long longAttribute;
 
   public String getStringAttribute() {
     return stringAttribute;
@@ -21,4 +22,11 @@ public class SimpleMBean implements SimpleMXBean {
     this.intAttribute = intAttribute;
   }
 
+  public long getLongAttribute() {
+    return longAttribute;
+  }
+
+  public void setLongAttribute(long longAttribute) {
+    this.longAttribute = longAttribute;
+  }
 }
