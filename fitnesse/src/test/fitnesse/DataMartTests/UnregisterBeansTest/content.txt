@@ -1,0 +1,43 @@
+!contents
+
+This test exercises the behavior of the UnregisterMBeans fixture that is used as part of test TearDown
+
+First, create some MBeans to test
+
+| create MBeans |
+| bean class | bean name |
+| org.jmxdatamart.SimpleMBean | org.jmxdatamart:type=SimpleMBean,forTest=UnregisterBeansTest,name=One |
+| org.jmxdatamart.SimpleMBean | org.jmxdatamart:type=SimpleMBean,forTest=UnregisterBeansTest,name=Two |
+
+Make sure that the MBeans got registered
+
+| check MBean registration |
+| bean name | registered? |
+| org.jmxdatamart:type=SimpleMBean,forTest=UnregisterBeansTest,name=One | true |
+| org.jmxdatamart:type=SimpleMBean,forTest=UnregisterBeansTest,name=Two | true |
+
+Unregister an MBean by its full name
+
+| unregister MBeans |
+| bean name |
+| org.jmxdatamart:type=SimpleMBean,forTest=UnregisterBeansTest,name=One |
+
+Verify that it (and only it) was unregistered
+
+| check MBean registration |
+| bean name | registered? |
+| org.jmxdatamart:type=SimpleMBean,forTest=UnregisterBeansTest,name=One | false |
+| org.jmxdatamart:type=SimpleMBean,forTest=UnregisterBeansTest,name=Two | true |
+
+Unregister all MBeans that match a pattern
+
+| unregister MBeans |
+| bean name |
+| org.jmxdatamart:* |
+
+Verify that all MBeans have been unregistered
+
+| check MBean registration |
+| bean name | registered? |
+| org.jmxdatamart:type=SimpleMBean,forTest=UnregisterBeansTest,name=One | false |
+| org.jmxdatamart:type=SimpleMBean,forTest=UnregisterBeansTest,name=Two | false |
