@@ -63,6 +63,8 @@
                     <root>${fitnesse.root}</root>
                     <createSymLink>true</createSymLink>
                     <logDir>${fitnesse.working}/logs</logDir>
+                    <resultsDir>${project.build.directory}/surefire-reports</resultsDir>
+                    <summaryFile>${project.build.directory}/surefire-reports/failsafe-summary.xml</summaryFile>
                     <suite>DataMartTests</suite>
                 </configuration>
                 <dependencies>
