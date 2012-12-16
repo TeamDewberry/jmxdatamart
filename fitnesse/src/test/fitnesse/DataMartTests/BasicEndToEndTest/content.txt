@@ -1,25 +1,45 @@
 !contents
 
-!| eg.Division |
-| numerator | denominator | quotient? |
-| 10 | 5 | 2 |
-
-
-This test verifies an end-to-end extract and load of JMX Statistics into the Data Mart.
+This test verifies an end-to-end extract and load of a very simple JMX statistic into the Data Mart.
 
 First we set up a simple JMX MBean with one attribute.
 
+| create MBeans |
+| bean class | bean name |
+| org.jmxdatamart.SimpleMBean | org.jmxdatamart:type=SimpleMBean,forTest=BasicEndToEndTest |
+
+!| configure MBeans |
+| bean name | attribute | value |
+| org.jmxdatamart:type=SimpleMBean,forTest=BasicEndToEndTest | IntAttribute | 42 |
 
 Then we configure the collector
    * What beans should it collect?
    * How often should it collect them?
    * Where should it write the statistics file?
 
+!| configure collector |
+| collect statistics every | 500 | milliseconds |
+| write statistics to file | BasicEndToEndTest/statistics.dat |
+
+!| configure MBeans to be collected |
+| bean name | bean alias | attribute | attribute alias |
+| org.jmxdatamart:type=SimpleMBean,forTest=BasicEndToEndTest | BasicEndToEndTest | intAttribute | intAttribute |
 
 Then we give the collector some time to do its thing
 
-collect statistics for 5 seconds
+!| CollectorTestHelper |
+| collect statistics for | 2 | seconds |
 
 Then we load the statistics file into the data mart
 
+!| load statistics |
+| from file | BasicEndToEndTest/statistics.dat |
+
 Finally, we verify that the statistics were loaded as expected
+
+I think we should use !DbFit (http://fitnesse.info/dbfit) for this which provides !FitNesse fixtures for configuring the connection to and querying databases
+
+First, we'd configure a connection to the database as described in http://fitnesse.info/dbfit:reference:databaseunittests:helloworld:connecttothedatabase
+   * Although, this does beg the question as to what database we use to test.  I wonder if it is feasible to use Derby, the database that is embedded with the JDK (http://www.oracle.com/technetwork/java/javadb/overview/index.html) for the !FitNesse tests.
+
+Then we'd query the database and verify that the expect results were returned like in http://fitnesse.info/dbfit:reference:databaseunittests:helloworld:testingasimplequery
