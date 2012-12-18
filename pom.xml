@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jmxdatamart</groupId>
     <artifactId>jmxdatamart</artifactId>
@@ -8,11 +9,10 @@
     <name>jmxdatamart</name>
     <modules>
         <module>jmx-extractor</module>
+        <module>jmx-extractor-webapp</module>
         <module>fixtures</module>
         <module>fitnesse</module>
-    <module>jmx-extractor-webapp</module>
-    <module>test-webapp</module>
-  </modules>
+    </modules>
     <description>Tools to populate a Data Mart that is optimized for reporting on statistics from sources such as JMX.
     </description>
     <url>https://github.com/TeamDewberry/jmxdatamart</url>

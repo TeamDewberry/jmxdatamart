@@ -12,6 +12,7 @@
     <artifactId>fitnesse</artifactId>
     <version>1.0-SNAPSHOT</version>
     <name>fitnesse</name>
+    <packaging>war</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -31,9 +32,20 @@
                 <enabled>true</enabled>
             </releases>
         </pluginRepository>
+        <pluginRepository>
+            <id>apache-snapshot</id>
+            <url>https://repository.apache.org/content/groups/snapshots</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </pluginRepository>
     </pluginRepositories>
 
     <build>
+        <finalName>fitnesse</finalName>
         <plugins>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -87,6 +99,41 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.tomcat.maven</groupId>
+                <artifactId>tomcat6-maven-plugin</artifactId>
+                <version>2.1-SNAPSHOT</version>
+                <executions>
+                    <execution>
+                        <id>tomcat-run</id>
+                        <goals>
+                            <goal>run-war-only</goal>
+                        </goals>
+                        <phase>pre-integration-test</phase>
+                        <configuration>
+                            <port>8085</port>
+                            <fork>true</fork>
+                            <ignorePackaging>true</ignorePackaging>
+                            <path>/test-webapp</path>
+                            <webapps>
+                                <webapp>
+                                    <groupId>org.jmxdatamart</groupId>
+                                    <artifactId>jmx-extractor-webapp</artifactId>
+                                    <version>1.0-SNAPSHOT</version>
+                                    <contextPath>/jmx-extractor</contextPath>
+                                </webapp>
+                            </webapps>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>tomcat-shutdown</id>
+                        <goals>
+                            <goal>shutdown</goal>
+                        </goals>
+                        <phase>post-integration-test</phase>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -118,6 +165,12 @@
             <artifactId>junit</artifactId>
             <version>3.8.1</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.5</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
