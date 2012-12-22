@@ -14,6 +14,7 @@
     </modules>
     <description>Tools to populate a Data Mart that is optimized for reporting on statistics from sources such as JMX.
     </description>
+    <inceptionYear>2012</inceptionYear>
     <url>https://github.com/TeamDewberry/jmxdatamart</url>
     <licenses>
         <license>
@@ -91,6 +92,63 @@
                     <target>${maven.compiler.target}</target>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.2</version>
+            </plugin>
         </plugins>
     </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.6</version>
+                <reportSets><!-- only index -->
+                    <reportSet>
+                        <reports>
+                            <report>index</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9</version>
+                <reportSets>
+                    <reportSet><!-- by default, id = "default" -->
+                        <reports><!-- select non-aggregate reports -->
+                            <report>javadoc</report>
+                            <report>test-javadoc</report>
+                        </reports>
+                    </reportSet>
+                    <reportSet>
+                        <id>aggregate</id>
+                        <!-- aggregate reportSet, for pom with modules -->
+                        <inherited>false</inherited>
+                        <!-- don't run aggregate in child modules -->
+                        <reports>
+                            <report>aggregate</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
+
+    <distributionManagement>
+        <repository>
+            <id>whitlock-PSU</id>
+            <name>David Whitlock's PSU Repository</name>
+            <url>scp://cs.pdx.edu/u/whitlock/public_html/repository/maven2</url>
+        </repository>
+        <site>
+            <id>whitlock-PSU</id>
+            <name>David Whitlock's PSU Web Site</name>
+            <url>scp://cs.pdx.edu/u/whitlock/public_html/site</url>
+        </site>
+    </distributionManagement>
 </project>
