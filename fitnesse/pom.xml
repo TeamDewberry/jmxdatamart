@@ -134,6 +134,28 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <!-- Apparently, in order to get Jenkins to include the failsafe test results,
+                     the plugin needs to be declared last:
+                     http://jenkins.361315.n4.nabble.com/Maven-builds-and-Integration-Tests-td3543419.html
+                  -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.12.4</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                        <configuration>
+                            <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+                            <summaryFile>${project.build.directory}/surefire-reports/failsafe-summary.xml</summaryFile>
+                            <skip>true</skip>  <!-- Don't actually RUN the tests -->
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
