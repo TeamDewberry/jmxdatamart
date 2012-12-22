@@ -79,14 +79,6 @@
                     <summaryFile>${project.build.directory}/surefire-reports/failsafe-summary.xml</summaryFile>
                     <suite>DataMartTests</suite>
                 </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.jmxdatamart</groupId>
-                        <artifactId>fixtures</artifactId>
-                        <version>1.0-SNAPSHOT</version>
-                        <classifier>tests</classifier>
-                    </dependency>
-                </dependencies>
                 <executions>
                     <execution>
                         <phase>integration-test</phase>
