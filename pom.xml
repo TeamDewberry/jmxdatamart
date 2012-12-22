@@ -10,7 +10,6 @@
     <modules>
         <module>jmx-extractor</module>
         <module>jmx-extractor-webapp</module>
-        <module>fixtures</module>
         <module>fitnesse</module>
     </modules>
     <description>Tools to populate a Data Mart that is optimized for reporting on statistics from sources such as JMX.
