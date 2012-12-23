@@ -114,14 +114,9 @@
                 <configuration>
                     <detectJavaApiLink>true</detectJavaApiLink>
                     <detectLinks>true</detectLinks>
+                    <linksource>true</linksource>
                 </configuration>
                 <reportSets>
-                    <reportSet><!-- by default, id = "default" -->
-                        <reports><!-- select non-aggregate reports -->
-                            <report>javadoc</report>
-                            <report>test-javadoc</report>
-                        </reports>
-                    </reportSet>
                     <reportSet>
                         <id>aggregate</id>
                         <!-- aggregate reportSet, for pom with modules -->
@@ -171,13 +166,26 @@
                 <version>2.3</version>
                 <reportSets>
                     <reportSet>
+                        <!-- Some non-aggregate (per-module) reports (like FindBugs) need xref -->
+                        <reports>
+                            <report>jxr</report>
+                            <report>test-jxr</report>
+                        </reports>
+                    </reportSet>
+                    <reportSet>
+                        <id>aggregate</id>
+                        <inherited>false</inherited>
                         <reports>
                             <report>aggregate</report>
                             <report>test-aggregate</report>
                         </reports>
                     </reportSet>
                 </reportSets>
-
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>2.5.2</version>
             </plugin>
         </plugins>
     </reporting>
