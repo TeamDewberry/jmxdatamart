@@ -28,6 +28,8 @@
 
 package org.jmxdatamart.Extractor;
 
+import com.google.inject.Inject;
+
 import javax.management.*;
 import java.io.IOException;
 
@@ -36,6 +38,7 @@ public class Extractor {
   private final Settings configData;
   private final MBeanServerConnection mbsc;
 
+  @Inject
   public Extractor(Settings configData, MBeanServerConnection mbsc) {
     this.configData = configData;
     this.mbsc = mbsc;
