@@ -25,14 +25,25 @@
   ~ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
+<Context>
+    <!-- Specify the location of the extractor settings file -->
+<!--
+    <Environment name="jmxdatamartSettingsFile"
+                 type="java.lang.String"
+                 value="extractor-settings.xml"/>
 
-<!DOCTYPE web-app PUBLIC
-        "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
-        "http://java.sun.com/dtd/web-app_2_3.dtd" >
-
-<web-app>
-    <display-name>Test Web Application</display-name>
-    <listener>
-        <listener-class>org.jmxdatamart.testwebapp.RegisterMBeansOnWebAppStartup</listener-class>
-    </listener>
-</web-app>
+    <Environment name="anInteger"
+                 type="java.lang.Integer"
+                 value="42"/>
+    <Environment name="aString"
+                 type="java.lang.String"
+                 value="The number 42"/>
+    <Environment name="WhatIsGoingOn"
+                 type="java.lang.String"
+                 value="extractor-settings.xml"/>
+-->
+    <Environment name="jmxdatamart/settings-file"
+                 type="java.lang.String"
+                 value="extractor-settings.xml"
+                 override="false"/>
+</Context>
