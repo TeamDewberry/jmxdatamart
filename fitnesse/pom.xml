@@ -79,17 +79,6 @@
                     <summaryFile>${project.build.directory}/surefire-reports/failsafe-summary.xml</summaryFile>
                     <suite>DataMartTests</suite>
                 </configuration>
-                <executions>
-                    <execution>
-                        <phase>integration-test</phase>
-                        <goals>
-                            <goal>set-up</goal>
-                            <goal>run-tests</goal>
-                            <goal>tear-down</goal>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.tomcat.maven</groupId>
@@ -153,7 +142,12 @@
 
     <profiles>
         <profile>
-            <id>wiki</id>
+            <id>run-tests</id>
+            <activation>
+                <property>
+                    <name>!wiki</name>
+                </property>
+            </activation>
             <build>
                 <plugins>
                     <plugin>
@@ -161,9 +155,38 @@
                         <artifactId>fitnesse-launcher-maven-plugin</artifactId>
                         <executions>
                             <execution>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>set-up</goal>
+                                    <goal>run-tests</goal>
+                                    <goal>tear-down</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>wiki</id>
+            <activation>
+                <property>
+                    <name>wiki</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>uk.co.javahelp.fitnesse</groupId>
+                        <artifactId>fitnesse-launcher-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>integration-test</phase>
                                 <goals>
                                     <goal>set-up</goal>
                                     <goal>wiki</goal>
+                                    <goal>tear-down</goal>
                                 </goals>
                             </execution>
                         </executions>
