@@ -9,3 +9,5 @@ The extraction process maintains statistics about itself in an MBean.  Through t
 You can also perform the following operations via the MBean
    * Extract MBean values to the statistics file
       * This would be helpful if the user wants to extract MBeans on demand (at the end of a test run, for instance, instead of periodically)
+   * Reload the extractor's configuration file
+      * This might be helpful to tests (like these !FitNesse tests)
