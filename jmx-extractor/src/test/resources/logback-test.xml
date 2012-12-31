@@ -25,21 +25,19 @@
   ~ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
-<Settings>
-  <pollingRate>1000</pollingRate>
-  <folderLocation>${fitnesse.working}/jmx-statistics</folderLocation>
-  <BeanList class="singleton-list">
-    <Bean>
-      <name>org.jmxdatamart:Type=TestWebAppMBean</name>
-      <alias>TestWebAppMBean</alias>
-      <AttributeList class="singleton-list">
-        <Attribute>
-          <dataType>INT</dataType>
-          <name>Age</name>
-          <alias>age</alias>
-        </Attribute>
-      </AttributeList>
-      <enable>true</enable>
-    </Bean>
-  </BeanList>
-</Settings>
+
+<configuration>
+    <!-- See http://logback.qos.ch/manual/configuration.html -->
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- encoders are assigned the type
+             ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="debug">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>
