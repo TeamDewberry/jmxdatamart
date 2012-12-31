@@ -1,0 +1,13 @@
+!contents
+
+The extraction process maintains statistics about itself in an MBean.  Through this MBean you can get
+   * The total number of times that extraction has occurred
+   * The total amount of time (in milliseconds) that the extractor has spent extracting statistics
+   * The total number of bytes that have been written to a data file
+   * The number of MBean attributes that were harvested in a given extraction
+
+You can also perform the following operations via the MBean
+   * Extract MBean values to the statistics file
+      * This would be helpful if the user wants to extract MBeans on demand (at the end of a test run, for instance, instead of periodically)
+   * Reload the extractor's configuration file
+      * This might be helpful to tests (like these !FitNesse tests)
