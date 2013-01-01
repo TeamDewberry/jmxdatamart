@@ -27,9 +27,16 @@
   -->
 
 <!DOCTYPE web-app PUBLIC
- "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
- "http://java.sun.com/dtd/web-app_2_3.dtd" >
+        "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+        "http://java.sun.com/dtd/web-app_2_3.dtd" >
 
 <web-app>
-  <display-name>A web application that collects JMX statistics</display-name>
+    <display-name>A web application that collects JMX statistics</display-name>
+    <listener>
+        <listener-class>org.jmxdatamart.webapp.ConfigureAndStartExtractor</listener-class>
+    </listener>
+    <env-entry>
+        <env-entry-name>jmxdatamart/settings-file</env-entry-name>
+        <env-entry-type>java.lang.String</env-entry-type>
+    </env-entry>
 </web-app>
