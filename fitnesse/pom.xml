@@ -55,7 +55,7 @@
         <plugins>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.3</version>
+                <version>2.4</version>
                 <configuration>
                     <descriptorRefs>
                         <descriptorRef>src</descriptorRef>
@@ -142,7 +142,7 @@
                   -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.12.4</version>
+                <version>2.13</version>
                 <executions>
                     <execution>
                         <goals>
@@ -221,7 +221,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>3.8.1</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -233,7 +233,7 @@
         <dependency>
             <groupId>org.fitnesse</groupId>
             <artifactId>fitnesse</artifactId>
-            <version>20111025</version>
+            <version>20121220</version>
             <scope>test</scope>
         </dependency>
         <dependency>
