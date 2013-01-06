@@ -1,6 +1,8 @@
-!contents
+This is the suite of !-FitNesse-! tests for the JMX Data Mart.
 
-The Maven plugin sets the value of the maven.classpath Java system property to contain all of the jars files on which the Maven project depends.  It also includes the directory into which class files are compiled.  
+!contents
+Here's something useful: Append "?responder=test&remote_debug=true" to the URL to run a !-FitNesse-! test so that a debugger can attach.  See also  http://fitnesse.org/FitNesse.UserGuide.DebugingFixtureCode
+
+The Maven plugin sets the value of the maven.classpath Java system property to contain all of the jars files on which the Maven project depends.  It also includes the directory into which class files are compiled.
 
 ${maven.classpath}
-

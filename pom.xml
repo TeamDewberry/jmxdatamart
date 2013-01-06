@@ -77,6 +77,8 @@
         <developerConnection>scm:git:git@github.com:TeamDewberry/jmxdatamart.git</developerConnection>
     </scm>
     <properties>
+        <maven.build.timestamp.format>yyyy-MMM-dd hh:mm a</maven.build.timestamp.format>
+
         <!-- All code is compiled for Java 1.6 -->
         <maven.compiler.source>1.6</maven.compiler.source>
         <maven.compiler.target>1.6</maven.compiler.target>
@@ -101,6 +103,23 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
                 <version>3.2</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                        <manifestEntries>
+                            <Build-Time>${maven.build.timestamp}</Build-Time>
+                            <Build-Number>${build.number}</Build-Number>
+                            <Source-Revision>${git.hash}</Source-Revision>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -215,4 +234,26 @@
             <url>scp://cs.pdx.edu/u/whitlock/public_html/site</url>
         </site>
     </distributionManagement>
+
+    <profiles>
+        <profile>
+            <id>private-build</id>
+            <activation>
+                <property>
+                    <name>!env.BUILD_NUMBER</name>
+                </property>
+            </activation>
+            <properties>
+                <build.number>Unknown</build.number>
+                <git.hash>Unknown</git.hash>
+            </properties>
+        </profile>
+        <profile>
+            <id>Jenkins</id>
+            <properties>
+                <build.number>${env.BUILD_NUMBER}</build.number>
+                <git.hash>${env.GIT_COMMIT}</git.hash>
+            </properties>
+        </profile>
+    </profiles>
 </project>
