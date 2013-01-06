@@ -58,4 +58,20 @@ public class VersionInformationForClass extends ColumnFixture {
   public boolean hasSomeInformation() throws ClassNotFoundException, IOException {
     return builtBy() != null;
   }
+
+  public String buildTime() throws IOException, ClassNotFoundException {
+    return getVersion().getBuildTime();
+  }
+
+  public String buildNumber() throws IOException, ClassNotFoundException {
+    return getVersion().getBuildNumber();
+  }
+
+  public String sourceRevision() throws IOException, ClassNotFoundException {
+    return getVersion().getSourceRevision();
+  }
+
+  public String implementationVersion() throws IOException, ClassNotFoundException {
+    return getVersion().getImplementationVersion();
+  }
 }

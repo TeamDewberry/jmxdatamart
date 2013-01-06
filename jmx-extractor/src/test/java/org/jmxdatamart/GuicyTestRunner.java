@@ -53,6 +53,6 @@ public class GuicyTestRunner extends BlockJUnit4ClassRunner {
 
   @Override
   protected void validateZeroArgConstructor(List<Throwable> errors) {
-    // It's okay for Guice-inject tests to not have zero-argument constructors
+    // It's okay for Guice-managed tests to not have zero-argument constructors
   }
 }

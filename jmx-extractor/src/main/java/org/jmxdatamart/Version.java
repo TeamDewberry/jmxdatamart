@@ -36,6 +36,10 @@ import java.util.jar.Manifest;
 
 public class Version {
   private final String builtBy;
+  private final String buildTime;
+  private final String buildNumber;
+  private final String sourceRevision;
+  private final String implementationVersion;
 
   /**
    * Computes version information about a class from the Manifest in its jar file
@@ -44,6 +48,10 @@ public class Version {
     Manifest manifest = getManifestForMyJarFile(aClass);
     Attributes mainAttributes = manifest.getMainAttributes();
     builtBy = mainAttributes.getValue("Built-By");
+    buildTime = mainAttributes.getValue("Build-Time");
+    buildNumber = mainAttributes.getValue("Build-Number");
+    sourceRevision = mainAttributes.getValue("Source-Revision");
+    implementationVersion = mainAttributes.getValue("Implementation-Version");
   }
 
   private Manifest getManifestForMyJarFile(Class<?> aClass) throws IOException {
@@ -59,5 +67,21 @@ public class Version {
 
   public String getBuiltBy() {
     return builtBy;
+  }
+
+  public String getBuildTime() {
+    return buildTime;
+  }
+
+  public String getBuildNumber() {
+    return buildNumber;
+  }
+
+  public String getSourceRevision() {
+    return sourceRevision;
+  }
+
+  public String getImplementationVersion() {
+    return implementationVersion;
   }
 }

@@ -3,5 +3,5 @@
 Tests for the Version class which extracts version information from the Manifest file inside a class's jar file.  These tests need to be integration tests because the jar files are not built for unit tests.  Note that this test doesn't expect particular values for version information because that is determined at build time (not at test-writing time).
 
 | version information for class |
-| class name | has some information? | built by? | 
-| org.jmxdatamart.Version | true | |
+| class name | has some information? | built by? | build time? | build number? | source revision? | implementation version? |
+| org.jmxdatamart.Version | true | | | | | |
