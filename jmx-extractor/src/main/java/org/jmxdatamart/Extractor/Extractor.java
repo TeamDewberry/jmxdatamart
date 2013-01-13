@@ -65,21 +65,24 @@ public class Extractor {
     return this.configData.getPollingRate() > 0;
   }
 
-  void extract() throws MalformedObjectNameException, InstanceNotFoundException, IOException, ReflectionException, AttributeNotFoundException, MBeanException {
-    for (BeanData bd : this.configData.getBeans()) {
+  String extract() throws MalformedObjectNameException, InstanceNotFoundException, IOException, ReflectionException, AttributeNotFoundException, MBeanException {
+      StringBuilder outputStuff = new StringBuilder();
+      for (BeanData bd : this.configData.getBeans()) {
       ObjectName on = new ObjectName(bd.getName());
       for (Attribute a : bd.getAttributes()) {
-        System.out.println(bd.getAlias() + ", " + a.getAlias() + ", "
-          + a.getDataType() + ", " + this.mbsc.getAttribute(on, a.getName()).toString());
+        outputStuff.append(bd.getAlias() + ", " + a.getAlias() + ", "
+          + a.getDataType() + ", " + this.mbsc.getAttribute(on, a.getName()).toString() + "\n");
       }
     }
+    return outputStuff.toString();
   }
 
   private class Extract extends TimerTask {
     @Override
     public void run() {
       try {
-        extract();
+        //Temporarily disabled by Xiao since it causes the Extrator and JMXTestServer out-of-sync.
+        //System.out.print(extract());
 
       } catch (Exception e) {
         logger.debug("While extracting MBeans", e);

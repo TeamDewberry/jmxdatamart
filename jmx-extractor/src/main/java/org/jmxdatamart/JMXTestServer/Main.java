@@ -7,6 +7,7 @@ package org.jmxdatamart.JMXTestServer;
 import java.lang.management.ManagementFactory;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+import java.io.FileWriter;
 
 /**
  *
@@ -23,10 +24,24 @@ public class Main {
         MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
         ObjectName mbeanName = new ObjectName("com.personal.JMXTestServer:type=TestBean");
         mbs.registerMBean(tb, mbeanName);
-        while (true) {
-            tb.randomize();
-            System.out.println(tb.toString());
-            Thread.sleep(2000);
+
+        FileWriter writer = new FileWriter(System.getProperty("user.dir") + "/JMXTestServer.txt");
+        writer.write("Start exporting on " + new java.util.Date()+"\n");
+        try {
+            while (true) {
+                tb.randomize();
+                System.out.println(tb.toString());
+                writer.write(tb.toString()+"\n");
+                writer.flush();
+                Thread.sleep(2000);
+            }
+        }
+        catch (Exception e){
+            System.err.println(e.getStackTrace());
+            System.exit(1);
+        }
+        finally {
+            writer.close();
         }
     }
 }
