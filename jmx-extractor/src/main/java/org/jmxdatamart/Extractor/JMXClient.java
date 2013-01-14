@@ -5,7 +5,6 @@
 package org.jmxdatamart.Extractor;
 
 import java.io.*;
-import java.util.Scanner;
 import javax.management.*;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
