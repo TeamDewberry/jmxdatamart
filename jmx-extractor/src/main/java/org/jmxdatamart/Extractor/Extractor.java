@@ -25,7 +25,6 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.jmxdatamart.Extractor;
 
 import com.google.inject.Inject;
@@ -34,59 +33,72 @@ import org.slf4j.LoggerFactory;
 
 import javax.management.*;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.net.MalformedURLException;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Level;
+import javax.management.remote.JMXConnectorFactory;
+import javax.management.remote.JMXServiceURL;
 
 public class Extractor {
 
-  private final Settings configData;
-  private final MBeanServerConnection mbsc;
-  private final Logger logger = LoggerFactory.getLogger(Extractor.class);
+    private final Settings configData;
+    private final MBeanServerConnection mbsc;
+    private final Logger logger = LoggerFactory.getLogger(Extractor.class);
 
-  @Inject
-  public Extractor(Settings configData, MBeanServerConnection mbsc) {
-    this.configData = configData;
-    this.mbsc = mbsc;
+    @Inject
+    public Extractor(Settings configData) throws IOException {
+        this.configData = configData;
+        if (configData.getUrl() == null) {
+            mbsc = ManagementFactory.getPlatformMBeanServer();
+        } else {
+            JMXServiceURL url = new JMXServiceURL(configData.getUrl());
+            mbsc = JMXConnectorFactory.connect(url).getMBeanServerConnection();
+        }
 
-    if (shouldPeriodicallyExtract()) {
-      periodicallyExtract();
+        if (shouldPeriodicallyExtract()) {
+            periodicallyExtract();
+        }
     }
-  }
 
-  private void periodicallyExtract() {
-    boolean isDaemon = true;
-    Timer timer = new Timer("JMX Statistics Extractor", isDaemon);
-    long rate = configData.getPollingRate();
-    int delay = 0;
-    timer.scheduleAtFixedRate(new Extract(), delay, rate);
-  }
-
-  private boolean shouldPeriodicallyExtract() {
-    return this.configData.getPollingRate() > 0;
-  }
-
-  String extract() throws MalformedObjectNameException, InstanceNotFoundException, IOException, ReflectionException, AttributeNotFoundException, MBeanException {
-      StringBuilder outputStuff = new StringBuilder();
-      for (BeanData bd : this.configData.getBeans()) {
-      ObjectName on = new ObjectName(bd.getName());
-      for (Attribute a : bd.getAttributes()) {
-        outputStuff.append(bd.getAlias() + ", " + a.getAlias() + ", "
-          + a.getDataType() + ", " + this.mbsc.getAttribute(on, a.getName()).toString() + "\n");
-      }
+    private void periodicallyExtract() {
+        boolean isDaemon = true;
+        Timer timer = new Timer("JMX Statistics Extractor", isDaemon);
+        long rate = configData.getPollingRate() * 1000;
+        int delay = 0;
+        timer.scheduleAtFixedRate(new Extract(), delay, rate);
     }
-    return outputStuff.toString();
-  }
 
-  private class Extract extends TimerTask {
-    @Override
-    public void run() {
-      try {
-        //Temporarily disabled by Xiao since it causes the Extrator and JMXTestServer out-of-sync.
-        //System.out.print(extract());
-
-      } catch (Exception e) {
-        logger.debug("While extracting MBeans", e);
-      }
+    private boolean shouldPeriodicallyExtract() {
+        return this.configData.getPollingRate() > 0;
     }
-  }
+
+    String extract() throws MalformedObjectNameException, InstanceNotFoundException, IOException, ReflectionException, AttributeNotFoundException, MBeanException {
+        StringBuilder outputStuff = new StringBuilder();
+        for (BeanData bd : this.configData.getBeans()) {
+            ObjectName on = new ObjectName(bd.getName());
+            for (Attribute a : bd.getAttributes()) {
+                outputStuff.append(bd.getAlias()).append(", ")
+                        .append(a.getAlias()).append(", ")
+                        .append(a.getDataType()).append(", ")
+                        .append(this.mbsc.getAttribute(on, a.getName()).toString())
+                        .append("\n");
+            }
+        }
+        return outputStuff.toString();
+    }
+
+    private class Extract extends TimerTask {
+
+        @Override
+        public void run() {
+            try {
+                //Temporarily disabled by Xiao since it causes the Extrator and JMXTestServer out-of-sync.
+                //System.out.print(extract());
+            } catch (Exception e) {
+                logger.debug("While extracting MBeans", e);
+            }
+        }
+    }
 }
