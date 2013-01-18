@@ -23,7 +23,7 @@ public class Settings {
     private long pollingRate;
     private String folderLocation;
     private String url;
-    private List<BeanData> beans;
+    private List<MBeanData> beans;
 
     /**
      * @return the pollingRate
@@ -70,28 +70,28 @@ public class Settings {
     /**
      * @return the beans
      */
-    public List<BeanData> getBeans() {
+    public List<MBeanData> getBeans() {
         return beans;
     }
 
     /**
      * @param beans the beans to set
      */
-    public void setBeans(List<BeanData> beans) {
+    public void setBeans(List<MBeanData> beans) {
         this.beans = beans;
     }
     
     public Settings() {
         XStream xstream = new XStream(new DomDriver());
         xstream.aliasField("BeanList", Settings.class, "beans");
-        xstream.aliasField("AttributeList", BeanData.class, "attributes");
+        xstream.aliasField("AttributeList", MBeanData.class, "attributes");
         xstream.alias("Settings", Settings.class);
-        xstream.alias("Bean", BeanData.class);
+        xstream.alias("Bean", MBeanData.class);
         xstream.alias("Attribute", Attribute.class);
     }
     
     public void sanitize() {
-        for (BeanData bd : getBeans()) {
+        for (MBeanData bd : getBeans()) {
             if ("".equals(bd.getAlias())) {
                 bd.setAlias(bd.getName());
             }
@@ -106,9 +106,9 @@ public class Settings {
     public String toXML() {
         XStream xstream = new XStream(new DomDriver());
         xstream.aliasField("BeanList", Settings.class, "beans");
-        xstream.aliasField("AttributeList", BeanData.class, "attributes");
+        xstream.aliasField("AttributeList", MBeanData.class, "attributes");
         xstream.alias("Settings", Settings.class);
-        xstream.alias("Bean", BeanData.class);
+        xstream.alias("Bean", MBeanData.class);
         xstream.alias("Attribute", Attribute.class);
         
         return xstream.toXML(this);
@@ -117,9 +117,9 @@ public class Settings {
     public static Settings fromXML(String s) {
         XStream xstream = new XStream(new DomDriver());
         xstream.aliasField("BeanList", Settings.class, "beans");
-        xstream.aliasField("AttributeList", BeanData.class, "attributes");
+        xstream.aliasField("AttributeList", MBeanData.class, "attributes");
         xstream.alias("Settings", Settings.class);
-        xstream.alias("Bean", BeanData.class);
+        xstream.alias("Bean", MBeanData.class);
         xstream.alias("Attribute", Attribute.class);
         
         Settings settings = (Settings)xstream.fromXML(s);
@@ -131,9 +131,9 @@ public class Settings {
     public static Settings fromXML(InputStream s) {
         XStream xstream = new XStream(new DomDriver());
         xstream.aliasField("BeanList", Settings.class, "beans");
-        xstream.aliasField("AttributeList", BeanData.class, "attributes");
+        xstream.aliasField("AttributeList", MBeanData.class, "attributes");
         xstream.alias("Settings", Settings.class);
-        xstream.alias("Bean", BeanData.class);
+        xstream.alias("Bean", MBeanData.class);
         xstream.alias("Attribute", Attribute.class);
 
         Settings settings = (Settings)xstream.fromXML(s);
@@ -157,9 +157,9 @@ public class Settings {
         s.setFolderLocation("\\project\\");
         s.setPollingRate(5);
         s.setUrl("service:jmx:rmi:///jndi/rmi://:9999/jmxrmi");
-        s.setBeans(new ArrayList<BeanData>());
+        s.setBeans(new ArrayList<MBeanData>());
         
-        BeanData bd = new BeanData("com.example:type=Hello","", new ArrayList<Attribute>(), true);
+        MBeanData bd = new MBeanData("com.example:type=Hello","", new ArrayList<Attribute>(), true);
         bd.getAttributes().add(new Attribute("Name","", DataType.STRING));
         bd.getAttributes().add(new Attribute("CacheSize", "", DataType.INT));
         s.getBeans().add(bd);
