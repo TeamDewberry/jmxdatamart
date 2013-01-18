@@ -60,10 +60,11 @@ public class BeanData {
         this.attributes = attributes;
     }
     
-    public BeanData(String name, String alias, List<Attribute> attributes) {
+    public BeanData(String name, String alias, List<Attribute> attributes, boolean enable) {
         this.name = name;
         this.alias = alias;
         this.attributes = attributes;
+        this.enable = enable;
     }
 
     public BeanData() {
