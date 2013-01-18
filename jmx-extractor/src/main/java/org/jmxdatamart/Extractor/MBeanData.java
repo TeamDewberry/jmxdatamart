@@ -118,4 +118,35 @@ public class MBeanData implements BeanData {
     public void setEnable(boolean enable) {
         this.enable = enable;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 53 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 53 * hash + (this.alias != null ? this.alias.hashCode() : 0);
+        hash = 53 * hash + (this.attributes != null ? this.attributes.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final MBeanData other = (MBeanData) obj;
+        if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
+            return false;
+        }
+        if ((this.alias == null) ? (other.alias != null) : !this.alias.equals(other.alias)) {
+            return false;
+        }
+        if (this.attributes != other.attributes && (this.attributes == null || !this.attributes.equals(other.attributes))) {
+            return false;
+        }
+        return true;
+    }
+    
 }
