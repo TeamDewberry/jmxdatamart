@@ -159,7 +159,7 @@ public class Settings {
         s.setUrl("service:jmx:rmi:///jndi/rmi://:9999/jmxrmi");
         s.setBeans(new ArrayList<BeanData>());
         
-        BeanData bd = new BeanData("com.example:type=Hello","", new ArrayList<Attribute>());
+        BeanData bd = new BeanData("com.example:type=Hello","", new ArrayList<Attribute>(), true);
         bd.getAttributes().add(new Attribute("Name","", DataType.STRING));
         bd.getAttributes().add(new Attribute("CacheSize", "", DataType.INT));
         s.getBeans().add(bd);

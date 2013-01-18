@@ -33,7 +33,6 @@ public class TestBean implements TestBeanMBean{
         }
     }
 
-    @Override
     public void randomize() {
         a = prng.nextInt(100);
     }

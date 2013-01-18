@@ -66,6 +66,15 @@
             </roles>
             <timezone>-7</timezone>
         </developer>
+        <developer>
+            <id>ankel</id>
+            <name>Binh Tran</name>
+            <roles>
+                <role>Team Lead</role>
+                <role>Developer - JMX team</role>
+            </roles>
+            <timezone>-7</timezone>
+        </developer>
     </developers>
     <issueManagement>
         <url>https://github.com/TeamDewberry/jmxdatamart/issues</url>
