@@ -35,7 +35,7 @@ public class JMXClient {
         mbsc = jmxc.getMBeanServerConnection();
 
         while (true) {
-            output = new Extractor(configData, mbsc).extract();
+            output = new Extractor(configData).extract();
             System.out.print(output);
             writer.write(output);
             writer.flush();

@@ -15,6 +15,4 @@ public interface TestBeanMBean {
     Object getA();
     
     void setA(Object obj);
-    
-    void randomize();
 }
