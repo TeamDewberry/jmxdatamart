@@ -27,39 +27,23 @@
  */
 package org.jmxdatamart.Extractor;
 
+import java.util.*;
+
 /**
- * This class contains information related to any given attribute such as name,
- * alias and its data type
- *
+ * This class contains data related to any MBean such as name, alias and its
+ * attributes
  * @author Binh Tran <mynameisbinh@gmail.com>
  */
-public class Attribute {
-    private DataType dataType;
+public class MBeanData implements BeanData {
     private String name;
     private String alias;
-
-    public Attribute() {
-        name = "";
-        alias = "";
-    }
-
-    /**
-     * @return the dataType
-     */
-    public DataType getDataType() {
-        return dataType;
-    }
-
-    /**
-     * @param dataType the dataType to set
-     */
-    public void setDataType(DataType dataType) {
-        this.dataType = dataType;
-    }
+    private List<Attribute> attributes;
+    private boolean enable;
 
     /**
      * @return the name
      */
+    @Override
     public String getName() {
         return name;
     }
@@ -74,6 +58,7 @@ public class Attribute {
     /**
      * @return the alias
      */
+    @Override
     public String getAlias() {
         return alias;
     }
@@ -85,23 +70,61 @@ public class Attribute {
         this.alias = alias;
     }
 
-    public Attribute(String name, String alias, DataType dataType) {
-        this.name = name;
-        this.alias = alias;
-        this.dataType = dataType;
+    /**
+     * @return the attributes
+     */
+    public List<Attribute> getAttributes() {
+        return attributes;
     }
 
+    /**
+     * @param attributes the attributes to set
+     */
+    public void setAttributes(List<Attribute> attributes) {
+        this.attributes = attributes;
+    }
+    
+    public MBeanData(String name, String alias, List<Attribute> attributes, boolean enable) {
+        this.name = name;
+        this.alias = alias;
+        this.attributes = attributes;
+        this.enable = enable;
+    }
+
+    public MBeanData() {
+        name = "";
+        alias = "";
+        enable = true;
+    }
+    
     @Override
     public String toString() {
-        return dataType.toString() + ": " + name + " -> " + alias;
+        String nl = System.getProperty("line.separator");
+        return  this.name + " -> " + this.alias + nl +
+                attributes.toString() + nl;
+    }
+
+    /**
+     * @return the enable
+     */
+    @Override
+    public boolean isEnable() {
+        return enable;
+    }
+
+    /**
+     * @param enable the enable to set
+     */
+    public void setEnable(boolean enable) {
+        this.enable = enable;
     }
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 97 * hash + (this.dataType != null ? this.dataType.hashCode() : 0);
-        hash = 97 * hash + (this.name != null ? this.name.hashCode() : 0);
-        hash = 97 * hash + (this.alias != null ? this.alias.hashCode() : 0);
+        int hash = 7;
+        hash = 53 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 53 * hash + (this.alias != null ? this.alias.hashCode() : 0);
+        hash = 53 * hash + (this.attributes != null ? this.attributes.hashCode() : 0);
         return hash;
     }
 
@@ -113,16 +136,17 @@ public class Attribute {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Attribute other = (Attribute) obj;
-        if (this.dataType != other.dataType) {
-            return false;
-        }
+        final MBeanData other = (MBeanData) obj;
         if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
             return false;
         }
         if ((this.alias == null) ? (other.alias != null) : !this.alias.equals(other.alias)) {
             return false;
         }
+        if (this.attributes != other.attributes && (this.attributes == null || !this.attributes.equals(other.attributes))) {
+            return false;
+        }
         return true;
     }
+    
 }

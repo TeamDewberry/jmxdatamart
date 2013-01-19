@@ -39,7 +39,7 @@ public class TestSettings extends TestCase {
     settings.setPollingRate(10);
     settings.setFolderLocation("jmx-statistics");
 
-    BeanData bean = new BeanData();
+    MBeanData bean = new MBeanData();
     bean.setName("org.jmxdatamart:Type=TestWebAppMBean");
     bean.setAlias("TestWebAppMBean");
 
@@ -48,7 +48,10 @@ public class TestSettings extends TestCase {
 
     settings.setBeans(Collections.singletonList(bean));
 
-    System.out.println(settings.toXML());
+    String s = settings.toXML();
+    
+    Settings newSettings = Settings.fromXML(s);
+    assertEquals(settings, newSettings);
   }
 
 }

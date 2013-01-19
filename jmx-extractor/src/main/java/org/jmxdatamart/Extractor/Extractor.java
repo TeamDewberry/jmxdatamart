@@ -28,16 +28,13 @@
 package org.jmxdatamart.Extractor;
 
 import com.google.inject.Inject;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.management.*;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
-import java.net.MalformedURLException;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.logging.Level;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 
@@ -45,7 +42,7 @@ public class Extractor {
 
     private final Settings configData;
     private final MBeanServerConnection mbsc;
-    private final Logger logger = LoggerFactory.getLogger(Extractor.class);
+    private final org.slf4j.Logger logger = LoggerFactory.getLogger(Extractor.class);
 
     @Inject
     public Extractor(Settings configData) throws IOException {
@@ -76,7 +73,7 @@ public class Extractor {
 
     String extract() throws MalformedObjectNameException, InstanceNotFoundException, IOException, ReflectionException, AttributeNotFoundException, MBeanException {
         StringBuilder outputStuff = new StringBuilder();
-        for (BeanData bd : this.configData.getBeans()) {
+        for (MBeanData bd : this.configData.getBeans()) {
             ObjectName on = new ObjectName(bd.getName());
             for (Attribute a : bd.getAttributes()) {
                 outputStuff.append(bd.getAlias()).append(", ")
