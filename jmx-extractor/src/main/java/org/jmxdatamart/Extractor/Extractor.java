@@ -28,15 +28,14 @@
 package org.jmxdatamart.Extractor;
 
 import com.google.inject.Inject;
-import org.slf4j.LoggerFactory;
-
-import javax.management.*;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.util.Timer;
 import java.util.TimerTask;
+import javax.management.*;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
+import org.slf4j.LoggerFactory;
 
 public class Extractor {
 
