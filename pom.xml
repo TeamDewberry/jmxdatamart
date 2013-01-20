@@ -148,6 +148,7 @@
                     <detectJavaApiLink>true</detectJavaApiLink>
                     <detectLinks>true</detectLinks>
                     <linksource>true</linksource>
+                    <use>false</use> <!-- Generating the usage page breaks the javadoc program -->
                 </configuration>
                 <reportSets>
                     <reportSet>
