@@ -37,8 +37,8 @@
     <modules>
         <module>jmx-extractor</module>
         <module>jmx-extractor-webapp</module>
-        <module>fitnesse</module>
         <module>jmx-loader</module>
+        <module>fitnesse</module>
   </modules>
     <description>Tools to populate a Data Mart that is optimized for reporting on statistics from sources such as JMX.
     </description>
@@ -121,6 +121,7 @@
         <maven.compiler.target>1.6</maven.compiler.target>
 
         <junit.version>4.11</junit.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <prerequisites>
         <maven>3.0.1</maven>
