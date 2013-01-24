@@ -26,7 +26,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.jmxdatamart.Loader;
+package org.jmxdatamart.common;
 
 
 import java.sql.*;
@@ -56,11 +56,11 @@ public class DBTester {
             props.put("user", "user1");
             props.put("password", "user1");
 
-            conn = derby.connectDB(dbName, props);
+            conn = derby.connectDatabase( dbName, props);
             st = conn.createStatement();
 
             conn.setAutoCommit(false);
-            if (!derby.tblExists("players", conn))
+            if (!derby.tableExists("players", conn))
                 st.execute("create table players(playerid int NOT NULL GENERATED " +
                         "ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), name varchar(40), primary key(playerid))");
             System.out.println("Created table PLAYERS");
@@ -112,8 +112,8 @@ public class DBTester {
         }
         finally {
 
-            derby.disconnectDB(rs,st,ps,conn);
-            derby.shutdownDB(dbName); //we should shut down a embedded Derby DB after using it
+            derby.disconnectDatabase(rs,st,ps,conn) ;
+            derby.shutdownDatabase(dbName); //we should shut down a embedded Derby DB after using it
         }
 
     }

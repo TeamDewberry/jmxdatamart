@@ -1,4 +1,4 @@
-package org.jmxdatamart.Loader;
+package org.jmxdatamart.common;
 
 import java.sql.*;
 
@@ -12,15 +12,15 @@ public class HypersqlHandler extends DBHandler {
     private final String protocol = "jdbc:hsqldb:";
     private DatabaseMetaData metadata =null;
 
-    public void shutdownDB(Connection conn) throws SQLException{
+    public void shutdownDatabase(Connection conn) throws SQLException{
         conn.createStatement().execute("SHUTDOWN");
     }
 
-    public Connection connectDB(String DBName,java.util.Properties p) throws SQLException{
+    public Connection connectDatabase(String DBName,java.util.Properties p) throws SQLException{
             return  DriverManager.getConnection(protocol+DBName, p.getProperty("username"),p.getProperty("password"));
     }
 
-    public boolean tblExists(String tablename, Connection conn)  throws SQLException{
+    public boolean tableExists(String tablename, Connection conn)  throws SQLException{
         metadata = conn.getMetaData();
         String[] names = { "TABLE"};
         ResultSet tableNames = metadata.getTables( null, null, null, names);
@@ -33,7 +33,7 @@ public class HypersqlHandler extends DBHandler {
         return false;
     }
 
-    public boolean dbExists(String DBName,java.util.Properties p){
+    public boolean databaseExists(String DBName,java.util.Properties p){
         //Maybe it is a dummy way to check if a db exits, need to improve
         try {
             DriverManager.getConnection(protocol+DBName, p.getProperty("username"),p.getProperty("password"));

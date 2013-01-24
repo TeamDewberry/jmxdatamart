@@ -1,10 +1,12 @@
 package org.jmxdatamart.Extractor;
 
 import org.jmxdatamart.JMXTestServer.TestBean;
+import org.jmxdatamart.common.*;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
 import java.sql.*;
+import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.*;
 /**
@@ -46,7 +48,7 @@ public class Bean2DB {
         Bean2DB bd = new Bean2DB();
         String dbname = bd.generateMBeanDB(s);
         HypersqlHandler hsql = new HypersqlHandler();
-        Connection conn= hsql.connectDB(dbname,props);
+        Connection conn= hsql.connectDatabase(dbname, props);
 
         bd.export2DB(conn,mbd,result);
 
@@ -54,43 +56,71 @@ public class Bean2DB {
         while(rs.next()){
             System.out.println(rs.getObject(1) + "\t" + rs.getObject(2));
         }
-        hsql.shutdownDB(conn);
-        hsql.disconnectDB(rs,null,null,conn);
+        hsql.shutdownDatabase(conn);
+        hsql.disconnectDatabase(rs, null, null, conn);
     }
 
     //get rid of the . : =, which are illegal for a table name
-    private  String convert_illegal_table_name(String tablename){
+    private  String convertIllegalTableName(String tablename){
         return tablename.replaceAll("\\.","_").replaceAll(":","__").replaceAll("=","___");
     }
-    private  String recover_original_table_name(String tablename){
+    private  String recoverOriginalTableName(String tablename){
         return tablename.replaceAll("___","=").replaceAll("__",":").replaceAll("_","\\.");
     }
 
     public void export2DB(Connection conn, MBeanData mbd, Map<Attribute, Object> result) throws  SQLException{
-        String tablename = convert_illegal_table_name(mbd.getName());
+
+        PreparedStatement ps = null;
+
+        String tablename = convertIllegalTableName(mbd.getName());
         StringBuilder insertstring = new StringBuilder() ;
         insertstring.append("insert into " + tablename +" (");
         StringBuilder insertvalue = new StringBuilder();
         insertvalue.append(" values(");
+
         for (Map.Entry<Attribute, Object> m : result.entrySet()) {
             insertstring.append(((Attribute)m.getKey()).getName()+",");
-            insertvalue.append("'" + m.getValue().toString()+"',");
+            insertvalue.append("?,");
         }
 
         String sql = insertstring.append("time)").toString();
-        sql += insertvalue.append("'" +new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date()) + "')").toString() ;
+        sql += insertvalue.append("?)").toString();
+        //System.out.println(sql);
+        ps = conn.prepareStatement(sql);
+
+        //need to think about how to avoid retrieving the map twice
+        int i=0;
+        for (Map.Entry<Attribute, Object> m : result.entrySet()) {
+            switch (((Attribute)m.getKey()).getDataType())
+            {
+                case INT:
+                    ps.setInt(++i,(Integer)m.getValue());
+                    break;
+                case STRING:
+                    ps.setString(++i,m.getValue().toString());
+                    break;
+                case BOOLEAN:
+                    ps.setBoolean(++i,(Boolean)m.getValue());
+                    break;
+                case FLOAT:
+                    ps.setFloat(++i,(Float)m.getValue());
+                    break;
+            }
+        }
+        ps.setTimestamp(++i, new Timestamp((new java.util.Date()).getTime()));
 
         boolean bl=false;
         try{
             bl = conn.getAutoCommit();
             conn.setAutoCommit(false);
-            conn.createStatement().executeUpdate(sql);
+            ps.executeUpdate();
             conn.commit();
         }
         catch (SQLException e){
             conn.rollback();
         }
         finally {
+            ps.close();
             conn.setAutoCommit(bl);
         }
 
@@ -109,7 +139,7 @@ public class Bean2DB {
             Properties props = new Properties();
             props.put("username", "sa");
             props.put("password", "whatever");
-            conn = hypersql.connectDB(dbName, props);
+            conn = hypersql.connectDatabase(dbName, props);
             System.out.println("Database " + dbName + " is created.");
 
             st = conn.createStatement();
@@ -117,7 +147,7 @@ public class Bean2DB {
 
             for (MBeanData bean:s.getBeans()){
                 sb = new StringBuilder();
-                tablename = convert_illegal_table_name(bean.getName());
+                tablename = convertIllegalTableName(bean.getName());
 
                 //1.the bean names are unique, but alias not
                 //2.the field name of "time"(or whatever) should be reserved,  can't be used as an attribute name
@@ -131,7 +161,7 @@ public class Bean2DB {
                 //sb.append(",primary key(time))");
                 System.out.println(sb.toString());
                 st.executeUpdate(sb.toString());
-                System.out.println("Table " + recover_original_table_name(tablename) + " is created.");
+                System.out.println("Table " + recoverOriginalTableName(tablename) + " is created.");
             }
             conn.commit();
         }
@@ -141,8 +171,8 @@ public class Bean2DB {
             return null;
         }
         finally {
-            hypersql.shutdownDB(conn); //we should shut down a Hsql DB
-            hypersql.disconnectDB(null,st,null,conn);
+            hypersql.shutdownDatabase(conn); //we should shut down a Hsql DB
+            hypersql.disconnectDatabase(null, st, null, conn);
         }
 
         return dbName;
