@@ -70,7 +70,7 @@ public class DerbyHandler extends DBHandler{
             return DriverManager.getConnection(protocol + DBName , p);
     }
 
-    public boolean tblExists(String TblName, Connection conn)  throws SQLException{
+    public boolean tblExists(String tablename, Connection conn)  throws SQLException{
         metadata = conn.getMetaData();
         String[] names = { "TABLE"};
         ResultSet tableNames = metadata.getTables( null, null, null, names);
@@ -78,7 +78,7 @@ public class DerbyHandler extends DBHandler{
         while( tableNames.next())
         {
             String tab = tableNames.getString( "TABLE_NAME");
-            if (tab.equalsIgnoreCase(TblName)) return true;
+            if (tab.equalsIgnoreCase(tablename)) return true;
         }
         return false;
     }
