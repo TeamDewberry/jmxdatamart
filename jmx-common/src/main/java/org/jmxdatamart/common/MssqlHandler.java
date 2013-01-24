@@ -26,7 +26,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.jmxdatamart.Loader;
+package org.jmxdatamart.common;
 
 import java.sql.*;
 
@@ -40,7 +40,7 @@ public class MssqlHandler extends DBHandler {
     private final String protocol = "jdbc:sqlserver://localhost:1433";
     private DatabaseMetaData metadata =null;
 
-    public Connection connectDB(String DBName,java.util.Properties p) throws SQLException {
+    public Connection connectDatabase(String DBName,java.util.Properties p) throws SQLException {
         //to be finished
         return null;
 /*        if (!dbExists(DBName,p))
@@ -66,7 +66,7 @@ public class MssqlHandler extends DBHandler {
         stmt = conn.createStatement(); */
     }
 
-    public boolean tblExists(String TblName, Connection conn)  throws SQLException{
+    public boolean tableExists(String TblName, Connection conn)  throws SQLException{
         metadata = conn.getMetaData();
         String[] names = { "TABLE"};
         ResultSet tableNames = metadata.getTables( null, null, null, names);
@@ -79,7 +79,7 @@ public class MssqlHandler extends DBHandler {
         return false;
     }
 
-    public boolean dbExists(String DBName,java.util.Properties p){
+    public boolean databaseExists(String DBName,java.util.Properties p){
         //to be finished
         return true;
     }
