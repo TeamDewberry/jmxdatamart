@@ -49,7 +49,7 @@ public class DBTester {
         derby.loadDriver(derby.getDriver());
 
         String dbName = "derbyDB";
-
+        //test commit
         try
         {
             Properties props = new Properties();
