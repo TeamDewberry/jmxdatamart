@@ -75,7 +75,7 @@ public class Main {
         
         //test MBean to embbed DB
         Settings s = new Settings();
-        s.setBeans(Collections.singletonList(mbd));
+        s.setBeans(Collections.singletonList((BeanData)mbd));
         s.setFolderLocation("HyperSQL/");
         s.setPollingRate(2);
         s.setUrl("service:jmx:rmi:///jndi/rmi://:9999/jmxrmi");

@@ -53,5 +53,5 @@ public class TestSettings extends TestCase {
     Settings newSettings = Settings.fromXML(s);
     assertEquals(settings, newSettings);
   }
-
+  
 }
