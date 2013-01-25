@@ -26,7 +26,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.jmxdatamart.Loader;
+package org.jmxdatamart.common;
 
 
 import java.sql.*;
@@ -40,7 +40,7 @@ public class DerbyHandler extends DBHandler{
     private final String protocol = "jdbc:derby:";
     private DatabaseMetaData metadata =null;
 
-    public void shutdownDB(String DBName){
+    public void shutdownDatabase(String DBName){
         try
         {
             DriverManager.getConnection("jdbc:derby:" + DBName + ";shutdown=true");
@@ -63,14 +63,14 @@ public class DerbyHandler extends DBHandler{
         }
     }
 
-    public Connection connectDB(String DBName,java.util.Properties p) throws SQLException{
-        if (!dbExists(DBName,p))
+    public Connection connectDatabase(String DBName,java.util.Properties p) throws SQLException{
+        if (!databaseExists(DBName,p))
             return DriverManager.getConnection(protocol + DBName + ";create=true", p);
         else
             return DriverManager.getConnection(protocol + DBName , p);
     }
 
-    public boolean tblExists(String tablename, Connection conn)  throws SQLException{
+    public boolean tableExists(String tablename, Connection conn)  throws SQLException{
         metadata = conn.getMetaData();
         String[] names = { "TABLE"};
         ResultSet tableNames = metadata.getTables( null, null, null, names);
@@ -83,7 +83,7 @@ public class DerbyHandler extends DBHandler{
         return false;
     }
 
-    public boolean dbExists(String DBName,java.util.Properties p){
+    public boolean databaseExists(String DBName,java.util.Properties p){
         //Maybe it is a dummy way to check if a db exits, need to improve
         try {
             DriverManager.getConnection(protocol+DBName+ ";create=true", p);

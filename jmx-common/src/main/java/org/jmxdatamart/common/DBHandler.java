@@ -26,9 +26,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.jmxdatamart.Loader;
+package org.jmxdatamart.common;
 
 import java.sql.*;
+import org.slf4j.LoggerFactory;
 /**
  * Created with IntelliJ IDEA.
  * User: Xiao Han
@@ -36,13 +37,13 @@ import java.sql.*;
  */
 public abstract class DBHandler {
 
+    private final org.slf4j.Logger logger = LoggerFactory.getLogger(DBHandler.class);
+    public abstract boolean databaseExists(String DBName,java.util.Properties p);
+    public abstract boolean tableExists(String TblName, Connection conn) throws SQLException;
 
-    public abstract boolean dbExists(String DBName,java.util.Properties p);
-    public abstract boolean tblExists(String TblName, Connection conn) throws SQLException;
-
-    public abstract Connection connectDB(String DBName,java.util.Properties p) throws SQLException;
+    public abstract Connection connectDatabase(String DBName,java.util.Properties p) throws SQLException;
     //public abstract void dropDB(String DBName);
-    public void disconnectDB(ResultSet rs, Statement st, PreparedStatement ps, Connection conn){
+    public void disconnectDatabase(ResultSet rs, Statement st, PreparedStatement ps, Connection conn){
 
         // PrepareStatement
         try {
@@ -91,16 +92,20 @@ public abstract class DBHandler {
     {
         while (e != null)
         {
+            /*
             System.err.println("\n----- SQLException -----");
             System.err.println("  SQL State:  " + e.getSQLState());
             System.err.println("  Error Code: " + e.getErrorCode());
             System.err.println("  Message:    " + e.getMessage());
+            */
+            logger.error("SQLException-- State:" + e.getSQLState()+
+                        "\tMessage:" + e.getMessage() ,e);
             e = e.getNextException();
         }
     }
 
 
-    protected void loadDriver(String driver) {
+    public void loadDriver(String driver) {
         try {
             Class.forName(driver).newInstance();
             System.out.println("Loaded the appropriate driver");
