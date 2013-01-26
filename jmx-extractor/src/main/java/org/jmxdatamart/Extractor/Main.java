@@ -89,7 +89,7 @@ public class Main {
         HypersqlHandler hsql = new HypersqlHandler();
         Connection conn= hsql.connectDatabase(dbname,props);
         bd.export2DB(conn,mbd,result);
-        ResultSet rs = conn.createStatement().executeQuery("select count(*) from org_jmxdatamart_JMXTestServer__type___TestBean");
+        ResultSet rs = conn.createStatement().executeQuery("select A from org_jmxdatamart_JMXTestServer__type___TestBean");
         rs.next();
         System.out.println(rs.getInt(1));
         rs.close();

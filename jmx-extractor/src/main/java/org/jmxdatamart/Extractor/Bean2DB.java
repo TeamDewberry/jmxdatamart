@@ -73,12 +73,12 @@ public class Bean2DB {
 
         String tablename = convertIllegalTableName(mbd.getName());
         StringBuilder insertstring = new StringBuilder() ;
-        insertstring.append("insert into " + tablename +" (");
+        insertstring.append("insert into ").append(tablename).append(" (");
         StringBuilder insertvalue = new StringBuilder();
         insertvalue.append(" values(");
 
         for (Map.Entry<Attribute, Object> m : result.entrySet()) {
-            insertstring.append(((Attribute)m.getKey()).getName()+",");
+            insertstring.append(((Attribute)m.getKey()).getName()).append(",");
             insertvalue.append("?,");
         }
 
