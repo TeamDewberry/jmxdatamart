@@ -73,7 +73,7 @@ public class Extractor {
 
     String extract() throws MalformedObjectNameException, InstanceNotFoundException, IOException, ReflectionException, AttributeNotFoundException, MBeanException {
         StringBuilder outputStuff = new StringBuilder();
-        for (MBeanData bd : this.configData.getBeans()) {
+        for (BeanData bd : this.configData.getBeans()) {
             ObjectName on = new ObjectName(bd.getName());
             for (Attribute a : bd.getAttributes()) {
                 outputStuff.append(bd.getAlias()).append(", ")

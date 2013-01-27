@@ -46,7 +46,7 @@ public class Settings {
     private long pollingRate;
     private String folderLocation;
     private String url;
-    private List<MBeanData> beans;
+    private List<BeanData> beans;
 
     @Override
     public int hashCode() {
@@ -128,14 +128,14 @@ public class Settings {
     /**
      * @return the beans
      */
-    public List<MBeanData> getBeans() {
+    public List<BeanData> getBeans() {
         return beans;
     }
 
     /**
      * @param beans the beans to set
      */
-    public void setBeans(List<MBeanData> beans) {
+    public void setBeans(List<BeanData> beans) {
         this.beans = beans;
     }
     
@@ -149,7 +149,7 @@ public class Settings {
     }
     
     public void sanitize() {
-        for (MBeanData bd : getBeans()) {
+        for (BeanData bd : getBeans()) {
             if ("".equals(bd.getAlias())) {
                 bd.setAlias(bd.getName());
             }
@@ -211,23 +211,28 @@ public class Settings {
     
     public static void main( String[] args ) throws IOException
     {
+        //Test reading file
+        Settings s1 = Settings.fromXML(new FileInputStream("Settings.xml"));
+        System.out.println(s1.toString());
+        System.out.println("Read xml settings complete");
+        
         Settings s = new Settings();
         s.setFolderLocation("\\project\\");
         s.setPollingRate(5);
         s.setUrl("service:jmx:rmi:///jndi/rmi://:9999/jmxrmi");
-        s.setBeans(new ArrayList<MBeanData>());
+        s.setBeans(new ArrayList<BeanData>());
         
         MBeanData bd = new MBeanData("com.example:type=Hello","", new ArrayList<Attribute>(), true);
         bd.getAttributes().add(new Attribute("Name","", DataType.STRING));
         bd.getAttributes().add(new Attribute("CacheSize", "", DataType.INT));
         s.getBeans().add(bd);
         s.sanitize();
-       System.out.println(s.toString());
+        System.out.println(s.toString());
         
         String sXML = s.toXML();
         System.out.println(sXML);
-        //FileWriter out = new FileWriter("settings.cfg");
-        //out.write(sXML);
-        //out.close();
+        FileWriter out = new FileWriter("settings.xml");
+        out.write(sXML);
+        out.close();
     }
 }

@@ -6,7 +6,6 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
 import java.sql.*;
-import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.*;
 /**
@@ -37,7 +36,7 @@ public class Bean2DB {
         Map result = instance.extract();
 
         Settings s = new Settings();
-        s.setBeans(Collections.singletonList(mbd));
+        s.setBeans(Collections.singletonList((BeanData)mbd));
         s.setFolderLocation("HyperSQL/");
         s.setPollingRate(2);
         s.setUrl("service:jmx:rmi:///jndi/rmi://:9999/jmxrmi");
@@ -74,12 +73,12 @@ public class Bean2DB {
 
         String tablename = convertIllegalTableName(mbd.getName());
         StringBuilder insertstring = new StringBuilder() ;
-        insertstring.append("insert into " + tablename +" (");
+        insertstring.append("insert into ").append(tablename).append(" (");
         StringBuilder insertvalue = new StringBuilder();
         insertvalue.append(" values(");
 
         for (Map.Entry<Attribute, Object> m : result.entrySet()) {
-            insertstring.append(((Attribute)m.getKey()).getName()+",");
+            insertstring.append(((Attribute)m.getKey()).getName()).append(",");
             insertvalue.append("?,");
         }
 
@@ -145,7 +144,7 @@ public class Bean2DB {
             st = conn.createStatement();
             conn.setAutoCommit(false);
 
-            for (MBeanData bean:s.getBeans()){
+            for (BeanData bean:s.getBeans()){
                 sb = new StringBuilder();
                 tablename = convertIllegalTableName(bean.getName());
 

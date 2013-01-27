@@ -93,6 +93,7 @@ public class MBeanExtractTest {
         Map result = instance.extract();
         assertEquals(1, result.size());
         assertTrue(result.keySet().contains(a));
+        assertEquals(expected, result.get(a));
         // TODO review the generated test code and remove the default call to fail.
         //fail("The test case is a prototype.");
     }
