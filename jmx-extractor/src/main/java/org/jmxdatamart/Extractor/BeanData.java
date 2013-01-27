@@ -27,6 +27,8 @@
  */
 package org.jmxdatamart.Extractor;
 
+import java.util.List;
+
 /**
  *
  * @author Binh Tran <mynameisbinh@gmail.com>
@@ -37,15 +39,21 @@ public interface BeanData {
      * @return the alias
      */
     String getAlias();
+    
+    void setAlias(String alias);
 
     /**
      * @return the name
      */
     String getName();
+    
+    void setName(String name);
 
     /**
      * @return the enable
      */
     boolean isEnable();
+    
+    List<Attribute> getAttributes();
     
 }
