@@ -1,47 +1,49 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (c) 2012, Tripwire, Inc.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *
+ * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ *
+ * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package org.jmxdatamart.Extractor;
 
+import org.jmxdatamart.JMXTestServer.CarBean;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-import org.jmxdatamart.JMXTestServer.CarBean;
-import org.junit.After;
-import org.junit.AfterClass;
 import static org.junit.Assert.*;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
+import org.hamcrest.Matchers.*;
+import org.hamcrest.core.*;
 
 /**
  *
  * @author Binh Tran <mynameisbinh@gmail.com>
  */
 public class MXBeanExtractTest {
-    
-    public MXBeanExtractTest() {
-    }
-    
-    @BeforeClass
-    public static void setUpClass() {
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
-    }
-    
-    @Before
-    public void setUp() {
-    }
-    
-    @After
-    public void tearDown() {
-    }
 
     /**
      * Test of extract method, of class MXBeanExtract.
@@ -69,18 +71,12 @@ public class MXBeanExtractTest {
         MXBeanExtract mxbe = new MXBeanExtract(mbd, mbs);
         
         Map<Attribute, Object> result = mxbe.extract();
-        
-        assertEquals(result.get(a1), CarBean.name);
-        assertEquals(result.get(a2), CarBean.year);
-        assertEquals(result.get(a3), CarBean.engine);
-        assertEquals(result.get(a4), CarBean.power);
+ 
+        assertEquals(result.get(a1), CarBean.NAME);
+        assertEquals(result.get(a2), CarBean.YEAR);
+        assertEquals(result.get(a3), CarBean.ENGINE);
+        assertEquals(result.get(a4), CarBean.POWER);
         assertEquals(result.size(), 4);
         
-        //MXBeanExtract instance = new MXBeanExtract();
-        //Map expResult = null;
-        //Map result = instance.extract();
-        //assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
     }
 }
