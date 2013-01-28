@@ -62,36 +62,12 @@ public class MBeanExtract implements Extractable{
     }
     
     @Override
-    public Map<Attribute, Object> extract() throws MBeanException, 
-                                            AttributeNotFoundException,
-                                            InstanceNotFoundException,
-                                            ReflectionException,
-                                            IOException {
+    public Map<Attribute, Object> extract() throws Exception {
         Map<Attribute, Object> ret = new HashMap<Attribute, Object>();
         for (Attribute a : this.mbd.getAttributes()){
             try {
                 ret.put(a, this.mbsc.getAttribute(on, a.getName()));
-            } catch (MBeanException ex) {   // JDK 6 doesn't support multicatch, ARGGG
-                logger.error("Error while extracting " 
-                                + a.getName() + " from " 
-                                + mbd.getName(), ex);
-                throw ex;
-            } catch (AttributeNotFoundException ex) {
-                logger.error("Error while extracting " 
-                                + a.getName() + " from " 
-                                + mbd.getName(), ex);
-                throw ex;
-            } catch (InstanceNotFoundException ex) {
-                logger.error("Error while extracting " 
-                                + a.getName() + " from " 
-                                + mbd.getName(), ex);
-                throw ex;
-            } catch (ReflectionException ex) {
-                logger.error("Error while extracting " 
-                                + a.getName() + " from " 
-                                + mbd.getName(), ex);
-                throw ex;
-            } catch (IOException ex) {
+            } catch (Exception ex) {   // JDK 6 doesn't support multicatch, ARGGG
                 logger.error("Error while extracting " 
                                 + a.getName() + " from " 
                                 + mbd.getName(), ex);
