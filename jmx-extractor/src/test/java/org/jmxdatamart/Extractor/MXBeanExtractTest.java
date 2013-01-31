@@ -27,74 +27,56 @@
  */
 package org.jmxdatamart.Extractor;
 
-import org.jmxdatamart.JMXTestServer.TestBean;
+import org.jmxdatamart.JMXTestServer.CarBean;
 import java.lang.management.ManagementFactory;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Test;
+import org.hamcrest.Matchers.*;
+import org.hamcrest.core.*;
 
 /**
  *
  * @author Binh Tran <mynameisbinh@gmail.com>
  */
-public class MBeanExtractTest {
-    
-    public MBeanExtractTest() {
-    }
-    
-    @BeforeClass
-    public static void setUpClass() {
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
-    }
-    
-    @Before
-    public void setUp() {
-    }
-    
-    @After
-    public void tearDown() {
-    }
+public class MXBeanExtractTest {
 
     /**
-     * Test of extract method, of class MBeanExtract.
+     * Test of extract method, of class MXBeanExtract.
      */
     @Test
     public void testExtract() throws Exception {
         System.out.println("extract");
-        
-        // values
-        int expected = 42;
-        
-        //Create new test MBean
-        TestBean tb = new TestBean();
-        tb.setA(new Integer(expected));
+        ObjectName on = new ObjectName("org.jmxdatamart.JMXTestServer:type=CarBean");
+        Object cb = new CarBean();
         MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
-        String mbName = "org.jmxdatamart.JMXTestServer:type=TestBean";
-        ObjectName mbeanName = new ObjectName(mbName);
-        mbs.registerMBean(tb, mbeanName);
+        mbs.registerMBean(cb, on);
         
-        //Create test MBean's MBeanData
-        Attribute a = new Attribute("A", "Alpha", DataType.INT);
-        MBeanData mbd = new MBeanData(mbName, "testMBean",
-                                        Collections.singletonList(a), true);
+        List<Attribute> attributes = new ArrayList<Attribute>();
+        Attribute a1 = new Attribute("Car.name", "Full name", DataType.STRING);
+        Attribute a2 = new Attribute("Car.year","Year unveiled", DataType.STRING);
+        Attribute a3 = new Attribute("Car.engine", "Engine type", DataType.INT);
+        Attribute a4 = new Attribute("Car.power", "Total power", DataType.INT);
+        attributes.add(a1);
+        attributes.add(a2);
+        attributes.add(a3);
+        attributes.add(a4);
         
-        //Init MBeanExtract
-        MBeanExtract instance = new MBeanExtract(mbd, mbs);
-        Map result = instance.extract();
-        assertEquals(1, result.size());
-        assertTrue(result.keySet().contains(a));
-        assertEquals(expected, result.get(a));
-        // TODO review the generated test code and remove the default call to fail.
-        //fail("The test case is a prototype.");
+        MBeanData mbd = new MBeanData(on.getCanonicalName(), "Dream Car", attributes, true);
+        
+        MXBeanExtract mxbe = new MXBeanExtract(mbd, mbs);
+        
+        Map<Attribute, Object> result = mxbe.extract();
+ 
+        assertEquals(result.get(a1), CarBean.NAME);
+        assertEquals(result.get(a2), CarBean.YEAR);
+        assertEquals(result.get(a3), CarBean.ENGINE);
+        assertEquals(result.get(a4), CarBean.POWER);
+        assertEquals(result.size(), 4);
+        
     }
 }
