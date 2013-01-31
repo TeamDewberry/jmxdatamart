@@ -49,9 +49,16 @@ public class SystemPropertiesMBean implements DynamicMBean {
     if (isInteger(value)) {
       return Integer.valueOf(value);
 
+    } else if (isBoolean(value)) {
+      return Boolean.valueOf(value);
+
     } else {
       return value;
     }
+  }
+
+  private boolean isBoolean(String value) {
+    return "true".equals(value) || "false".equals(value);
   }
 
   private boolean isInteger(String value) {

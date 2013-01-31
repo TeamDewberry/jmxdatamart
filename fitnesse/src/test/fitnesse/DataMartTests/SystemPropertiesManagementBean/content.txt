@@ -1,0 +1,18 @@
+!contents -R2 -g -p -f -h
+This tests the SystemPropertiesMBean that is registered in the "test" web application.  We want to make sure that we can harvest dynamic MBeans.
+
+!| create MBeans |
+| bean class | bean name |
+| org.jmxdatamart.testwebapp.SystemPropertiesMBean | org.jmxdatamart:Type=SystemProperties |
+
+!| set system properties |
+| key | value |
+| org.jmxdatamart.test.string | some string |
+| org.jmxdatamart.test.integer | 1234 |
+| org.jmxdatamart.test.boolean | true |
+
+!| validate MBeans | 
+| bean name | attribute | value? |
+| org.jmxdatamart:Type=SystemProperties | org.jmxdatamart.test.string | some string |
+| org.jmxdatamart:Type=SystemProperties | org.jmxdatamart.test.integer | 1234 |
+| org.jmxdatamart:Type=SystemProperties | org.jmxdatamart.test.boolean | true |
