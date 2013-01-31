@@ -35,4 +35,9 @@
     <listener>
         <listener-class>org.jmxdatamart.testwebapp.RegisterMBeansOnWebAppStartup</listener-class>
     </listener>
+    <env-entry>
+        <env-entry-name>jmxdatamart-testwebapp/jmx-rmi-port</env-entry-name>
+        <env-entry-value>8888</env-entry-value>
+        <env-entry-type>java.lang.Integer</env-entry-type>
+    </env-entry>
 </web-app>
