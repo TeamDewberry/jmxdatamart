@@ -26,39 +26,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.jmxdatamart.testwebapp;
+package org.jmxdatamart.fixtures;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.management.*;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+import javax.management.MBeanServer;
 import java.lang.management.ManagementFactory;
 
-public class RegisterMBeansOnWebAppStartup implements ServletContextListener {
-
-  private final MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-  public void contextInitialized(ServletContextEvent servletContextEvent) {
-    try {
-      registerMBean(new TestWebAppMBean(), "org.jmxdatamart:Type=TestWebAppMBean");
-      registerMBean(new SystemPropertiesMBean(), "org.jmxdatamart:Type=SystemProperties");
-      new JmxRmiConnector();
-
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
-
-  }
-
-  private void registerMBean(Object bean, String name) throws InstanceAlreadyExistsException, MBeanRegistrationException, NotCompliantMBeanException, MalformedObjectNameException {
-    logger.info("Registering a {} with name \"{}\"", bean.getClass(), name);
-    mBeanServer.registerMBean(bean, new ObjectName(name));
-  }
-
-  public void contextDestroyed(ServletContextEvent servletContextEvent) {
-
+public class MBeanServerFactory {
+  public static MBeanServer getMBeanServer() {
+    return ManagementFactory.getPlatformMBeanServer();
   }
 }
