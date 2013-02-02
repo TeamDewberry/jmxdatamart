@@ -28,6 +28,8 @@
 
 package org.jmxdatamart.testwebapp;
 
+import org.jmxdatamart.common.SystemPropertiesMBean;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

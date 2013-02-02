@@ -26,7 +26,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.jmxdatamart.testwebapp;
+package org.jmxdatamart.common;
 
 import com.google.common.collect.Lists;
 

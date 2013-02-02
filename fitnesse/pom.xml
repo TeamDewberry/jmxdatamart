@@ -222,11 +222,20 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>13.0.1</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jmxdatamart</groupId>
             <artifactId>jmx-extractor</artifactId>
             <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jmxdatamart</groupId>
+            <artifactId>jmx-common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <classifier>tests</classifier>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <!-- FitNesse needs catalina jar in order to create JNDI context for looking up JMX RMI -->

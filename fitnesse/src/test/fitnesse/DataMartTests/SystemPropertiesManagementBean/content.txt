@@ -3,7 +3,7 @@ This tests the SystemPropertiesMBean that is registered in the "test" web applic
 
 !| create MBeans |
 | bean class | bean name |
-| org.jmxdatamart.testwebapp.SystemPropertiesMBean | org.jmxdatamart:Type=SystemProperties |
+| org.jmxdatamart.common.SystemPropertiesMBean | org.jmxdatamart:Type=SystemProperties |
 
 !| set system properties |
 | key | value |
