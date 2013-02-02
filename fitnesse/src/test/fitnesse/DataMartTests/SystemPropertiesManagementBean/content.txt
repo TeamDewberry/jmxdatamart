@@ -35,9 +35,4 @@ Let's see how it works for a remote JVM...
 | org.jmxdatamart:Type=SystemProperties | org.jmxdatamart.test.long | 90000000000001 |
 | org.jmxdatamart:Type=SystemProperties | org.jmxdatamart.test.boolean | false |
 
-!| validate MBeans | 
-| bean name | attribute | value? |
-| org.jmxdatamart:Type=SystemProperties | org.jmxdatamart.test.string | some string |
-| org.jmxdatamart:Type=SystemProperties | org.jmxdatamart.test.integer | 1234 |
-| org.jmxdatamart:Type=SystemProperties | org.jmxdatamart.test.long | 9000000000000 |
-| org.jmxdatamart:Type=SystemProperties | org.jmxdatamart.test.boolean | true |
+I would like to validate that the MBeans in the local VM still have the original expected values because the MBeans accessed through the RMI URL are supposed to be remote.  That works fine when fitnesse is run as a wiki.  But when fitnesse is run with run-tests, it appears as if Tomcat and fitnesse run in the same process and therefore share the same system properties and MBean.  I don't understand because I thought Tomcat was forked in its own process.  Strange.
