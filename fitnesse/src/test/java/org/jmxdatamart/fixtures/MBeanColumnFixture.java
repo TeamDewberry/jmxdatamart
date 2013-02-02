@@ -30,14 +30,17 @@ package org.jmxdatamart.fixtures;
 
 import fit.ColumnFixture;
 
-import javax.management.MBeanServer;
+import javax.management.MBeanServerConnection;
 
 public abstract class MBeanColumnFixture extends ColumnFixture {
 
-  protected final MBeanServer mBeanServer;
+  private MBeanServerConnection mBeanServer;
 
-  public MBeanColumnFixture() {
-    mBeanServer = MBeanServerFactory.getMBeanServer();
+  protected MBeanServerConnection getMBeanServer() {
+    if (mBeanServer == null) {
+      String jmxUrl = args.length > 0 ? args[0] : null;
+      mBeanServer = MBeanServerFactory.getMBeanServer(jmxUrl);
+    }
+    return mBeanServer;
   }
-
 }

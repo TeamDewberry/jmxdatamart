@@ -52,8 +52,21 @@ public class SystemPropertiesMBean implements DynamicMBean {
     } else if (isBoolean(value)) {
       return Boolean.valueOf(value);
 
+    } else if (isLong(value)) {
+      return Long.valueOf(value);
+
     } else {
       return value;
+    }
+  }
+
+  private boolean isLong(String value) {
+    try {
+      Long.parseLong(value);
+      return true;
+
+    } catch (NumberFormatException ex) {
+      return false;
     }
   }
 
