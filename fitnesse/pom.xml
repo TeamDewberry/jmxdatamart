@@ -46,30 +46,20 @@
 
     <build>
         <finalName>fitnesse</finalName>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
         <plugins>
             <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.4</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.3</version>
                 <configuration>
-                    <descriptorRefs>
-                        <descriptorRef>src</descriptorRef>
-                    </descriptorRefs>
+                    <webResources>
+                        <resource>
+                            <directory>src/main/webapp/META-INF</directory>
+                            <targetPath>META-INF</targetPath>
+                            <filtering>true</filtering>
+                        </resource>
+                    </webResources>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>uk.co.javahelp.fitnesse</groupId>
@@ -101,13 +91,19 @@
                             <port>8085</port>
                             <fork>true</fork>
                             <ignorePackaging>true</ignorePackaging>
-                            <path>/test-webapp</path>
+                            <path>/fitnesse-webapp</path>
                             <webapps>
                                 <webapp>
                                     <groupId>org.jmxdatamart</groupId>
                                     <artifactId>jmx-extractor-webapp</artifactId>
                                     <version>1.0-SNAPSHOT</version>
                                     <contextPath>/jmx-extractor</contextPath>
+                                </webapp>
+                                <webapp>
+                                    <groupId>org.jmxdatamart</groupId>
+                                    <artifactId>test-webapp</artifactId>
+                                    <version>1.0-SNAPSHOT</version>
+                                    <contextPath>/test-webapp</contextPath>
                                 </webapp>
                             </webapps>
                         </configuration>
@@ -120,20 +116,6 @@
                         <phase>post-integration-test</phase>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>2.3</version>
-                <configuration>
-                    <webResources>
-                        <resource>
-                            <directory>src/main/webapp/META-INF</directory>
-                            <targetPath>META-INF</targetPath>
-                            <filtering>true</filtering>
-                        </resource>
-                    </webResources>
-                </configuration>
             </plugin>
             <plugin>
                 <!-- Apparently, in order to get Jenkins to include the failsafe test results,
@@ -225,12 +207,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>2.5</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.fitnesse</groupId>
             <artifactId>fitnesse</artifactId>
             <version>20121220</version>
@@ -241,11 +217,6 @@
             <artifactId>fitlibrary</artifactId>
             <version>20080812</version>
             <!-- For some reason the FitNesse plugin isn't happy when this dependency has "test" scope -->
-        </dependency>
-        <dependency>
-            <groupId>com.google.inject</groupId>
-            <artifactId>guice</artifactId>
-            <version>3.0</version>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
