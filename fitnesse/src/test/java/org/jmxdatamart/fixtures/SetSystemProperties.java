@@ -28,7 +28,9 @@
 
 package org.jmxdatamart.fixtures;
 
-public class SetSystemProperties extends GuicySetUpFixture {
+import fitlibrary.SetUpFixture;
+
+public class SetSystemProperties extends SetUpFixture {
 
   public void keyValue(String key, String value) {
     System.setProperty(key, value);

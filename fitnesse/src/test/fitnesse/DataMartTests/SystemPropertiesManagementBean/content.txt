@@ -1,18 +1,23 @@
 !contents -R2 -g -p -f -h
 This tests the SystemPropertiesMBean that is registered in the "test" web application.  We want to make sure that we can harvest dynamic MBeans.
 
-!| create MBeans |
-| bean class | bean name |
-| org.jmxdatamart.testwebapp.SystemPropertiesMBean | org.jmxdatamart:Type=SystemProperties |
+!| check MBean registration | service:jmx:rmi:///jndi/rmi://:8888/jmxrmi |
+| bean name | registered? |
+| org.jmxdatamart:Type=SystemProperties | true |
 
-!| set system properties |
-| key | value |
-| org.jmxdatamart.test.string | some string |
-| org.jmxdatamart.test.integer | 1234 |
-| org.jmxdatamart.test.boolean | true |
+!| configure MBeans | service:jmx:rmi:///jndi/rmi://:8888/jmxrmi |
+| bean name | attribute | value |
+| org.jmxdatamart:Type=SystemProperties | org.jmxdatamart.test.string | another string |
+| org.jmxdatamart:Type=SystemProperties | org.jmxdatamart.test.integer | 5678 |
+| org.jmxdatamart:Type=SystemProperties | org.jmxdatamart.test.long | 90000000000001 |
+| org.jmxdatamart:Type=SystemProperties | org.jmxdatamart.test.boolean | false |
 
-!| validate MBeans | 
+!| test utilities |
+| sleep for | 0 minutes |
+
+!| validate MBeans | service:jmx:rmi:///jndi/rmi://:8888/jmxrmi |
 | bean name | attribute | value? |
-| org.jmxdatamart:Type=SystemProperties | org.jmxdatamart.test.string | some string |
-| org.jmxdatamart:Type=SystemProperties | org.jmxdatamart.test.integer | 1234 |
-| org.jmxdatamart:Type=SystemProperties | org.jmxdatamart.test.boolean | true |
+| org.jmxdatamart:Type=SystemProperties | org.jmxdatamart.test.string | another string |
+| org.jmxdatamart:Type=SystemProperties | org.jmxdatamart.test.integer | 5678 |
+| org.jmxdatamart:Type=SystemProperties | org.jmxdatamart.test.long | 90000000000001 |
+| org.jmxdatamart:Type=SystemProperties | org.jmxdatamart.test.boolean | false |

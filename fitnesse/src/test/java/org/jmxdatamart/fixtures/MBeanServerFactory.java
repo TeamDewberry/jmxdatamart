@@ -28,11 +28,27 @@
 
 package org.jmxdatamart.fixtures;
 
-import javax.management.MBeanServer;
+import javax.management.MBeanServerConnection;
+import javax.management.remote.JMXConnector;
+import javax.management.remote.JMXConnectorFactory;
+import javax.management.remote.JMXServiceURL;
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
 
 public class MBeanServerFactory {
-  public static MBeanServer getMBeanServer() {
-    return ManagementFactory.getPlatformMBeanServer();
+  public static MBeanServerConnection getMBeanServer(String jmxUrl) {
+    if (jmxUrl == null) {
+      return ManagementFactory.getPlatformMBeanServer();
+
+    } else {
+      try {
+        JMXServiceURL url = new JMXServiceURL(jmxUrl);
+        JMXConnector connector = JMXConnectorFactory.connect(url);
+        return connector.getMBeanServerConnection();
+
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    }
   }
 }
