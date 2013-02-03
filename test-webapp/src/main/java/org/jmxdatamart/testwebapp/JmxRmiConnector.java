@@ -39,7 +39,6 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
 import java.rmi.registry.LocateRegistry;
 import java.util.HashMap;
 
@@ -50,7 +49,7 @@ public class JmxRmiConnector {
 
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-  public JmxRmiConnector() throws IOException, NamingException {
+  public JmxRmiConnector(MBeanServer mBeanServer) throws IOException, NamingException {
     System.setProperty("java.rmi.server.randomIDs", "true");
 
     int port = getPort();
@@ -58,12 +57,12 @@ public class JmxRmiConnector {
 
     LocateRegistry.createRegistry(port);
 
-    MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
-
     HashMap<String,Object> env = new HashMap<String,Object>();
     JMXServiceURL url = new JMXServiceURL(String.format("service:jmx:rmi:///jndi/rmi://:%d/jmxrmi", port));
-    JMXConnectorServer cs = JMXConnectorServerFactory.newJMXConnectorServer(url, env, mbs);
+    JMXConnectorServer cs = JMXConnectorServerFactory.newJMXConnectorServer(url, env, mBeanServer);
     cs.start();
+
+    logger.info("Starting JMX RMI Connector {}", url);
   }
 
   private int getPort() throws NamingException {
