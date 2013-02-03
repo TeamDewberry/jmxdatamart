@@ -1,25 +1,9 @@
 !contents -R2 -g -p -f -h
 This tests the SystemPropertiesMBean that is registered in the "test" web application.  We want to make sure that we can harvest dynamic MBeans.
 
-!| create MBeans |
-| bean class | bean name |
-| org.jmxdatamart.common.SystemPropertiesMBean | org.jmxdatamart:Type=SystemProperties |
-
-!| set system properties |
-| key | value |
-| org.jmxdatamart.test.string | some string |
-| org.jmxdatamart.test.integer | 1234 |
-| org.jmxdatamart.test.long | 9000000000000 |
-| org.jmxdatamart.test.boolean | true |
-
-!| validate MBeans | 
-| bean name | attribute | value? |
-| org.jmxdatamart:Type=SystemProperties | org.jmxdatamart.test.string | some string |
-| org.jmxdatamart:Type=SystemProperties | org.jmxdatamart.test.integer | 1234 |
-| org.jmxdatamart:Type=SystemProperties | org.jmxdatamart.test.long | 9000000000000 |
-| org.jmxdatamart:Type=SystemProperties | org.jmxdatamart.test.boolean | true |
-
-Let's see how it works for a remote JVM...
+!| check MBean registration | service:jmx:rmi:///jndi/rmi://:8888/jmxrmi |
+| bean name | registered? |
+| org.jmxdatamart:Type=SystemProperties | true |
 
 !| configure MBeans | service:jmx:rmi:///jndi/rmi://:8888/jmxrmi |
 | bean name | attribute | value |
@@ -28,11 +12,12 @@ Let's see how it works for a remote JVM...
 | org.jmxdatamart:Type=SystemProperties | org.jmxdatamart.test.long | 90000000000001 |
 | org.jmxdatamart:Type=SystemProperties | org.jmxdatamart.test.boolean | false |
 
+!| test utilities |
+| sleep for | 0 minutes |
+
 !| validate MBeans | service:jmx:rmi:///jndi/rmi://:8888/jmxrmi |
 | bean name | attribute | value? |
 | org.jmxdatamart:Type=SystemProperties | org.jmxdatamart.test.string | another string |
 | org.jmxdatamart:Type=SystemProperties | org.jmxdatamart.test.integer | 5678 |
 | org.jmxdatamart:Type=SystemProperties | org.jmxdatamart.test.long | 90000000000001 |
 | org.jmxdatamart:Type=SystemProperties | org.jmxdatamart.test.boolean | false |
-
-I would like to validate that the MBeans in the local VM still have the original expected values because the MBeans accessed through the RMI URL are supposed to be remote.  That works fine when fitnesse is run as a wiki.  But when fitnesse is run with run-tests, it appears as if Tomcat and fitnesse run in the same process and therefore share the same system properties and MBean.  I don't understand because I thought Tomcat was forked in its own process.  Strange.
