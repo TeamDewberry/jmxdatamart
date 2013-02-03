@@ -26,7 +26,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.jmxdatamart.common;
+package org.jmxdatamart.testwebapp;
 
 import com.google.common.collect.Lists;
 import org.slf4j.Logger;
