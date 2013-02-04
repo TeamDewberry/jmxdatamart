@@ -30,6 +30,8 @@ package org.jmxdatamart.common;
 
 
 import java.sql.*;
+import java.util.Map;
+
 /**
  * Created with IntelliJ IDEA.
  * User: Xiao Han
@@ -38,8 +40,10 @@ import java.sql.*;
 public class DerbyHandler extends DBHandler{
     private final String driver = "org.apache.derby.jdbc.EmbeddedDriver";
     private final String protocol = "jdbc:derby:";
-    private DatabaseMetaData metadata =null;
-
+    private String timeType = "timestamp";
+    public String getTimeType() {
+		return null;
+	}
     public void shutdownDatabase(String DBName){
         try
         {
@@ -71,9 +75,9 @@ public class DerbyHandler extends DBHandler{
     }
 
     public boolean tableExists(String tablename, Connection conn)  throws SQLException{
-        metadata = conn.getMetaData();
+
         String[] names = { "TABLE"};
-        ResultSet tableNames = metadata.getTables( null, null, null, names);
+        ResultSet tableNames = conn.getMetaData().getTables( null, null, null, names);
 
         while( tableNames.next())
         {
@@ -92,6 +96,14 @@ public class DerbyHandler extends DBHandler{
             return false;
         }
    }
+    public Map<String, Map> getDatabaseSchema(Connection conn) throws DBException{
+        throw new DBException("To be implemented");
+    }
+
+    public boolean columnExists(String columnName, String tableName, Connection conn){
+        //temporarily not implemented
+        return false;
+    }
 
     public String getProtocol() {
         return protocol;
