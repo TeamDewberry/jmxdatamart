@@ -29,6 +29,7 @@
 package org.jmxdatamart.Extractor;
 
 import junit.framework.TestCase;
+import org.jmxdatamart.common.DataType;
 
 import java.util.Collections;
 
