@@ -46,7 +46,7 @@ import org.hamcrest.core.*;
 public class MXBeanExtractTest {
 
     /**
-     * Test of extract method, of class MXBeanExtract.
+     * Test of extract method, of class MBeanExtract.
      */
     @Test
     public void testExtract() throws Exception {
@@ -68,7 +68,7 @@ public class MXBeanExtractTest {
         
         MBeanData mbd = new MBeanData(on.getCanonicalName(), "Dream Car", attributes, true);
         
-        MXBeanExtract mxbe = new MXBeanExtract(mbd, mbs);
+        MBeanExtract mxbe = new MBeanExtract(mbd, mbs);
         
         Map<Attribute, Object> result = mxbe.extract();
  
