@@ -28,19 +28,15 @@
 
 package org.jmxdatamart.fixtures;
 
-import javax.inject.Inject;
-import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
+import java.io.IOException;
 
-public class CheckMBeanRegistration extends GuicyColumnFixture {
+public class CheckMBeanRegistration extends MBeanColumnFixture {
 
   public String beanName;
 
-  @Inject
-  private MBeanServer mBeanServer;
-
-  public boolean registered() throws MalformedObjectNameException {
-    return mBeanServer.isRegistered(new ObjectName(beanName));
+  public boolean registered() throws MalformedObjectNameException, IOException {
+    return getMBeanServer().isRegistered(new ObjectName(beanName));
   }
 }

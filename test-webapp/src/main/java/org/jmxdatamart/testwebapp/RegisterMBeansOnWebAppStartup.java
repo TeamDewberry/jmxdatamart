@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Tripwire, Inc.
+ * Copyright (c) 2012, Tripwire, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,45 +31,38 @@ package org.jmxdatamart.testwebapp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.management.MBeanServer;
-import javax.management.remote.JMXConnectorServer;
-import javax.management.remote.JMXConnectorServerFactory;
-import javax.management.remote.JMXServiceURL;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import java.io.IOException;
+import javax.management.*;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 import java.lang.management.ManagementFactory;
-import java.rmi.registry.LocateRegistry;
-import java.util.HashMap;
 
-/**
- * Starts up a JMX RMI Connector
- */
-public class JmxRmiConnector {
+public class RegisterMBeansOnWebAppStartup implements ServletContextListener {
 
+  private final MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-  public JmxRmiConnector() throws IOException, NamingException {
-    System.setProperty("java.rmi.server.randomIDs", "true");
+  @Override
+  public void contextInitialized(ServletContextEvent servletContextEvent) {
+    try {
+      registerMBean(new TestWebAppMBean(), "org.jmxdatamart:Type=TestWebAppMBean");
+      registerMBean(new SystemPropertiesMBean(), "org.jmxdatamart:Type=SystemProperties");
+      new JmxRmiConnector(mBeanServer);
 
-    int port = getPort();
-    logger.info("Starting JMX RMI Connector on port {}", port);
+    } catch (Exception e) {
+      logger.error("While initializing MBeans", e);
+      throw new RuntimeException(e);
+    }
 
-    LocateRegistry.createRegistry(port);
-
-    MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
-
-    HashMap<String,Object> env = new HashMap<String,Object>();
-    JMXServiceURL url = new JMXServiceURL(String.format("service:jmx:rmi:///jndi/rmi://:%d/jmxrmi", port));
-    JMXConnectorServer cs = JMXConnectorServerFactory.newJMXConnectorServer(url, env, mbs);
-    cs.start();
   }
 
-  private int getPort() throws NamingException {
-    InitialContext initialContext = new InitialContext();
-    Context context = (Context) initialContext.lookup("java:comp/env");
-    return (Integer) context.lookup("jmxdatamart-testwebapp/jmx-rmi-port");
+  private void registerMBean(Object bean, String name) throws InstanceAlreadyExistsException, MBeanRegistrationException, NotCompliantMBeanException, MalformedObjectNameException {
+    logger.info("Registering a {} with name \"{}\"", bean.getClass(), name);
+    ObjectName objectName = new ObjectName(name);
+    mBeanServer.registerMBean(bean, objectName);
   }
 
+  @Override
+  public void contextDestroyed(ServletContextEvent servletContextEvent) {
+    logger.info("Shutting down test web application");
+  }
 }

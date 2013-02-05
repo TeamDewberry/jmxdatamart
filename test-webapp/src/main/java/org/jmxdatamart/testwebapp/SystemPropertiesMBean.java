@@ -29,6 +29,8 @@
 package org.jmxdatamart.testwebapp;
 
 import com.google.common.collect.Lists;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.management.*;
 import java.util.*;
@@ -37,6 +39,8 @@ import java.util.*;
  * A dynamic MBean that provides access to the JVM's System properties
  */
 public class SystemPropertiesMBean implements DynamicMBean {
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
   private final Properties properties = System.getProperties();
 
   @Override
@@ -52,8 +56,21 @@ public class SystemPropertiesMBean implements DynamicMBean {
     } else if (isBoolean(value)) {
       return Boolean.valueOf(value);
 
+    } else if (isLong(value)) {
+      return Long.valueOf(value);
+
     } else {
       return value;
+    }
+  }
+
+  private boolean isLong(String value) {
+    try {
+      Long.parseLong(value);
+      return true;
+
+    } catch (NumberFormatException ex) {
+      return false;
     }
   }
 
@@ -77,7 +94,10 @@ public class SystemPropertiesMBean implements DynamicMBean {
   }
 
   private void setProperty(Attribute attribute) {
-    properties.setProperty(attribute.getName(), String.valueOf(attribute.getValue()));
+    String name = attribute.getName();
+    String value = String.valueOf(attribute.getValue());
+    logger.info("Setting system property \"{}\" to \"{}\"", name, value);
+    properties.setProperty(name, value);
   }
 
   @Override
