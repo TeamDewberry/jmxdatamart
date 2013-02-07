@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Tripwire, Inc.
+ * Copyright (c) 2013, Tripwire, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,16 +27,12 @@
  */
 package org.jmxdatamart.Extractor;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import javax.management.AttributeNotFoundException;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanException;
 import javax.management.MBeanServerConnection;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
-import javax.management.ReflectionException;
+import javax.management.openmbean.CompositeData;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -45,12 +41,12 @@ import org.slf4j.LoggerFactory;
  */
 public class MBeanExtract implements Extractable{
 
-    MBeanData mbd;
+    BeanData mbd;
     MBeanServerConnection mbsc;
     private final org.slf4j.Logger logger = LoggerFactory.getLogger(MBeanExtract.class);
     ObjectName on;
 
-    public MBeanExtract(MBeanData mbd, MBeanServerConnection mbsc) throws MalformedObjectNameException {
+    public MBeanExtract(BeanData mbd, MBeanServerConnection mbsc) throws MalformedObjectNameException {
         this.mbd = mbd;
         this.mbsc = mbsc;
         try {
@@ -61,21 +57,34 @@ public class MBeanExtract implements Extractable{
         }
     }
     
+    
     @Override
     public Map<Attribute, Object> extract() throws Exception {
-        Map<Attribute, Object> ret = new HashMap<Attribute, Object>();
-        for (Attribute a : this.mbd.getAttributes()){
-            try {
-                ret.put(a, this.mbsc.getAttribute(on, a.getName()));
-            } catch (Exception ex) {   // JDK 6 doesn't support multicatch, ARGGG
+        Map<Attribute, Object> retVal = new HashMap<Attribute, Object>();
+        
+        for (Attribute a : this.mbd.getAttributes()) {
+            try{
+                String aName = a.getName();
+                if (!aName.contains(".")) {
+                    retVal.put(a, this.mbsc.getAttribute(on, aName));
+                } else {
+                    String[] mxAttribute = aName.split("\\.");
+                    if (mxAttribute.length != 2) {
+                        throw new Exception("MXBean attribute malformed " + aName);
+                    }
+                    CompositeData cd = (CompositeData)mbsc.getAttribute(on, mxAttribute[0]);
+                    Object value = cd.get(mxAttribute[1]);
+                    retVal.put(a, value);
+                }
+            } catch (Exception ex) {
                 logger.error("Error while extracting " 
                                 + a.getName() + " from " 
                                 + mbd.getName(), ex);
                 throw ex;
             }
         }
-        return ret;
+        
+        return retVal;
     }
-    
     
 }
