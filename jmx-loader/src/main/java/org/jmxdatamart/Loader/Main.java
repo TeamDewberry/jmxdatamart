@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2012 Tripwire, Inc.
+package org.jmxdatamart.Loader;/*
+ * Copyright (c) 2013, Tripwire, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,46 +25,31 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.jmxdatamart.JMXTestServer;
 
-import java.lang.management.ManagementFactory;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-import java.io.FileWriter;
+import org.jmxdatamart.common.DBException;
+import org.jmxdatamart.common.HypersqlHandler;
 
-/**
- *
- * @author Binh Tran <mynameisbinh@gmail.com>
- */
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.io.*;
+
 public class Main {
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) throws Exception {
-
-        TestBean tb = new TestBean();
-        MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
-        ObjectName mbeanName = new ObjectName("com.personal.JMXTestServer:type=TestBean");
-        mbs.registerMBean(tb, mbeanName);
-
-        FileWriter writer = new FileWriter(System.getProperty("user.dir") + "/JMXTestServer.txt");
-        writer.write("Start exporting on " + new java.util.Date()+"\n");
-        try {
-            while (true) {
-                tb.randomize();
-                System.out.println(tb.toString());
-                writer.write(tb.toString()+"\n");
-                writer.flush();
-                Thread.sleep(2000);
-            }
+    public static void main(String[] args) throws SQLException, DBException {
+        if (args.length!=1){
+            System.err.println("Must have one argument");
+            //System.exit(0);
         }
-        catch (Exception e){
-            System.err.println(e.getStackTrace());
-            System.exit(1);
-        }
-        finally {
-            writer.close();
-        }
+        //read file ...
+        DB2DB d2d = new DB2DB();
+        LoaderSetting s =d2d.readProperties("jmx-loader/src/main/java/org/jmxdatamart/Loader/loaderconfig.ini");
+        d2d.loadSetting(s);
+        d2d.copySchema();
+        d2d.importData();
+        d2d.disConnect();
+        System.out.println("done");
     }
+
+
 }
