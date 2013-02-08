@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2012, Tripwire, Inc.
+package org.jmxdatamart.common;/*
+ * Copyright (c) 2013, Tripwire, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,29 +26,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.jmxdatamart.fixtures;
-
-import javax.management.MBeanServerConnection;
-import javax.management.remote.JMXConnector;
-import javax.management.remote.JMXConnectorFactory;
-import javax.management.remote.JMXServiceURL;
-import java.io.IOException;
-import java.lang.management.ManagementFactory;
-
-public class MBeanServerFactory {
-  public static MBeanServerConnection getMBeanServer(String jmxUrl) {
-    if (jmxUrl == null) {
-      return ManagementFactory.getPlatformMBeanServer();
-
-    } else {
-      try {
-        JMXServiceURL url = new JMXServiceURL(jmxUrl);
-        JMXConnector connector = JMXConnectorFactory.connect(url);
-        return connector.getMBeanServerConnection();
-
-      } catch (IOException e) {
-        throw new RuntimeException(e);
-      }
+public class FieldAttribute {
+    public FieldAttribute(DataType fieldtype, String typename, int fieldsize) {
+        this.fieldtype = fieldtype;
+        this.typename = typename;
+        this.fieldsize = fieldsize;
     }
-  }
+
+    private DataType fieldtype;
+    private String typename;
+    private int fieldsize = 0;
+
+    public String getTypename() {
+        return typename;
+    }
+
+    public void setTypename(String typename) {
+        this.typename = typename;
+    }
+
+
+    public DataType getFieldtype() {
+        return fieldtype;
+    }
+
+    public void setFieldtype(DataType fieldtype) {
+        this.fieldtype = fieldtype;
+    }
+
+    public int getFieldsize() {
+        return fieldsize;
+    }
+
+    public void setFieldsize(int fieldsize) {
+        this.fieldsize = fieldsize;
+    }
+
+
 }

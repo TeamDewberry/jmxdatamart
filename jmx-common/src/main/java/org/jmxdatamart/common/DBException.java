@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2012, Tripwire, Inc.
+package org.jmxdatamart.common;/*
+ * Copyright (c) 2013, Tripwire, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,12 +25,20 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.jmxdatamart.Extractor;
 
-/**
- * Supported data types
- * @author Binh Tran <mynameisbinh@gmail.com>
- */
-public enum DataType {
-    INT, FLOAT, STRING, BOOLEAN
+import java.lang.Throwable;
+
+public class DBException extends Throwable{
+    public DBException(){
+        super();
+    }
+    public DBException(String msg){
+        super(msg);
+    }
+    public DBException(String msg, Throwable cause){
+        super(msg,cause);
+    }
+    public DBException(Throwable cause){
+        super(cause);
+    }
 }

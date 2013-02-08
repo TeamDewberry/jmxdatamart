@@ -28,20 +28,26 @@
 
 package org.jmxdatamart.fixtures;
 
+import com.google.inject.Inject;
+import fit.ColumnFixture;
+
 import javax.management.*;
-import java.io.IOException;
+import java.lang.management.ManagementFactory;
 
 /**
  * A FitNesse fixture that validates that MBean attributes have the expected values
  */
-public class ValidateMBeans extends MBeanColumnFixture {
+public class ValidateMBeans extends GuicyColumnFixture {
 
   String beanName;
   String attribute;
 
-  public String value() throws MalformedObjectNameException, InstanceNotFoundException, ReflectionException, AttributeNotFoundException, MBeanException, IOException {
+  @Inject
+  MBeanServer mBeanServer;
+
+  public String value() throws MalformedObjectNameException, InstanceNotFoundException, ReflectionException, AttributeNotFoundException, MBeanException {
     ObjectName name = new ObjectName(beanName);
-    return String.valueOf(getMBeanServer().getAttribute(name, attribute));
+    return String.valueOf(mBeanServer.getAttribute(name, attribute));
   }
 
 }

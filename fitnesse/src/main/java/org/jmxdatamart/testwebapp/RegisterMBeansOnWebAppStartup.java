@@ -28,9 +28,6 @@
 
 package org.jmxdatamart.testwebapp;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.management.*;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -39,30 +36,17 @@ import java.lang.management.ManagementFactory;
 public class RegisterMBeansOnWebAppStartup implements ServletContextListener {
 
   private final MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-  @Override
   public void contextInitialized(ServletContextEvent servletContextEvent) {
+    TestWebAppMBean mBean = new TestWebAppMBean();
     try {
-      registerMBean(new TestWebAppMBean(), "org.jmxdatamart:Type=TestWebAppMBean");
-      registerMBean(new SystemPropertiesMBean(), "org.jmxdatamart:Type=SystemProperties");
-      new JmxRmiConnector(mBeanServer);
-
+      mBeanServer.registerMBean(mBean, new ObjectName("org.jmxdatamart:Type=TestWebAppMBean"));
     } catch (Exception e) {
-      logger.error("While initializing MBeans", e);
       throw new RuntimeException(e);
     }
-
   }
 
-  private void registerMBean(Object bean, String name) throws InstanceAlreadyExistsException, MBeanRegistrationException, NotCompliantMBeanException, MalformedObjectNameException {
-    logger.info("Registering a {} with name \"{}\"", bean.getClass(), name);
-    ObjectName objectName = new ObjectName(name);
-    mBeanServer.registerMBean(bean, objectName);
-  }
-
-  @Override
   public void contextDestroyed(ServletContextEvent servletContextEvent) {
-    logger.info("Shutting down test web application");
+
   }
 }

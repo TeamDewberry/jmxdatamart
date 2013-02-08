@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Tripwire, Inc.
+ * Copyright (c) 2012, Tripwire, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,17 +28,12 @@
 
 package org.jmxdatamart.fixtures;
 
-import fitlibrary.DoFixture;
+import fitlibrary.SetUpFixture;
 
-import java.util.concurrent.TimeUnit;
+public class GuicySetUpFixture extends SetUpFixture {
 
-public class TestUtilities extends DoFixture {
-
-  public void sleepFor(String sleepTime) throws InterruptedException {
-    String[] array = sleepTime.split(" ");
-    long duration = Long.parseLong(array[0]);
-    TimeUnit unit = TimeUnit.valueOf(array[1].toUpperCase());
-    Thread.sleep(unit.toMillis(duration));
+  public GuicySetUpFixture() {
+    Guicy.INJECTOR.getInjector().injectMembers(this);
   }
 
 }

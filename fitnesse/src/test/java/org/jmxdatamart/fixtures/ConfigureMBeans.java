@@ -30,14 +30,14 @@ package org.jmxdatamart.fixtures;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
+import com.google.inject.Inject;
 
 import javax.management.*;
-import java.io.IOException;
 
 /**
  * A FitNesse fixture that configures the attributes of MBeans
  */
-public class ConfigureMBeans extends MBeanSetUpFixture {
+public class ConfigureMBeans extends GuicySetUpFixture {
 
   private final ImmutableMap<String, Function<String, Object>> attributeTypeToObject =
     new ImmutableMap.Builder<String, Function<String, Object>>()
@@ -51,70 +51,43 @@ public class ConfigureMBeans extends MBeanSetUpFixture {
           return Integer.parseInt(stringValue);
         }
       })
-      .put(Integer.class.getName(), new Function<String, Object>() {
-        public Object apply(String stringValue) {
-          return Integer.parseInt(stringValue);
-        }
-      })
       .put(long.class.getName(), new Function<String, Object>() {
         public Object apply(String stringValue) {
           return Long.parseLong(stringValue);
         }
       })
-      .put(Long.class.getName(), new Function<String, Object>() {
-        public Object apply(String stringValue) {
-          return Long.parseLong(stringValue);
-        }
-      })
-      .put(boolean.class.getName(), new Function<String, Object>() {
-        public Object apply(String stringValue) {
-          return Boolean.parseBoolean(stringValue);
-        }
-      })
-      .put(Boolean.class.getName(), new Function<String, Object>() {
-        public Object apply(String stringValue) {
-          return Boolean.parseBoolean(stringValue);
-        }
-      })
       .build();
 
-  public void beanNameAttributeValue(String beanName, String attribute, String value) throws MalformedObjectNameException, InstanceNotFoundException, ClassNotFoundException, MBeanException, InstanceAlreadyExistsException, NotCompliantMBeanException, IllegalAccessException, InstantiationException, InvalidAttributeValueException, AttributeNotFoundException, ReflectionException, IntrospectionException, IOException {
+  @Inject
+  private MBeanServer mBeanServer;
+
+  public void beanNameAttributeValue(String beanName, String attribute, String value) throws MalformedObjectNameException, InstanceNotFoundException, ClassNotFoundException, MBeanException, InstanceAlreadyExistsException, NotCompliantMBeanException, IllegalAccessException, InstantiationException, InvalidAttributeValueException, AttributeNotFoundException, ReflectionException, IntrospectionException {
     ObjectInstance bean = getMBean(beanName);
     setAttribute(bean, attribute, value);
   }
 
-  private void setAttribute(ObjectInstance bean, String attributeName, String value) throws InstanceNotFoundException, ReflectionException, AttributeNotFoundException, MBeanException, InvalidAttributeValueException, IntrospectionException, IOException {
+  private void setAttribute(ObjectInstance bean, String attributeName, String value) throws InstanceNotFoundException, ReflectionException, AttributeNotFoundException, MBeanException, InvalidAttributeValueException, IntrospectionException {
     ObjectName name = bean.getObjectName();
     setAttribute(name, attributeName, value);
   }
 
-  private void setAttribute(ObjectName name, String attributeName, String stringValue) throws InstanceNotFoundException, AttributeNotFoundException, InvalidAttributeValueException, MBeanException, ReflectionException, IntrospectionException, IOException {
+  private void setAttribute(ObjectName name, String attributeName, String stringValue) throws InstanceNotFoundException, AttributeNotFoundException, InvalidAttributeValueException, MBeanException, ReflectionException, IntrospectionException {
     Object value = getValueWithCorrectTypeFor(name, attributeName, stringValue);
-    getMBeanServer().setAttribute(name, new Attribute(attributeName, value));
+    mBeanServer.setAttribute(name, new Attribute(attributeName, value));
   }
 
-  private Object getValueWithCorrectTypeFor(ObjectName name, String attributeName, String stringValue) throws IntrospectionException, InstanceNotFoundException, ReflectionException, IOException {
+  private Object getValueWithCorrectTypeFor(ObjectName name, String attributeName, String stringValue) throws IntrospectionException, InstanceNotFoundException, ReflectionException {
     MBeanAttributeInfo attribute = getAttribute(name, attributeName);
-    if (attribute == null) {
-      // Unknown attribute.  We might be configuring a dynamic MBean.  Assume the value is a String.
-      return stringValue;
-
-    } else {
-      Function<String, Object> toObject = getStringConverter(attribute.getType());
-      return toObject.apply(stringValue);
-    }
+    Function<String, Object> toObject = getStringConverter(attribute.getType());
+    return toObject.apply(stringValue);
   }
 
   private Function<String, Object> getStringConverter(String type) {
-    Function<String, Object> function = attributeTypeToObject.get(type);
-    if (function == null) {
-      throw new UnsupportedOperationException("No converter funciton for " + type);
-    }
-    return function;
+    return attributeTypeToObject.get(type);
   }
 
-  private MBeanAttributeInfo getAttribute(ObjectName name, String attributeName) throws IntrospectionException, InstanceNotFoundException, ReflectionException, IOException {
-    MBeanInfo info = getMBeanServer().getMBeanInfo(name);
+  private MBeanAttributeInfo getAttribute(ObjectName name, String attributeName) throws IntrospectionException, InstanceNotFoundException, ReflectionException {
+    MBeanInfo info = mBeanServer.getMBeanInfo(name);
     MBeanAttributeInfo[] attributes = info.getAttributes();
     for (MBeanAttributeInfo attribute : attributes) {
       if (attribute.getName().equals(attributeName)) {
@@ -122,12 +95,13 @@ public class ConfigureMBeans extends MBeanSetUpFixture {
       }
     }
 
-    return null;
+    String message = String.format("Cannot find attribute \"%s\" on \"%s\"", attributeName, name);
+    throw new IllegalStateException(message);
   }
 
-  private ObjectInstance getMBean(String beanName) throws MalformedObjectNameException, InstanceNotFoundException, ClassNotFoundException, MBeanRegistrationException, InstanceAlreadyExistsException, NotCompliantMBeanException, InstantiationException, IllegalAccessException, IOException {
+  private ObjectInstance getMBean(String beanName) throws MalformedObjectNameException, InstanceNotFoundException, ClassNotFoundException, MBeanRegistrationException, InstanceAlreadyExistsException, NotCompliantMBeanException, InstantiationException, IllegalAccessException {
     ObjectName name = new ObjectName(beanName);
-    return getMBeanServer().getObjectInstance(name);
+    return mBeanServer.getObjectInstance(name);
   }
 
 }

@@ -1,17 +1,17 @@
 <!--
-  ~ Copyright (c) 2013, Tripwire, Inc.
+  ~ Copyright (c) 2012, Tripwire, Inc.
   ~ All rights reserved.
   ~
   ~ Redistribution and use in source and binary forms, with or without
   ~ modification, are permitted provided that the following conditions are
   ~ met:
   ~
-  ~  o Redistributions of source code must retain the above copyright
-  ~    notice, this list of conditions and the following disclaimer.
+  ~ Redistributions of source code must retain the above copyright
+  ~ notice, this list of conditions and the following disclaimer.
   ~
-  ~  o Redistributions in binary form must reproduce the above copyright
-  ~    notice, this list of conditions and the following disclaimer in the
-  ~    documentation and/or other materials provided with the distribution.
+  ~ Redistributions in binary form must reproduce the above copyright
+  ~ notice, this list of conditions and the following disclaimer in the
+  ~ documentation and/or other materials provided with the distribution.
   ~
   ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
   ~ "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -31,5 +31,8 @@
         "http://java.sun.com/dtd/web-app_2_3.dtd" >
 
 <web-app>
-    <display-name>Web Application for finesse tests</display-name>
+    <display-name>Test Web Application</display-name>
+    <listener>
+        <listener-class>org.jmxdatamart.testwebapp.RegisterMBeansOnWebAppStartup</listener-class>
+    </listener>
 </web-app>

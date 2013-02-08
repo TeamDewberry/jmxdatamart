@@ -25,22 +25,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package org.jmxdatamart.common;
 
-package org.jmxdatamart.fixtures;
-
-import fit.ColumnFixture;
-
-import javax.management.MBeanServerConnection;
-
-public abstract class MBeanColumnFixture extends ColumnFixture {
-
-  private MBeanServerConnection mBeanServer;
-
-  protected MBeanServerConnection getMBeanServer() {
-    if (mBeanServer == null) {
-      String jmxUrl = args.length > 0 ? args[0] : null;
-      mBeanServer = MBeanServerFactory.getMBeanServer(jmxUrl);
-    }
-    return mBeanServer;
-  }
+/**
+ * Supported data types
+ * @author Binh Tran <mynameisbinh@gmail.com>
+ */
+public enum DataType {
+    INT, FLOAT, STRING  //MS SQLserve doesn't support Boolean type
 }
