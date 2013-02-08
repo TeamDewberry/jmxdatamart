@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012 Tripwire, Inc.
+ * Copyright (c) 2013, Tripwire, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,39 +25,40 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.jmxdatamart.JMXTestServer;
+
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
 
 /**
  *
- * @author Binh Tran <mynameisbinh@gmail.com>
+ * @author Capstone
  */
-public class Car {
-    private String name;
-    private String year;
-    private int engine;
-    private int power;
+public class ClassA implements AnInterface{
 
-    public Car(String name, String year, int engine, int power) {
-        this.name = name;
-        this.year = year;
-        this.engine = engine;
-        this.power = power;
+    public int n1, n2;
+    public String s;
+    
+    @Override
+    public int getNum() {
+        return n1;
     }
 
-    public String getName() {
-        return name;
+    @Override
+    public String getStr() {
+        return s;
     }
-
-    public String getYear() {
-        return year;
+    
+    @Override
+    public String toString() {
+        return s + n1 + n2;
     }
-
-    public int getEngine() {
-        return engine;
-    }
-
-    public int getPower() {
-        return power;
+    
+    public ClassA(int n1, int n2, String s) {
+        this.n1 = n1;
+        this.n2 = n2;
+        this.s = s;
     }
     
 }

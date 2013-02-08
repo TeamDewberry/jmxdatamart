@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Tripwire, Inc.
+ * Copyright (c) 2013, Tripwire, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,23 +25,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.jmxdatamart.Extractor;
-
-import java.io.IOException;
-import java.util.Map;
-import javax.management.AttributeNotFoundException;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanException;
-import javax.management.ReflectionException;
 
 /**
  *
- * @author Binh Tran <mynameisbinh@gmail.com>
+ * @author Capstone
  */
-interface Extractable {
-    Map<Attribute, Object> extract() throws MBeanException, 
-                                            AttributeNotFoundException,
-                                            InstanceNotFoundException,
-                                            ReflectionException,
-                                            IOException;
+public interface AnInterface {
+    int getNum();
+    String getStr();
 }

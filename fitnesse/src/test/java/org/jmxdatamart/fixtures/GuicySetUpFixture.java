@@ -28,27 +28,12 @@
 
 package org.jmxdatamart.fixtures;
 
-import javax.management.MBeanServerConnection;
-import javax.management.remote.JMXConnector;
-import javax.management.remote.JMXConnectorFactory;
-import javax.management.remote.JMXServiceURL;
-import java.io.IOException;
-import java.lang.management.ManagementFactory;
+import fitlibrary.SetUpFixture;
 
-public class MBeanServerFactory {
-  public static MBeanServerConnection getMBeanServer(String jmxUrl) {
-    if (jmxUrl == null) {
-      return ManagementFactory.getPlatformMBeanServer();
+public class GuicySetUpFixture extends SetUpFixture {
 
-    } else {
-      try {
-        JMXServiceURL url = new JMXServiceURL(jmxUrl);
-        JMXConnector connector = JMXConnectorFactory.connect(url);
-        return connector.getMBeanServerConnection();
-
-      } catch (IOException e) {
-        throw new RuntimeException(e);
-      }
-    }
+  public GuicySetUpFixture() {
+    Guicy.INJECTOR.getInjector().injectMembers(this);
   }
+
 }

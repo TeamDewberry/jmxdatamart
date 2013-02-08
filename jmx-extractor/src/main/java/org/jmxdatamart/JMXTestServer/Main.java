@@ -31,7 +31,6 @@ import java.lang.management.ManagementFactory;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import java.io.FileWriter;
-import org.jmxdatamart.Extractor.*;
 
 /**
  *

@@ -28,9 +28,7 @@
 
 package org.jmxdatamart.fixtures;
 
-import fitlibrary.SetUpFixture;
-
-public class ConfigureMBeansToBeCollected extends SetUpFixture {
+public class ConfigureMBeansToBeCollected extends  GuicySetUpFixture {
 
   public void beanNameBeanAliasAttributeAttributeAlias(String beanName, String beanAlias, String attribute, String attributeAlias) {
 

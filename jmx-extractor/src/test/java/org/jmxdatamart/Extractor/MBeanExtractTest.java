@@ -27,17 +27,13 @@
  */
 package org.jmxdatamart.Extractor;
 
-import org.jmxdatamart.JMXTestServer.TestBean;
 import java.lang.management.ManagementFactory;
 import java.util.Collections;
 import java.util.Map;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-<<<<<<< HEAD
 import org.jmxdatamart.JMXTestServer.TestBean;
 import org.jmxdatamart.common.DataType;
-=======
->>>>>>> upstream/master
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

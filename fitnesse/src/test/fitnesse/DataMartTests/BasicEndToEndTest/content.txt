@@ -6,11 +6,11 @@ First we set up a simple JMX MBean with one attribute.
 
 | create MBeans |
 | bean class | bean name |
-| org.jmxdatamart.SimpleMBean | org.jmxdatamart.fitnesse:type=SimpleMBean,forTest=BasicEndToEndTest |
+| org.jmxdatamart.SimpleMBean | org.jmxdatamart:type=SimpleMBean,forTest=BasicEndToEndTest |
 
 !| configure MBeans |
 | bean name | attribute | value |
-| org.jmxdatamart.fitnesse:type=SimpleMBean,forTest=BasicEndToEndTest | IntAttribute | 42 |
+| org.jmxdatamart:type=SimpleMBean,forTest=BasicEndToEndTest | IntAttribute | 42 |
 
 Then we configure the collector
    * What beans should it collect?
@@ -23,7 +23,7 @@ Then we configure the collector
 
 !| configure MBeans to be collected |
 | bean name | bean alias | attribute | attribute alias |
-| org.jmxdatamart.fitnesse:type=SimpleMBean,forTest=BasicEndToEndTest | BasicEndToEndTest | intAttribute | intAttribute |
+| org.jmxdatamart:type=SimpleMBean,forTest=BasicEndToEndTest | BasicEndToEndTest | intAttribute | intAttribute |
 
 Then we give the collector some time to do its thing
 
