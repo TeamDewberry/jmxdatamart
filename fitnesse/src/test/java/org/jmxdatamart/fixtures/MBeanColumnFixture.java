@@ -28,28 +28,19 @@
 
 package org.jmxdatamart.fixtures;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import fit.ColumnFixture;
 
-import javax.management.MBeanServer;
-import java.lang.management.ManagementFactory;
+import javax.management.MBeanServerConnection;
 
-/**
- * A enum that initializes the Guice Injector in a thread-safe manner
- */
-public enum Guicy {
-  INJECTOR {
-    @Override
-    Injector getInjector() {
-      return Guice.createInjector(new AbstractModule() {
-        @Override
-        protected void configure() {
-          bind(MBeanServer.class).toInstance(ManagementFactory.getPlatformMBeanServer());
-        }
-      });
+public abstract class MBeanColumnFixture extends ColumnFixture {
+
+  private MBeanServerConnection mBeanServer;
+
+  protected MBeanServerConnection getMBeanServer() {
+    if (mBeanServer == null) {
+      String jmxUrl = args.length > 0 ? args[0] : null;
+      mBeanServer = MBeanServerFactory.getMBeanServer(jmxUrl);
     }
-  };
-
-  abstract Injector getInjector();
+    return mBeanServer;
+  }
 }

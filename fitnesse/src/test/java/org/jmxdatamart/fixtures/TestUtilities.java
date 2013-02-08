@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Tripwire, Inc.
+ * Copyright (c) 2013, Tripwire, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,21 +28,17 @@
 
 package org.jmxdatamart.fixtures;
 
-import fitlibrary.SetUpFixture;
+import fitlibrary.DoFixture;
 
-import javax.management.*;
-import java.lang.management.ManagementFactory;
+import java.util.concurrent.TimeUnit;
 
-public class CreateMBeans extends SetUpFixture {
+public class TestUtilities extends DoFixture {
 
-  public void beanClassBeanName(String beanClass, String beanName) throws MalformedObjectNameException, MBeanRegistrationException, InstanceAlreadyExistsException, ClassNotFoundException, NotCompliantMBeanException, InstantiationException, IllegalAccessException {
-    ObjectName name = new ObjectName(beanName);
-    createAndRegisterMBean(beanClass, name);
-  }
-
-  private void createAndRegisterMBean(String beanClassName, ObjectName name) throws ClassNotFoundException, IllegalAccessException, InstantiationException, MBeanRegistrationException, InstanceAlreadyExistsException, NotCompliantMBeanException {
-    Class beanClass = Class.forName(beanClassName);
-    ManagementFactory.getPlatformMBeanServer().registerMBean(beanClass.newInstance(), name);
+  public void sleepFor(String sleepTime) throws InterruptedException {
+    String[] array = sleepTime.split(" ");
+    long duration = Long.parseLong(array[0]);
+    TimeUnit unit = TimeUnit.valueOf(array[1].toUpperCase());
+    Thread.sleep(unit.toMillis(duration));
   }
 
 }
