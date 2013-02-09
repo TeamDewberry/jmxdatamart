@@ -38,7 +38,7 @@ import java.util.Properties;
  * To change this template use File | Settings | File Templates.
  */
 public class DBTester {
-    public static void main(String[] args) throws SQLException{
+    public static void main(String[] args){
 
         Connection conn = null;
         PreparedStatement ps = null;

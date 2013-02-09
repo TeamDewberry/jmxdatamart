@@ -98,6 +98,9 @@ public class Bean2DB {
                 case STRING:
                     ps.setString(++i,m.getValue().toString());
                     break;
+                case BOOLEAN:
+                    ps.setBoolean(++i,(Boolean)m.getValue());
+                    break;
                 case FLOAT:
                     ps.setFloat(++i,(Float)m.getValue());
                     break;

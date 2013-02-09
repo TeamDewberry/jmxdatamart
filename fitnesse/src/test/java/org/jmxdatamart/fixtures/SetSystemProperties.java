@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Tripwire, Inc.
+ * Copyright (c) 2013, Tripwire, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,12 +28,12 @@
 
 package org.jmxdatamart.fixtures;
 
-import fit.ColumnFixture;
+import fitlibrary.SetUpFixture;
 
-public class GuicyColumnFixture extends ColumnFixture {
+public class SetSystemProperties extends SetUpFixture {
 
-  public GuicyColumnFixture() {
-    Guicy.INJECTOR.getInjector().injectMembers(this);
+  public void keyValue(String key, String value) {
+    System.setProperty(key, value);
   }
 
 }

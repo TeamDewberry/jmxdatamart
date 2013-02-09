@@ -27,21 +27,12 @@
  */
 package org.jmxdatamart.Extractor;
 
-import java.io.IOException;
 import java.util.Map;
-import javax.management.AttributeNotFoundException;
-import javax.management.InstanceNotFoundException;
-import javax.management.MBeanException;
-import javax.management.ReflectionException;
 
 /**
  *
  * @author Binh Tran <mynameisbinh@gmail.com>
  */
 interface Extractable {
-    Map<Attribute, Object> extract() throws MBeanException, 
-                                            AttributeNotFoundException,
-                                            InstanceNotFoundException,
-                                            ReflectionException,
-                                            IOException;
+    Map<Attribute, Object> extract() throws Exception;
 }

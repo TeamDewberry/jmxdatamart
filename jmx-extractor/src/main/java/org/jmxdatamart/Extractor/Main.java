@@ -36,7 +36,6 @@ import java.util.Map;
 import java.util.Properties;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-
 import org.jmxdatamart.JMXTestServer.TestBean;
 import org.jmxdatamart.common.*;
 

@@ -28,19 +28,18 @@
 
 package org.jmxdatamart.fixtures;
 
-import com.google.inject.Inject;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanRegistrationException;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+import java.io.IOException;
 
-import javax.management.*;
+public class UnregisterMBeans extends MBeanSetUpFixture {
 
-public class UnregisterMBeans extends GuicySetUpFixture {
-
-  @Inject
-  private MBeanServer mBeanServer;
-
-  public void beanName(String beanName) throws MalformedObjectNameException, InstanceNotFoundException, MBeanRegistrationException {
+  public void beanName(String beanName) throws IOException, MalformedObjectNameException, InstanceNotFoundException, MBeanRegistrationException {
     ObjectName query = new ObjectName(beanName);
-    for (ObjectName name : mBeanServer.queryNames(query, null)) {
-      mBeanServer.unregisterMBean(name);
+    for (ObjectName name : getMBeanServer().queryNames(query, null)) {
+      getMBeanServer().unregisterMBean(name);
     }
   }
 }
