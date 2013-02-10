@@ -11,3 +11,4 @@ You can also perform the following operations via the MBean
       * This would be helpful if the user wants to extract MBeans on demand (at the end of a test run, for instance, instead of periodically)
    * Reload the extractor's configuration file
       * This might be helpful to tests (like these !FitNesse tests)
+
