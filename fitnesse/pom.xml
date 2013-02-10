@@ -160,11 +160,13 @@
                             <target>
                                 <java fork="true" spawn="true" classpathref="maven.runtime.classpath"
                                       classname="org.apache.derby.drda.NetworkServerControl"
-                                      dir="${project.build.directory}" >
+                                      dir="${project.build.directory}">
                                     <arg value="start"/>
                                     <arg value="-noSecurityManager"/>
                                 </java>
-                                <sleep milliseconds="1000"/>
+                                <waitfor maxwait="30" maxwaitunit="second" checkevery="500">
+                                    <socket server="localhost" port="1527"/>
+                                </waitfor>
                             </target>
                         </configuration>
                     </execution>
@@ -178,11 +180,14 @@
                             <target>
                                 <java fork="true" spawn="true" classpathref="maven.runtime.classpath"
                                       classname="org.apache.derby.drda.NetworkServerControl"
-                                      dir="${project.build.directory}" >
+                                      dir="${project.build.directory}">
                                     <arg value="shutdown"/>
-                                    <arg value="-noSecurityManager"/>
                                 </java>
-                                <sleep milliseconds="1000"/>
+                                <waitfor maxwait="30" maxwaitunit="second" checkevery="500">
+                                    <not>
+                                        <socket server="localhost" port="1527"/>
+                                    </not>
+                                </waitfor>
                             </target>
                         </configuration>
                     </execution>
