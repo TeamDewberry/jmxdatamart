@@ -2,6 +2,9 @@
 
 This test verifies an end-to-end extract and load of a very simple JMX statistic into the Data Mart.
 
+| Import |
+| org.jmxdatamart.fixtures |
+
 First we set up a simple JMX MBean with one attribute.
 
 | create MBeans |

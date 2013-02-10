@@ -1,7 +1,0 @@
-!contents
-
-This imports all of the fixtures from the org.jmxdatamart.fixtures package so that we don't need to use
-fully-qualified class names in the FitNesse tests
-
-| Import |
-| org.jmxdatamart.fixtures |

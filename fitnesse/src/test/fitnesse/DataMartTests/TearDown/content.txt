@@ -2,6 +2,9 @@
 
 At the end of every test, unregister any test MBeans that were created by the test.
 
+| Import |
+| org.jmxdatamart.fixtures |
+
 | unregister MBeans |
 | bean name |
 | org.jmxdatamart.fitnesse:* |
