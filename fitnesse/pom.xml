@@ -159,7 +159,8 @@
                         <configuration>
                             <target>
                                 <java fork="true" spawn="true" classpathref="maven.runtime.classpath"
-                                      classname="org.apache.derby.drda.NetworkServerControl">
+                                      classname="org.apache.derby.drda.NetworkServerControl"
+                                      dir="${project.build.directory}" >
                                     <arg value="start"/>
                                     <arg value="-noSecurityManager"/>
                                 </java>
@@ -167,27 +168,22 @@
                             </target>
                         </configuration>
                     </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.2.1</version>
-                <executions>
                     <execution>
-                        <id>shutdown-derby-network-server</id>
+                        <id>stop-derby-network-server</id>
                         <phase>post-integration-test</phase>
                         <goals>
-                            <goal>exec</goal>
+                            <goal>run</goal>
                         </goals>
                         <configuration>
-                            <executable>java</executable>
-                            <arguments>
-                                <argument>-classpath</argument>
-                                <classpath/>
-                                <argument>org.apache.derby.drda.NetworkServerControl</argument>
-                                <argument>shutdown</argument>
-                            </arguments>
+                            <target>
+                                <java fork="true" spawn="true" classpathref="maven.runtime.classpath"
+                                      classname="org.apache.derby.drda.NetworkServerControl"
+                                      dir="${project.build.directory}" >
+                                    <arg value="shutdown"/>
+                                    <arg value="-noSecurityManager"/>
+                                </java>
+                                <sleep milliseconds="1000"/>
+                            </target>
                         </configuration>
                     </execution>
                 </executions>
