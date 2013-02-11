@@ -48,7 +48,7 @@ import javax.management.NotCompliantMBeanException;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
 import org.jmxdatamart.JMXTestServer.TestBean;
-import org.jmxdatamart.JMXTestServer.TestDynamicMBean;
+import org.jmxdatamart.JMXTestServer.RandomValueDynamicMBean;
 import org.jmxdatamart.common.*;
 
 public class Main {
@@ -64,17 +64,16 @@ public class Main {
 
         //Create new test MBean
         ObjectName mBeanName = null;
-        /** 1: Uncomment the next line to test with an MBean **/
-        // mBeanName = createMBean(expected, mbs);
         
-        /** 2: Uncomment the next line to test with a dynamic MBean **/
-        // mBeanName = createDynamicMBean(expected, mbs);
+        /** To create a regular mBean, replace with mBeanName = createMBean(expected, mbs) **/
+        mBeanName = createDynamicMBean(expected, mbs);
         
         //Create test MBean's MBeanData
         Attribute a = new Attribute("A", "Alpha", DataType.INT);
         MBeanData mbd = new MBeanData(mBeanName.getCanonicalName(), "testMBean",
                                         Collections.singletonList(a), true);
-
+        /** Example operation invoking:**/
+        //mbs.invoke(mBeanName, "randomize", new Object[]{"A"}, null);
         
         
         //Init MBeanExtract
@@ -125,7 +124,7 @@ public class Main {
   		InstanceAlreadyExistsException, MBeanRegistrationException, NotCompliantMBeanException, 
   		MalformedObjectNameException, NullPointerException {
 	  
-      TestDynamicMBean dynamicTb = new TestDynamicMBean();     
+      RandomValueDynamicMBean dynamicTb = new RandomValueDynamicMBean();     
       String dynamicMbName = "org.jmxdatamart.JMXTestServer:type=TestBeanDynamicMBean";
       ObjectName dynamicMbeanName = new ObjectName(dynamicMbName);
       

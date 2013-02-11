@@ -49,21 +49,24 @@ import javax.management.MBeanInfo;
 import javax.management.MBeanNotificationInfo;
 import javax.management.MBeanOperationInfo;
 import javax.management.ReflectionException;
+import org.slf4j.LoggerFactory;
 
 /**
  * Interface TestBeanMBean
  *
  * @author Tesca Fitzgerald <tesca@pdx.edu>
  */
-public class TestDynamicMBean implements DynamicMBean {
+public class RandomValueDynamicMBean implements DynamicMBean {
     
-    private Random prng;
+    private Random random;
     private ArrayList<MBeanAttributeInfo> attributes;
     private ArrayList<MBeanOperationInfo> operations;
+    private final org.slf4j.Logger logger = LoggerFactory.getLogger(RandomValueDynamicMBean.class);
     
     private Map<String, Object> data;
     
-    public TestDynamicMBean() {
+    public RandomValueDynamicMBean() {
+    	random = new Random();
     	attributes = new ArrayList<MBeanAttributeInfo>();
     	operations = new ArrayList<MBeanOperationInfo>();
     	data = new TreeMap<String, Object>();
@@ -77,6 +80,7 @@ public class TestDynamicMBean implements DynamicMBean {
         		MBeanOperationInfo.ACTION));
     }
 
+    /** Returns the MBeanInfo object for this dynamic mBean */
     public MBeanInfo getMBeanInfo() {
         return new MBeanInfo(this.getClass().getName(),
         		"Dynamic MBean Implementation",
@@ -86,7 +90,7 @@ public class TestDynamicMBean implements DynamicMBean {
               	new MBeanNotificationInfo[0]);
     }
     
-    //Get a list of attributes
+    /** Get a list of attributes */
 	@Override
 	public AttributeList getAttributes(String[] attributes) {
 	    AttributeList attributesList = new AttributeList();	        
@@ -94,14 +98,14 @@ public class TestDynamicMBean implements DynamicMBean {
 			try {
 				attributesList.add(new Attribute(attributes[i], getAttribute((String) attributes[i])));
 			} catch (AttributeNotFoundException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 	    }
 	    
 	    return attributesList;
 	}
 	
-	//Get a single attribute
+	/** Get a single attribute */
     public Object getAttribute(String attributeName) throws AttributeNotFoundException {
     	if(data.containsKey(attributeName))
     		return data.get(attributeName);
@@ -110,7 +114,7 @@ public class TestDynamicMBean implements DynamicMBean {
     }
     
 
-    //Set a list of attributes
+    /** Set a list of attributes */
 	@Override
 	public AttributeList setAttributes(AttributeList attributes) {
 	    AttributeList attributesList = new AttributeList();
@@ -124,13 +128,13 @@ public class TestDynamicMBean implements DynamicMBean {
 	            Object value = getAttribute(name); 
 	            attributesList.add(new Attribute(name, value));
 	        } catch(Exception e) {
-	            e.printStackTrace();
+				logger.error(e.getMessage());
 	        }
 	    }
 	    return attributesList;
 	}
 
-	//Set a single attribute
+	/** Set a single attribute, adding it to the attributes list if necessary. Also puts given data to the data mapping. */
 	@Override
     public void setAttribute(Attribute attribute) throws AttributeNotFoundException, InvalidAttributeValueException {
     	String name = attribute.getName();
@@ -157,11 +161,12 @@ public class TestDynamicMBean implements DynamicMBean {
     			throw(new InvalidAttributeValueException("Cannot set attribute due to incorrect data type"));
     		return;
    		} catch (ClassNotFoundException e) {
-   			e.printStackTrace();
+			logger.error(e.getMessage());
    		}
     	throw(new AttributeNotFoundException("Attribute not found"));
     }
 	
+	/** Add the given attribute to the attributes list */
 	public boolean addAttribute(String name, String className, String description, boolean isReadable, boolean isWritable, boolean isIs) {
  		if (name == null || data.containsKey(name) || className == null)
 			return false;
@@ -180,6 +185,7 @@ public class TestDynamicMBean implements DynamicMBean {
 	    return true;
 	}
 
+	/** Remove the given attribute from the data mapping and from the attributes list */
 	public boolean removeAttribute(String name) {
     	int attributeIndex = -1;
    		for(int i = 0; (attributeIndex == -1) && (i < attributes.size()); i++)
@@ -194,11 +200,12 @@ public class TestDynamicMBean implements DynamicMBean {
 	    attributes.remove(attributeIndex);         
 	    return true;
 	}
-	//Invoke a given operation
+	
+	/** Invoke a given operation */
 	@Override
 	public Object invoke(String operationName, Object params[], String signature[]) throws MBeanException, ReflectionException {
 	    if (operationName.equals("randomize")) {
-	    	this.randomize("A");
+	    	this.randomize((String) params[0]);
 	    	return null;
 	    }
 	    //Add additional if-statement blocks here for other mbean operations
@@ -207,7 +214,7 @@ public class TestDynamicMBean implements DynamicMBean {
 	}
 
     private void randomize(String key) {
-    	data.put(key, prng.nextInt(100));
+    	data.put(key, random.nextInt(100));
     }
     
 }
