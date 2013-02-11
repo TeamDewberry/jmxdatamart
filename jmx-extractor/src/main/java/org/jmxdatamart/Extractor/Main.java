@@ -28,15 +28,27 @@
 
 package org.jmxdatamart.Extractor;
 
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
+import javax.management.AttributeNotFoundException;
+import javax.management.InstanceAlreadyExistsException;
+import javax.management.InvalidAttributeValueException;
+import javax.management.MBeanAttributeInfo;
+import javax.management.MBeanException;
+import javax.management.MBeanRegistrationException;
 import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.NotCompliantMBeanException;
 import javax.management.ObjectName;
+import javax.management.ReflectionException;
 import org.jmxdatamart.JMXTestServer.TestBean;
+import org.jmxdatamart.JMXTestServer.RandomValueDynamicMBean;
 import org.jmxdatamart.common.*;
 
 public class Main {
@@ -46,20 +58,24 @@ public class Main {
         
         // values
         int expected = 42;
-        
-        //Create new test MBean
-        TestBean tb = new TestBean();
-        tb.setA(new Integer(expected));
+
+        //Create MBean Server
         MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
-        String mbName = "org.jmxdatamart.JMXTestServer:type=TestBean";
-        ObjectName mbeanName = new ObjectName(mbName);
-        mbs.registerMBean(tb, mbeanName);
+
+        //Create new test MBean
+        ObjectName mBeanName = null;
+        
+        /** To create a regular mBean, replace with mBeanName = createMBean(expected, mbs) **/
+        mBeanName = createDynamicMBean(expected, mbs);
         
         //Create test MBean's MBeanData
         Attribute a = new Attribute("A", "Alpha", DataType.INT);
-        MBeanData mbd = new MBeanData(mbName, "testMBean",
+        MBeanData mbd = new MBeanData(mBeanName.getCanonicalName(), "testMBean",
                                         Collections.singletonList(a), true);
-
+        /** Example operation invoking:**/
+        //mbs.invoke(mBeanName, "randomize", new Object[]{"A"}, null);
+        
+        
         //Init MBeanExtract
         MBeanExtract instance = new MBeanExtract(mbd, mbs);
         Map result = instance.extract();
@@ -80,7 +96,7 @@ public class Main {
         HypersqlHandler hsql = new HypersqlHandler();
         Connection conn= hsql.connectDatabase(dbname,props);
         bd.export2DB(conn,mbd,result);
-        ResultSet rs = conn.createStatement().executeQuery("select A from org_jmxdatamart_JMXTestServer__type___TestBean");
+        ResultSet rs = conn.createStatement().executeQuery("select A from " + bd.convertIllegalTableName(mbd.getName()));
         rs.next();
         System.out.println(rs.getInt(1));
         rs.close();
@@ -89,5 +105,33 @@ public class Main {
 
         // TODO review the generated test code and remove the default call to fail.
         //fail("The test case is a prototype.");
+  }
+  
+  private static ObjectName createMBean(Object value, MBeanServer mbs) 
+  		throws MalformedObjectNameException, NullPointerException, 
+  		InstanceAlreadyExistsException, MBeanRegistrationException, NotCompliantMBeanException {
+	  
+      TestBean tb = new TestBean();
+      tb.setA((Integer) value);
+      String mbName = "org.jmxdatamart.JMXTestServer:type=TestBean";
+      ObjectName mbeanName = new ObjectName(mbName);
+      mbs.registerMBean(tb, mbeanName);
+      return mbeanName;
+  }
+  
+  private static ObjectName createDynamicMBean(Object value, MBeanServer mbs) 
+  		throws AttributeNotFoundException, InvalidAttributeValueException, 
+  		InstanceAlreadyExistsException, MBeanRegistrationException, NotCompliantMBeanException, 
+  		MalformedObjectNameException, NullPointerException {
+	  
+      RandomValueDynamicMBean dynamicTb = new RandomValueDynamicMBean();     
+      String dynamicMbName = "org.jmxdatamart.JMXTestServer:type=TestBeanDynamicMBean";
+      ObjectName dynamicMbeanName = new ObjectName(dynamicMbName);
+      
+      javax.management.Attribute dynamicA = new javax.management.Attribute("A", (Integer) value);
+      dynamicTb.setAttribute(dynamicA);
+
+      mbs.registerMBean(dynamicTb, dynamicMbeanName);
+      return dynamicMbeanName;
   }
 }
