@@ -29,6 +29,9 @@
 package org.jmxdatamart.common;
 
 import java.sql.*;
+import java.util.Map;
+import java.util.Properties;
+
 import org.slf4j.LoggerFactory;
 /**
  * Created with IntelliJ IDEA.
@@ -38,11 +41,15 @@ import org.slf4j.LoggerFactory;
 public abstract class DBHandler {
 
     private final org.slf4j.Logger logger = LoggerFactory.getLogger(DBHandler.class);
-    public abstract boolean databaseExists(String DBName,java.util.Properties p);
-    public abstract boolean tableExists(String TblName, Connection conn) throws SQLException;
-
-    public abstract Connection connectDatabase(String DBName,java.util.Properties p) throws SQLException;
-    //public abstract void dropDB(String DBName);
+    public abstract boolean databaseExists(String databaseName,java.util.Properties p) throws SQLException;
+    public abstract boolean tableExists(String tableName, Connection conn) throws SQLException;
+    public abstract boolean columnExists(String columnName, String tableName, Connection conn) throws SQLException;
+    public abstract Connection connectDatabase(String databaseName,java.util.Properties p) throws SQLException;
+    public abstract Map<String, Map> getDatabaseSchema(Connection conn) throws SQLException,DBException;
+    public abstract String getTimeType();
+    public boolean connectServer(Properties p) throws SQLException{
+        return true;
+    }
     public void disconnectDatabase(ResultSet rs, Statement st, PreparedStatement ps, Connection conn){
 
         // PrepareStatement
@@ -92,12 +99,6 @@ public abstract class DBHandler {
     {
         while (e != null)
         {
-            /*
-            System.err.println("\n----- SQLException -----");
-            System.err.println("  SQL State:  " + e.getSQLState());
-            System.err.println("  Error Code: " + e.getErrorCode());
-            System.err.println("  Message:    " + e.getMessage());
-            */
             logger.error("SQLException-- State:" + e.getSQLState()+
                         "\tMessage:" + e.getMessage() ,e);
             e = e.getNextException();
