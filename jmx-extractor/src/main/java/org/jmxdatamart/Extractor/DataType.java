@@ -25,44 +25,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-package org.jmxdatamart.JMXTestServer;
-
-import java.util.Random;
+package org.jmxdatamart.Extractor;
 
 /**
- *
+ * Supported data types
  * @author Binh Tran <mynameisbinh@gmail.com>
  */
-public class TestBean implements TestBeanMBean{
-
-    Integer a;
-    Random prng;
-
-    public TestBean() {
-        a = new Integer(0);
-        prng = new Random();
-    }
-    
-    @Override
-    public Object getA() {
-        return a;
-    }
-
-    @Override
-    public void setA(Object obj) {
-        if (obj instanceof Integer) {
-            a = (Integer)obj;
-        }
-    }
-
-    public void randomize() {
-        a = prng.nextInt(100);
-    }
-    
-    @Override
-    public String toString() {
-        return "A = " + a.toString();
-    }
-
+public enum DataType {
+    INT, FLOAT, STRING, BOOLEAN
 }

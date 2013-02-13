@@ -27,8 +27,6 @@
  */
 package org.jmxdatamart.Extractor;
 
-import org.jmxdatamart.common.DataType;
-
 /**
  * This class contains information related to any given attribute such as name,
  * alias and its data type

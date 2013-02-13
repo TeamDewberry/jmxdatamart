@@ -67,7 +67,7 @@ public class Bean2DB {
         return tablename.replaceAll("___","=").replaceAll("__",":").replaceAll("_","\\.");
     }
 
-    public void export2DB(Connection conn, BeanData mbd, Map<Attribute, Object> result) throws  SQLException{
+    public void export2DB(Connection conn, MBeanData mbd, Map<Attribute, Object> result) throws  SQLException{
 
         PreparedStatement ps = null;
 
@@ -97,6 +97,9 @@ public class Bean2DB {
                     break;
                 case STRING:
                     ps.setString(++i,m.getValue().toString());
+                    break;
+                case BOOLEAN:
+                    ps.setBoolean(++i,(Boolean)m.getValue());
                     break;
                 case FLOAT:
                     ps.setFloat(++i,(Float)m.getValue());
