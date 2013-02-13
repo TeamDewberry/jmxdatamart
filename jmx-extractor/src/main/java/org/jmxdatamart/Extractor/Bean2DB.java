@@ -60,10 +60,10 @@ public class Bean2DB {
     }
 
     //get rid of the . : =, which are illegal for a table name
-    private  String convertIllegalTableName(String tablename){
+    public  String convertIllegalTableName(String tablename){
         return tablename.replaceAll("\\.","_").replaceAll(":","__").replaceAll("=","___");
     }
-    private  String recoverOriginalTableName(String tablename){
+    public  String recoverOriginalTableName(String tablename){
         return tablename.replaceAll("___","=").replaceAll("__",":").replaceAll("_","\\.");
     }
 
