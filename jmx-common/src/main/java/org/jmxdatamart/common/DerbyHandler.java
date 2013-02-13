@@ -30,6 +30,9 @@ package org.jmxdatamart.common;
 
 
 import java.sql.*;
+import java.util.Map;
+import java.util.Properties;
+
 /**
  * Created with IntelliJ IDEA.
  * User: Xiao Han
@@ -38,12 +41,15 @@ import java.sql.*;
 public class DerbyHandler extends DBHandler{
     private final String driver = "org.apache.derby.jdbc.EmbeddedDriver";
     private final String protocol = "jdbc:derby:";
-    private DatabaseMetaData metadata =null;
+    private String timeType = "timestamp";
+    public String getTimeType() {
+        return null;
+    }
 
-    public void shutdownDatabase(String DBName){
+    public void shutdownDatabase(String databaseName){
         try
         {
-            DriverManager.getConnection("jdbc:derby:" + DBName + ";shutdown=true");
+            DriverManager.getConnection("jdbc:derby:" + databaseName + ";shutdown=true");
 
         }
         catch (SQLException se)
@@ -63,30 +69,29 @@ public class DerbyHandler extends DBHandler{
         }
     }
 
-    public Connection connectDatabase(String DBName,java.util.Properties p) throws SQLException{
-        if (!databaseExists(DBName,p))
-            return DriverManager.getConnection(protocol + DBName + ";create=true", p);
+    public Connection connectDatabase(String databaseName,java.util.Properties p) throws SQLException{
+        if (!databaseExists(databaseName,p))
+            return DriverManager.getConnection(protocol + databaseName + ";create=true", p);
         else
-            return DriverManager.getConnection(protocol + DBName , p);
+            return DriverManager.getConnection(protocol + databaseName , p);
     }
 
-    public boolean tableExists(String tablename, Connection conn)  throws SQLException{
-        metadata = conn.getMetaData();
+    public boolean tableExists(String tableName, Connection conn)  throws SQLException{
         String[] names = { "TABLE"};
-        ResultSet tableNames = metadata.getTables( null, null, null, names);
+        ResultSet tableNames = conn.getMetaData().getTables(null, null, null, names);
 
         while( tableNames.next())
         {
             String tab = tableNames.getString( "TABLE_NAME");
-            if (tab.equalsIgnoreCase(tablename)) return true;
+            if (tab.equalsIgnoreCase(tableName)) return true;
         }
         return false;
     }
 
-    public boolean databaseExists(String DBName,java.util.Properties p){
+    public boolean databaseExists(String databaseName,java.util.Properties p){
         //Maybe it is a dummy way to check if a db exits, need to improve
         try {
-            DriverManager.getConnection(protocol+DBName+ ";create=true", p);
+            DriverManager.getConnection(protocol+databaseName+ ";create=true", p);
             return true;
         } catch (SQLException e) {
             return false;
@@ -99,5 +104,14 @@ public class DerbyHandler extends DBHandler{
 
     public String getDriver() {
         return driver;
+    }
+
+    public Map<String, Map> getDatabaseSchema(Connection conn) throws DBException{
+        throw new DBException("To be implemented");
+    }
+
+    public boolean columnExists(String columnName, String tableName, Connection conn){
+        //temporarily not implemented
+        return false;
     }
 }
