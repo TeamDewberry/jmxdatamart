@@ -88,7 +88,7 @@ public class Extractor {
         return this.configData.getPollingRate() > 0;
     }
 
-    void extract() throws MalformedObjectNameException, InstanceNotFoundException, IOException, ReflectionException, AttributeNotFoundException, MBeanException, SQLException {
+    void extract() throws Exception {
         Properties props = new Properties();
         props.put("username", "sa");
         props.put("password", "whatever");
