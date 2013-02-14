@@ -30,6 +30,10 @@ package org.jmxdatamart.common;
 
 
 import java.sql.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
 /**
  * Created with IntelliJ IDEA.
  * User: Xiao Han
@@ -38,12 +42,15 @@ import java.sql.*;
 public class DerbyHandler extends DBHandler{
     private final String driver = "org.apache.derby.jdbc.EmbeddedDriver";
     private final String protocol = "jdbc:derby:";
-    private DatabaseMetaData metadata =null;
+    private String timeType = "timestamp";
+    public String getTimeType() {
+        return null;
+    }
 
-    public void shutdownDatabase(String DBName){
+    public void shutdownDatabase(String databaseName){
         try
         {
-            DriverManager.getConnection("jdbc:derby:" + DBName + ";shutdown=true");
+            DriverManager.getConnection("jdbc:derby:" + databaseName + ";shutdown=true");
 
         }
         catch (SQLException se)
@@ -63,35 +70,21 @@ public class DerbyHandler extends DBHandler{
         }
     }
 
-    public Connection connectDatabase(String DBName,java.util.Properties p) throws SQLException{
-        if (!databaseExists(DBName,p))
-            return DriverManager.getConnection(protocol + DBName + ";create=true", p);
-        else
-            return DriverManager.getConnection(protocol + DBName , p);
+    public Connection connectDatabase(String databaseName,java.util.Properties p) throws SQLException{
+        return DriverManager.getConnection(protocol + databaseName + ";create=true", p);
     }
 
-    public boolean tableExists(String tablename, Connection conn)  throws SQLException{
-        metadata = conn.getMetaData();
-        String[] names = { "TABLE"};
-        ResultSet tableNames = metadata.getTables( null, null, null, names);
 
-        while( tableNames.next())
-        {
-            String tab = tableNames.getString( "TABLE_NAME");
-            if (tab.equalsIgnoreCase(tablename)) return true;
-        }
-        return false;
-    }
 
-    public boolean databaseExists(String DBName,java.util.Properties p){
+    public boolean databaseExists(String databaseName,java.util.Properties p){
         //Maybe it is a dummy way to check if a db exits, need to improve
         try {
-            DriverManager.getConnection(protocol+DBName+ ";create=true", p);
+            DriverManager.getConnection(protocol+databaseName+ ";create=false", p);
             return true;
         } catch (SQLException e) {
             return false;
         }
-   }
+    }
 
     public String getProtocol() {
         return protocol;
@@ -100,4 +93,62 @@ public class DerbyHandler extends DBHandler{
     public String getDriver() {
         return driver;
     }
+
+    public Map<String, Map> getDatabaseSchema(Connection conn) throws SQLException{
+        Map<String, Map> databaseSchema =  new HashMap<String,Map>();
+
+        String[] names = { "TABLE"};
+        ResultSet tables = conn.getMetaData().getTables(null, null, null, names), columns =null;
+
+
+        while( tables.next())
+        {
+            String tab = tables.getString( "TABLE_NAME");
+            String schem = tables.getString("table_schem");
+            //if (!schem.equalsIgnoreCase("public")) continue;
+
+            columns = conn.getMetaData().getColumns(null, null, tab.toUpperCase(), null);
+            Map<String, FieldAttribute> fields = new HashMap<String, FieldAttribute>();
+            while (columns.next()){
+                String col = columns.getString("COLUMN_NAME");
+                String typename = "varchar";
+                int type = columns.getInt("DATA_TYPE");
+                int size = columns.getInt("COLUMN_SIZE") ;
+                DataType myType ;
+                switch (type){
+                    case Types.VARCHAR:
+                        myType = DataType.STRING;
+                        typename ="varchar";
+                        break;
+                    case Types.INTEGER:
+                        myType = DataType.INT;
+                        typename = "integer";
+                        break;
+                    case Types.FLOAT:
+                    case Types.DOUBLE:
+                        typename = "float";
+                        myType = DataType.FLOAT;
+                        break;
+                    default:
+                        myType = DataType.STRING;
+                        typename = "varchar";
+                        break;
+                }
+                FieldAttribute fieldinfo = new FieldAttribute(myType,typename,size);
+                fields.put(col,fieldinfo);
+            }
+            databaseSchema.put(tab,fields);
+        }
+
+        if (columns!=null) columns.close();
+        if (tables!=null) tables.close();
+
+        return databaseSchema;
+    }
+
+
+
+
+
+
 }
