@@ -109,8 +109,8 @@ public class DB2DB {
     }
 
     public void disConnect() throws SQLException{
-        sourceDatabase.disconnectDatabase(null,null,null,sourceConn);
-        targerDatabase.disconnectDatabase(null,null,null,targetConn);
+        DBHandler.disconnectDatabase(null,null,null,sourceConn);
+        DBHandler.disconnectDatabase(null,null,null,targetConn);
     }
     public void loadSetting(LoaderSetting s) throws SQLException,DBException {
 
@@ -139,10 +139,13 @@ public class DB2DB {
             throw new DBException("Only support HyperSQL and MSSQL so for!");
 
         //source database must exist
-        if (sourceDatabase.databaseExists(s.getSource().getDatabaseName(),s.getSource().getUserInfo()) )
-            sourceConn = sourceDatabase.connectDatabase(s.getSource().getDatabaseName(),s.getSource().getUserInfo());
+        if (sourceDatabase.connectServer(s.getSource().getUserInfo()))
+            if (sourceDatabase.databaseExists(s.getSource().getDatabaseName(),s.getSource().getUserInfo()) )
+                sourceConn = sourceDatabase.connectDatabase(s.getSource().getDatabaseName(),s.getSource().getUserInfo());
+            else
+                throw new DBException("Can't connect to source database!");
         else
-            throw new DBException("Can't connect to source database!");
+            throw new DBException("Can't connect to the source server, please check database driver, network, username, password and etc...");
 
         //if target database doesn't exist, then create one. But prerequisite is be able to connect the server.
         if (targerDatabase.connectServer(s.getTarget().getUserInfo()))
@@ -170,7 +173,7 @@ public class DB2DB {
         for (Map.Entry<String, Map> tables : sourceSchema.entrySet()) {
             String tab = tables.getKey();
             if (tab.equalsIgnoreCase(this.mainTableName)) continue; //in case the source database has the "maintable"
-            if (!targerDatabase.tableExists(tab,targetConn)){
+            if (!DBHandler.tableExists(tab,targetConn)){
                 sql = new StringBuilder();
                 sql.append("create table ").append(tab).append("(").append(idName).append(" ").append(idNameType).append(")");
                 //System.out.println(sql.toString());
@@ -183,7 +186,7 @@ public class DB2DB {
                 String col = field.getKey();
                 if (col.equalsIgnoreCase(this.idName)) continue; //in case the tables in source database has the field named "testid"
                 FieldAttribute attributes =field.getValue();
-                if (!targerDatabase.columnExists(col,tab,targetConn)){
+                if (!DBHandler.columnExists(col,tab,targetConn)){
                     sql = new StringBuilder();
                     sql.append("Alter table ").append(tab).append(" add ").append(col).append(" ").append(attributes.getTypename());
                     if (attributes.getFieldtype().equals(DataType.STRING))
@@ -209,7 +212,7 @@ public class DB2DB {
         boolean bl = targetConn.getAutoCommit();
 
         targetConn.setAutoCommit(false);
-        if (!targerDatabase.tableExists(mainTableName,targetConn)){
+        if (!DBHandler.tableExists(mainTableName,targetConn)){
             sql = new StringBuilder();
             sql.append("create table ").append(mainTableName).append("(").append(idName).append(" ").append(idNameType).append(",");
             sql.append(dbfile).append(" ").append(dbfileType).append(",");
@@ -224,7 +227,7 @@ public class DB2DB {
         Enumeration keys = merged.keys();
         while (keys.hasMoreElements()) {
             String col = (String) keys.nextElement();
-            if (!targerDatabase.columnExists(col,mainTableName,targetConn)){
+            if (!DBHandler.columnExists(col,mainTableName,targetConn)){
                 sql = new StringBuilder();
                 sql.append("Alter table ").append(mainTableName).append(" add ").append(col).append(" varchar(100)") ;
                 //System.out.println(sql.toString());
@@ -237,7 +240,7 @@ public class DB2DB {
     }
 
     public boolean alreadyImport() throws SQLException{
-        if (!targerDatabase.tableExists(mainTableName,targetConn)){
+        if (!DBHandler.tableExists(mainTableName,targetConn)){
             return false;
         }
         else{

@@ -134,31 +134,8 @@ public class MssqlHandler extends DBHandler {
             if (ps!=null) ps.close();
         }
     }
-    public boolean columnExists(String columnName, String tableName, Connection conn) throws SQLException{
 
-        ResultSet columnNames = conn.getMetaData().getColumns(null, null, tableName.toUpperCase(), columnName.toUpperCase());
-        while (columnNames.next()){
-            String col = columnNames.getString("COLUMN_NAME");
-            if (col.equalsIgnoreCase(columnName)){
-                columnNames.close();
-                return true;
-            }
-        }
-        columnNames.close();
-        return false;
-    }
 
-    public boolean tableExists(String TblName, Connection conn)  throws SQLException{
-        String[] names = { "TABLE"};
-        ResultSet tableNames = conn.getMetaData().getTables( null, null, null, names);
-
-        while( tableNames.next())
-        {
-            String tab = tableNames.getString( "TABLE_NAME");
-            if (tab.equalsIgnoreCase(TblName)) return true;
-        }
-        return false;
-    }
 
     public boolean databaseExists(String databaseName,Properties p) throws SQLException{
         Connection conn =null;
