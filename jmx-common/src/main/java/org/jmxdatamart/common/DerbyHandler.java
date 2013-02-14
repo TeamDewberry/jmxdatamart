@@ -75,21 +75,7 @@ public class DerbyHandler extends DBHandler{
     }
 
 
-    public boolean tableExists(String tablename, Connection conn)  throws SQLException{
-        String[] names = { "TABLE"};
-        ResultSet tableNames = conn.getMetaData().getTables(null, null, null, names);
 
-        while( tableNames.next())
-        {
-            String tab = tableNames.getString( "TABLE_NAME");
-            if (tab.equalsIgnoreCase(tablename)){
-                tableNames.close();
-                return true;
-            }
-        }
-        tableNames.close();
-        return false;
-    }
 
     public boolean databaseExists(String databaseName,java.util.Properties p){
         //Maybe it is a dummy way to check if a db exits, need to improve
@@ -119,7 +105,7 @@ public class DerbyHandler extends DBHandler{
         {
             String tab = tables.getString( "TABLE_NAME");
             String schem = tables.getString("table_schem");
-            if (!schem.equalsIgnoreCase("public")) continue;
+            //if (!schem.equalsIgnoreCase("public")) continue;
 
 
             columns = conn.getMetaData().getColumns(null, null, tab.toUpperCase(), null);
@@ -161,16 +147,5 @@ public class DerbyHandler extends DBHandler{
         return databaseSchema;
     }
 
-    public boolean columnExists(String columnName, String tableName, Connection conn) throws  SQLException{
-        ResultSet columnNames = conn.getMetaData().getColumns(null, null, tableName.toUpperCase(), columnName.toUpperCase());
-        while (columnNames.next()){
-            String col = columnNames.getString("COLUMN_NAME");
-            if (col.equalsIgnoreCase(columnName)){
-                columnNames.close();
-                return true;
-            }
-        }
-        columnNames.close();
-        return false;
-    }
+
 }
