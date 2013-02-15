@@ -84,7 +84,7 @@ public class Bean2DB {
         conn.setAutoCommit(bl);
     }
 
-    public void export2DB(Connection conn, MBeanData mbd, Map<Attribute, Object> result) throws  SQLException,DBException{
+    public void export2DB(Connection conn, BeanData mbd, Map<Attribute, Object> result) throws  SQLException,DBException{
 
         String tablename = convertIllegalTableName(mbd.getName());
         //deal with dynamic bean
