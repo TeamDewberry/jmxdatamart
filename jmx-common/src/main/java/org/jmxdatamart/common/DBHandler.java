@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class DBHandler {
 
-    private final org.slf4j.Logger logger = LoggerFactory.getLogger(DBHandler.class);
+    private final static org.slf4j.Logger logger = LoggerFactory.getLogger(DBHandler.class);
     public abstract boolean databaseExists(String databaseName,java.util.Properties p) throws SQLException;
     public abstract Connection connectDatabase(String databaseName,java.util.Properties p) throws SQLException;
     public abstract Map<String, Map> getDatabaseSchema(Connection conn) throws SQLException,DBException;
@@ -121,7 +121,7 @@ public abstract class DBHandler {
     }
 
 
-    protected void printSQLException(SQLException e)
+    protected static void printSQLException(SQLException e)
     {
         while (e != null)
         {
