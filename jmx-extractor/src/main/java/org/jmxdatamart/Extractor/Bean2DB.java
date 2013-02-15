@@ -56,7 +56,7 @@ public class Bean2DB {
             System.out.println(rs.getObject(1) + "\t" + rs.getObject(2));
         }
         hsql.shutdownDatabase(conn);
-        hsql.disconnectDatabase(rs, null, null, conn);
+        DBHandler.disconnectDatabase(rs, null, null, conn);
     }
 
     //get rid of the . : =, which are illegal for a table name
@@ -67,11 +67,31 @@ public class Bean2DB {
         return tablename.replaceAll("___","=").replaceAll("__",":").replaceAll("_","\\.");
     }
 
-    public void export2DB(Connection conn, BeanData mbd, Map<Attribute, Object> result) throws  SQLException{
+    private void dealWithDynamicBean(Connection conn, String tableName , Map<Attribute, Object> result) throws  SQLException,DBException{
+        if (!DBHandler.tableExists(tableName,conn)){
+            throw new DBException("Something wrong in the Dynamic Bean: bean table doesn't exists!");
+        }
+        String sql;
+        boolean bl = conn.getAutoCommit();
+        conn.setAutoCommit(false);
+        for (Map.Entry<Attribute, Object> m : result.entrySet()) {
+            if (!DBHandler.columnExists(m.getKey().getName(),tableName,conn)){
+                sql = "Alter table " + tableName +" add " +m.getKey().getName()+ " "+m.getKey().getDataType();
+                conn.createStatement().executeUpdate(sql);
+            }
+        }
+        conn.commit();
+        conn.setAutoCommit(bl);
+    }
+
+    public void export2DB(Connection conn, MBeanData mbd, Map<Attribute, Object> result) throws  SQLException,DBException{
+
+        String tablename = convertIllegalTableName(mbd.getName());
+        //deal with dynamic bean
+        dealWithDynamicBean(conn,tablename,result);
 
         PreparedStatement ps = null;
 
-        String tablename = convertIllegalTableName(mbd.getName());
         StringBuilder insertstring = new StringBuilder() ;
         insertstring.append("insert into ").append(tablename).append(" (");
         StringBuilder insertvalue = new StringBuilder();
@@ -154,8 +174,6 @@ public class Bean2DB {
                     sb.append(ab.getName() + " " + ab.getDataType() + ",");
                 }
                 sb.append("time TIMESTAMP)");
-                //sb.append(",primary key(time))");
-                System.out.println(sb.toString());
                 st.executeUpdate(sb.toString());
                 System.out.println("Table " + recoverOriginalTableName(tablename) + " is created.");
             }
@@ -168,7 +186,7 @@ public class Bean2DB {
         }
         finally {
             hypersql.shutdownDatabase(conn); //we should shut down a Hsql DB
-            hypersql.disconnectDatabase(null, st, null, conn);
+            DBHandler.disconnectDatabase(null, st, null, conn);
         }
 
         return dbName;
