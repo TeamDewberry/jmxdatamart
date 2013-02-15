@@ -121,7 +121,7 @@ public abstract class DBHandler {
     }
 
 
-    protected static void printSQLException(SQLException e)
+    protected void printSQLException(SQLException e)
     {
         while (e != null)
         {
