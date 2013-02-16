@@ -29,6 +29,9 @@
 package org.jmxdatamart.common;
 
 import java.sql.*;
+import java.util.Map;
+import java.util.Properties;
+
 import org.slf4j.LoggerFactory;
 /**
  * Created with IntelliJ IDEA.
@@ -37,13 +40,43 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class DBHandler {
 
-    private final org.slf4j.Logger logger = LoggerFactory.getLogger(DBHandler.class);
-    public abstract boolean databaseExists(String DBName,java.util.Properties p);
-    public abstract boolean tableExists(String TblName, Connection conn) throws SQLException;
+    private final static org.slf4j.Logger logger = LoggerFactory.getLogger(DBHandler.class);
+    public abstract boolean databaseExists(String databaseName,java.util.Properties p) throws SQLException;
+    public abstract Connection connectDatabase(String databaseName,java.util.Properties p) throws SQLException;
+    public abstract Map<String, Map> getDatabaseSchema(Connection conn) throws SQLException,DBException;
+    public abstract String getTimeType();
+    public boolean connectServer(Properties p) throws SQLException{
+        return true;
+    }
+    public static boolean tableExists(String tableName, Connection conn)  throws SQLException{
+        String[] names = { "TABLE"};
+        ResultSet tableNames = conn.getMetaData().getTables(null, null, null, names);
 
-    public abstract Connection connectDatabase(String DBName,java.util.Properties p) throws SQLException;
-    //public abstract void dropDB(String DBName);
-    public void disconnectDatabase(ResultSet rs, Statement st, PreparedStatement ps, Connection conn){
+        while( tableNames.next())
+        {
+            String tab = tableNames.getString( "TABLE_NAME");
+            if (tab.equalsIgnoreCase(tableName)){
+                tableNames.close();
+                return true;
+            }
+        }
+        tableNames.close();
+        return false;
+    }
+    public static boolean columnExists(String columnName, String tableName, Connection conn) throws SQLException{
+
+        ResultSet columnNames = conn.getMetaData().getColumns(null, null, tableName.toUpperCase(), columnName.toUpperCase());
+        while (columnNames.next()){
+            String col = columnNames.getString("COLUMN_NAME");
+            if (col.equalsIgnoreCase(columnName)){
+                columnNames.close();
+                return true;
+            }
+        }
+        columnNames.close();
+        return false;
+    }
+    public static void disconnectDatabase(ResultSet rs, Statement st, PreparedStatement ps, Connection conn){
 
         // PrepareStatement
         try {
@@ -88,16 +121,10 @@ public abstract class DBHandler {
     }
 
 
-    protected void printSQLException(SQLException e)
+    protected static void printSQLException(SQLException e)
     {
         while (e != null)
         {
-            /*
-            System.err.println("\n----- SQLException -----");
-            System.err.println("  SQL State:  " + e.getSQLState());
-            System.err.println("  Error Code: " + e.getErrorCode());
-            System.err.println("  Message:    " + e.getMessage());
-            */
             logger.error("SQLException-- State:" + e.getSQLState()+
                         "\tMessage:" + e.getMessage() ,e);
             e = e.getNextException();

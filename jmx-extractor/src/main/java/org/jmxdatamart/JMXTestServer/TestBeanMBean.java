@@ -43,4 +43,8 @@ public interface TestBeanMBean {
     Object getA();
     
     void setA(Object obj);
+    
+    Object getB();
+    
+    void setB(Object obj);
 }
