@@ -2,8 +2,7 @@
 
 This test verifies an end-to-end extract and load of a very simple JMX statistic into the Data Mart.
 
-| Import |
-| org.jmxdatamart.fixtures |
+| org.jmxdatamart.fixtures.ExtractAndLoadTest |
 
 First we set up a simple JMX MBean with one attribute.
 
@@ -30,7 +29,6 @@ Then we configure the extractor (note that this extractor extracts from the loca
 
 Then we give the collector some time to do its thing
 
-!| CollectorTestHelper |
 | collect statistics for | 2 | seconds |
 
 Then we load the statistics file into the data mart

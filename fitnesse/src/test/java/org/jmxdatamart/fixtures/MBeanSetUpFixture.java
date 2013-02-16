@@ -38,9 +38,16 @@ public abstract class MBeanSetUpFixture extends SetUpFixture {
 
   protected MBeanServerConnection getMBeanServer() {
     if (mBeanServer == null) {
-      String jmxUrl = args.length > 0 ? args[0] : null;
+      String jmxUrl = getJmxUrlFromArgs();
       mBeanServer = MBeanServerFactory.getMBeanServer(jmxUrl);
     }
     return mBeanServer;
+  }
+
+  private String getJmxUrlFromArgs() {
+    if (args == null) {
+      return null;
+    }
+    return args.length > 0 ? args[0] : null;
   }
 }
