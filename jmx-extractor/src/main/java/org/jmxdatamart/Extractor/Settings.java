@@ -30,6 +30,8 @@ package org.jmxdatamart.Extractor;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
+import org.jmxdatamart.common.DataType;
+
 import java.io.*;
 import java.util.*;
 
@@ -223,7 +225,7 @@ public class Settings {
         s.setBeans(new ArrayList<BeanData>());
         
         MBeanData bd = new MBeanData("com.example:type=Hello","", new ArrayList<Attribute>(), true);
-        bd.getAttributes().add(new Attribute("Name","", DataType.STRING));
+        bd.getAttributes().add(new Attribute("Name", "", DataType.STRING));
         bd.getAttributes().add(new Attribute("CacheSize", "", DataType.INT));
         s.getBeans().add(bd);
         s.sanitize();
