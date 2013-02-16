@@ -30,13 +30,17 @@ package org.jmxdatamart.fixtures;
 
 import fitlibrary.DoFixture;
 
-public class ConfigureCollector extends DoFixture {
+public class ConfigureExtractor extends DoFixture {
 
-  public void collectStatisticsEveryMilliseconds(int collectionRate) {
+  public void extractStatisticsEveryMilliseconds(int collectionRate) {
 
   }
 
-  public void writeStatisticsToFile(String fileName) {
+  public void extractStatisticsFromUrl(String url) {
+
+  }
+
+  public void writeStatisticsToDirectory(String directoryName) {
 
   }
 

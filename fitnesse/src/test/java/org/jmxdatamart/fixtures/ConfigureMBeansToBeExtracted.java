@@ -30,7 +30,7 @@ package org.jmxdatamart.fixtures;
 
 import fitlibrary.SetUpFixture;
 
-public class ConfigureMBeansToBeCollected extends SetUpFixture {
+public class ConfigureMBeansToBeExtracted extends SetUpFixture {
 
   public void beanNameBeanAliasAttributeAttributeAlias(String beanName, String beanAlias, String attribute, String attributeAlias) {
 
