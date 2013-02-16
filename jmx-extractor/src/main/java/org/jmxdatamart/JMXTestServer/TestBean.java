@@ -37,6 +37,7 @@ import java.util.Random;
 public class TestBean implements TestBeanMBean{
 
     Integer a;
+    Integer b;
     Random prng;
 
     public TestBean() {
@@ -63,6 +64,18 @@ public class TestBean implements TestBeanMBean{
     @Override
     public String toString() {
         return "A = " + a.toString();
+    }
+
+    @Override
+    public Object getB() {
+        return b;
+    }
+
+    @Override
+    public void setB(Object obj) {
+        if (obj instanceof Integer) {
+            b = (Integer) obj;
+        }
     }
 
 }

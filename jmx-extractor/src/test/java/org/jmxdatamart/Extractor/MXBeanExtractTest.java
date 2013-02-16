@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+import org.jmxdatamart.common.*;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import org.hamcrest.Matchers.*;

@@ -29,6 +29,9 @@
 package org.jmxdatamart.common;
 
 import java.sql.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * Created with IntelliJ IDEA.
@@ -37,58 +40,130 @@ import java.sql.*;
  */
 public class MssqlHandler extends DBHandler {
     private final String driver = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
-    private final String protocol = "jdbc:sqlserver://localhost:1433";
-    private DatabaseMetaData metadata =null;
+    private String jdbcurl ;
+    private final String timeType = "datetime";
 
-    public Connection connectDatabase(String DBName,java.util.Properties p) throws SQLException {
-        //to be finished
-        return null;
-/*        if (!dbExists(DBName,p))
-            return DriverManager.getConnection(protocol + DBName + ";create=true", p);
-        else
-            return DriverManager.getConnection(protocol + DBName , p);
-
-        readConfig();
-
-        Class.forName(JDBC_DRIVER);
-        conn = DriverManager.getConnection(DB_URL, USER, PASS);
-        stmt = conn.createStatement();
-        String sql = "Select count(*) from master.sys.databases where name='" +DB_NAME +"' ";
-        rs = stmt.executeQuery(sql);
-        rs.next();
-        if (rs.getInt(1)==0){
-            sql = "CREATE DATABASE " + DB_NAME;
-            stmt.executeUpdate(sql);
-        }
-        stmt.close();
-        conn.close();
-        conn = DriverManager.getConnection(DB_URL+";database="+DB_NAME, USER, PASS);
-        stmt = conn.createStatement(); */
+    public String getTimeType() {
+        return timeType;
     }
 
-    public boolean tableExists(String TblName, Connection conn)  throws SQLException{
-        metadata = conn.getMetaData();
-        String[] names = { "TABLE"};
-        ResultSet tableNames = metadata.getTables( null, null, null, names);
-
-        while( tableNames.next())
-        {
-            String tab = tableNames.getString( "TABLE_NAME");
-            if (tab.equalsIgnoreCase(TblName)) return true;
+    public boolean connectServer( Properties p) throws SQLException{
+        try {
+            Class.forName(this.driver);
+            DriverManager.getConnection(this.jdbcurl, p);
         }
-        return false;
-    }
-
-    public boolean databaseExists(String DBName,java.util.Properties p){
-        //to be finished
+        catch (ClassNotFoundException ce){
+            return false;
+        }
         return true;
     }
 
-    public String getProtocol() {
-        return protocol;
+    public Map<String, Map> getDatabaseSchema(Connection conn) throws SQLException{
+
+
+        Map<String, Map> databaseSchema =  new HashMap<String,Map>();
+
+        String[] names = { "TABLE"};
+        ResultSet tables = conn.getMetaData().getTables(null, null, null, names), columns =null;
+
+        while( tables.next())
+        {
+            String tab = tables.getString( "TABLE_NAME");
+            String schem = tables.getString("table_schem");
+            if (!schem.equalsIgnoreCase("dbo")) continue;
+            //System.out.println(tab);
+            columns = conn.getMetaData().getColumns(null, null, tab.toUpperCase(), null);
+            Map<String, FieldAttribute> fields = new HashMap<String, FieldAttribute>();
+            while (columns.next()){
+                String col = columns.getString("COLUMN_NAME");
+                String typename = columns.getString("TYPE_NAME");
+                int type = columns.getInt("DATA_TYPE");
+                int size = columns.getInt("COLUMN_SIZE") ;
+                DataType myType ;
+                switch (type){
+                    case Types.VARCHAR:
+                        myType = DataType.STRING;
+                        break;
+                    case Types.INTEGER:
+                        myType = DataType.INT;
+                        break;
+                    case Types.FLOAT:
+                    case Types.DOUBLE:
+                        myType = DataType.FLOAT;
+                        break;
+                    default:
+                        myType = DataType.STRING;
+                        break;
+                }
+                FieldAttribute fieldinfo = new FieldAttribute(myType,typename,size);
+                fields.put(col,fieldinfo);
+            }
+            databaseSchema.put(tab,fields);
+        }
+
+        if (columns!=null) columns.close();
+        if (tables!=null) tables.close();
+
+        return databaseSchema;
+
+    }
+    public Connection connectDatabase(String databasename, Properties p) throws SQLException {
+        Connection conn =null;
+        PreparedStatement ps = null;
+        ResultSet rs =  null;
+        try {
+            Class.forName(this.driver);
+
+            conn = DriverManager.getConnection(this.jdbcurl, p);
+            String sql = "Select count(*) from master.sys.databases where name=? ";
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, databasename);
+            rs = ps.executeQuery();
+            if (rs.next() && rs.getInt(1)==0){
+                sql = "CREATE DATABASE " + databasename;
+
+                conn.createStatement().executeUpdate(sql);
+            }
+            return DriverManager.getConnection(this.jdbcurl+";database="+databasename, p);
+        }
+        catch (ClassNotFoundException ce){
+            return null;
+        }
+        finally {
+            if (rs!=null) rs.close();
+            if (ps!=null) ps.close();
+        }
     }
 
-    public String getDriver() {
-        return driver;
+
+
+    public boolean databaseExists(String databaseName,Properties p) throws SQLException{
+        Connection conn =null;
+        PreparedStatement ps = null;
+        ResultSet rs =  null;
+        try {
+            Class.forName(this.driver);
+            conn = DriverManager.getConnection(this.jdbcurl, p);
+            String sql = "Select count(*) from master.sys.databases where name=? ";
+            ps =conn.prepareStatement(sql);
+            ps.setString(1,databaseName);
+            rs = ps.executeQuery();
+            return (rs.next() && rs.getInt(1)==1);
+        }
+        catch (ClassNotFoundException ce){
+            return false;
+        }
+        catch (SQLException e){
+            return false;
+        }
+        finally {
+            if (ps != null) {ps.close();}
+            if (rs != null) {rs.close();}
+            if (conn != null) {conn.close();}
+        }
+    }
+
+    public void setJdbcurl(String jdbcurl) {
+        this.jdbcurl = jdbcurl;
     }
 }
