@@ -28,17 +28,47 @@
 
 package org.jmxdatamart.testwebapp;
 
+import java.util.Random;
+
 public class TestWebAppMBean implements TestWebAppMXBean {
 
   private final long creationTime = System.currentTimeMillis();
+  private final Random random = new Random();
   private int numberOfCalls;
 
+  @Override
   public long getAge() {
     return System.currentTimeMillis() - creationTime;
   }
 
-  public int getNumberOfCalls() {
+  @Override
+  public int getNumberOfInvocations() {
     return numberOfCalls++;
+  }
+
+  @Override
+  public float getRandomFloat() {
+    return random.nextFloat();
+  }
+
+  @Override
+  public String getAsciiString() {
+    return "Where is the library?";
+  }
+
+  @Override
+  public String getLatin1String() {
+    return "\\u00BFD\\u00F3nde est\\u00E1 la biblioteca?";
+  }
+
+  @Override
+  public String getUnicodeString() {
+    return "Th\\u01B0 vi\\u1EC7n \\u1EDF \\u0111\\u00E2u?";
+  }
+
+  @Override
+  public String getAnotherUnicodeString() {
+    return "\u56F3\u66F8\u9928\u306F\u3069\u3053\u3067\u3059\u304B\uFF1F";
   }
 
 }
