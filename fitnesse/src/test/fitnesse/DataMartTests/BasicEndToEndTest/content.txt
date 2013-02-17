@@ -2,6 +2,8 @@
 
 This test verifies an end-to-end extract and load of a very simple JMX statistic into the Data Mart.
 
+| org.jmxdatamart.fixtures.ExtractAndLoadTest |
+
 First we set up a simple JMX MBean with one attribute.
 
 | create MBeans |
@@ -12,30 +14,50 @@ First we set up a simple JMX MBean with one attribute.
 | bean name | attribute | value |
 | org.jmxdatamart.fitnesse:type=SimpleMBean,forTest=BasicEndToEndTest | IntAttribute | 42 |
 
-Then we configure the collector
-   * What beans should it collect?
-   * How often should it collect them?
+Then we configure the extractor (note that this extractor extracts from the local VM, not an RMI URL)
+   * What beans should it extractor?
+   * How often should it extract them?
    * Where should it write the statistics file?
 
-!| configure collector |
-| collect statistics every | 500 | milliseconds |
-| write statistics to file | BasicEndToEndTest/statistics.dat |
+!| configure extractor |
+| extract statistics every | 500 | milliseconds |
+| write statistics to directory | BasicEndToEndTest/statistics |
 
-!| configure MBeans to be collected |
+!| configure MBeans to be extracted |
 | bean name | bean alias | attribute | attribute alias |
-| org.jmxdatamart.fitnesse:type=SimpleMBean,forTest=BasicEndToEndTest | BasicEndToEndTest | intAttribute | intAttribute |
+| org.jmxdatamart.fitnesse:type=SimpleMBean,forTest=BasicEndToEndTest | BasicEndToEndTest | intAttribute | simpleInteger |
 
 Then we give the collector some time to do its thing
 
-!| CollectorTestHelper |
 | collect statistics for | 2 | seconds |
 
 Then we load the statistics file into the data mart
 
 !| load statistics |
 | from file | BasicEndToEndTest/statistics.dat |
+| into database with url | ${derby.url};user=${derby.username};password=${derby.username} |
 
 Finally, we verify that the statistics were loaded as expected
+
+Connect to the JMX Data Mart database
+
+!|Connect|${derby.url};user=${derby.username};password=${derby.username}|
+
+Make sure that the expected schema was created.  This query will have to be updated when the extractor fixture is fully implemented.
+
+!|Query|SELECT COLUMNNAME, COLUMNDATATYPE FROM SYS.SYSCOLUMNS WHERE REFERENCEID = (SELECT TABLEID FROM SYS.SYSTABLES WHERE TABLENAME = 'EXAMPLE_TABLE')|
+|COLUMNNAME|COLUMNDATATYPE|
+|ID|INTEGER NOT NULL|
+|WHO|VARCHAR(20) NOT NULL|
+|WHEN_DONE|TIMESTAMP NOT NULL|
+|PLACE|VARCHAR(20)|
+|IMPLEMENT|VARCHAR(20)|
+
+Until the load fixture is hooked up to the real code, let's just query the other data
+
+!|Query| select * from example_table|
+|id|who|place|implement|
+|1|Prof Plum|Library|Candlestick|
 
 I think we should use !DbFit (http://fitnesse.info/dbfit) for this which provides !FitNesse fixtures for configuring the connection to and querying databases
 
