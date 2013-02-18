@@ -34,10 +34,6 @@ import java.util.Map;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import org.jmxdatamart.common.*;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -47,25 +43,6 @@ import static org.junit.Assert.*;
  */
 public class MBeanExtractTest {
     
-    public MBeanExtractTest() {
-    }
-    
-    @BeforeClass
-    public static void setUpClass() {
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
-    }
-    
-    @Before
-    public void setUp() {
-    }
-    
-    @After
-    public void tearDown() {
-    }
-
     /**
      * Test of extract method, of class MBeanExtract.
      */
