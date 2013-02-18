@@ -74,7 +74,10 @@ public class MBeanExtract implements Extractable{
                     }
                     CompositeData cd = (CompositeData)mbsc.getAttribute(on, mxAttribute[0]);
                     Object value = cd.get(mxAttribute[1]);
-                    retVal.put(a, value);
+                    if (value.getClass() == a.getClass())
+                    	retVal.put(a, value);
+                    else
+                    	logger.error("Error while extracting " + a.getAlias() + " from " + on + ": Mismatched data type\n");
                 }
             } catch (Exception ex) {
                 logger.error("Error while extracting " 
