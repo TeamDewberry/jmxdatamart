@@ -2,6 +2,9 @@
 
 This test exercises the behavior of the UnregisterMBeans fixture that is used as part of test TearDown
 
+| Import |
+| org.jmxdatamart.fixtures |
+
 First, create some MBeans to test
 
 | create MBeans |

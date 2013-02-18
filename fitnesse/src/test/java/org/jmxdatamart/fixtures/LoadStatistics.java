@@ -36,4 +36,8 @@ public class LoadStatistics extends DoFixture {
 
   }
 
+  public void intoDatabaseWithUrl(String url) {
+
+  }
+
 }

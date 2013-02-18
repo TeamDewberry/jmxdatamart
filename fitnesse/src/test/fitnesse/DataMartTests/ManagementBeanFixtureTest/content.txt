@@ -2,6 +2,9 @@
 
 There are a couple of FitNesse fixtures that manipulate MBeans.  These tests test those fixtures.
 
+| Import |
+| org.jmxdatamart.fixtures |
+
 The CreateMBeans fixture creates a new MBean by invoking its zero-argument constructor and registers the MBean with the given name
 
 !| create MBeans |

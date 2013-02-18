@@ -19,6 +19,11 @@
         <fitnesse.port>8787</fitnesse.port>
         <fitnesse.working>${project.build.directory}/fitnesse</fitnesse.working>
         <fitnesse.root>FitNesseRoot</fitnesse.root>
+        <derby.driver>org.apache.derby.jdbc.ClientDriver</derby.driver>
+        <derby.url>jdbc:derby://localhost:1527/${project.build.directory}/derbyDB;create=true</derby.url>
+        <derby.username>derbyuser</derby.username>
+        <derby.password>derbyuser</derby.password>
+        <derby.version>10.4.1.3</derby.version>
     </properties>
 
     <pluginRepositories>
@@ -140,6 +145,84 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <id>start-derby-network-server</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <java fork="true" spawn="true" classpathref="maven.runtime.classpath"
+                                      classname="org.apache.derby.drda.NetworkServerControl"
+                                      dir="${project.build.directory}">
+                                    <arg value="start"/>
+                                    <arg value="-noSecurityManager"/>
+                                </java>
+                                <waitfor maxwait="30" maxwaitunit="second" checkevery="500">
+                                    <socket server="localhost" port="1527"/>
+                                </waitfor>
+                            </target>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>stop-derby-network-server</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <java fork="true" spawn="true" classpathref="maven.runtime.classpath"
+                                      classname="org.apache.derby.drda.NetworkServerControl"
+                                      dir="${project.build.directory}">
+                                    <arg value="shutdown"/>
+                                </java>
+                                <waitfor maxwait="30" maxwaitunit="second" checkevery="500">
+                                    <not>
+                                        <socket server="localhost" port="1527"/>
+                                    </not>
+                                </waitfor>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>sql-maven-plugin</artifactId>
+                <version>1.5</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.derby</groupId>
+                        <artifactId>derbyclient</artifactId>
+                        <version>${derby.version}</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>derby</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <driver>${derby.driver}</driver>
+                            <url>${derby.url}</url>
+                            <username>${derby.username}</username>
+                            <password>${derby.password}</password>
+                            <srcFiles>
+                                <srcFile>src/main/sql/001_init.sql</srcFile>
+                            </srcFiles>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -234,6 +317,33 @@
             <artifactId>catalina</artifactId>
             <version>6.0.36</version>
             <!--<scope>test</scope>-->
+        </dependency>
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derby</artifactId>
+            <version>${derby.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derbynet</artifactId>
+            <version>${derby.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derbyclient</artifactId>
+            <version>${derby.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.dbfit</groupId>
+            <artifactId>dbfit</artifactId>
+            <version>1.1.2.2</version>
         </dependency>
     </dependencies>
 

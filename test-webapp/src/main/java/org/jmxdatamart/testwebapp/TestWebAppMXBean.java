@@ -30,4 +30,16 @@ package org.jmxdatamart.testwebapp;
 
 public interface TestWebAppMXBean {
   long getAge();
+
+  int getNumberOfInvocations();
+
+  float getRandomFloat();
+
+  String getAsciiString();
+
+  String getLatin1String();
+
+  String getUnicodeString();
+
+  String getAnotherUnicodeString();
 }
