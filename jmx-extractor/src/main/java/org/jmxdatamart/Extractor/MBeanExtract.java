@@ -59,7 +59,7 @@ public class MBeanExtract implements Extractable{
     
     
     @Override
-    public Map<Attribute, Object> extract() throws Exception {
+    public Map<Attribute, Object> extract() {
         Map<Attribute, Object> retVal = new HashMap<Attribute, Object>();
         
         for (Attribute a : this.mbd.getAttributes()) {
@@ -83,7 +83,6 @@ public class MBeanExtract implements Extractable{
                 logger.error("Error while extracting " 
                                 + a.getName() + " from " 
                                 + mbd.getName(), ex);
-                throw ex;
             }
         }
         
