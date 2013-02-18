@@ -112,6 +112,36 @@ public class Extractor {
         System.out.println("Extracted");
     }
 
+    void extract(String beanAlias) throws Exception {
+        Properties props = new Properties();
+        boolean beanFound = false;
+        props.put("username", "sa");
+        props.put("password", "whatever");
+        
+        connLock.lock();
+        try{
+            conn= hsql.connectDatabase(dbname,props);
+
+            for (BeanData bdata : this.configData.getBeans()) {
+            	if(bdata.getAlias().equals(beanAlias)) {
+            		beanFound = true;
+	                MBeanExtract mbe = new MBeanExtract(bdata, mbsc);
+	                Map<Attribute, Object> result = mbe.extract();
+	                bd.export2DB(conn, bdata, result);
+	                System.out.println("Extracted");
+            	}
+            }
+            if(!beanFound)
+            	logger.info("Extraction failed: " + beanAlias + " MBean not found");
+
+            hsql.shutdownDatabase(conn);
+            hsql.disconnectDatabase(null,null,null,conn);
+            conn = null;
+        } finally {
+            connLock.unlock();
+        }
+    }
+
     private class Extract extends TimerTask {
 
         public Extract(){
