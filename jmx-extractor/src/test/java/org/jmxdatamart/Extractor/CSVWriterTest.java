@@ -4,11 +4,11 @@
  */
 package org.jmxdatamart.Extractor;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 import org.jmxdatamart.common.DataType;
-import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Test;
 
 /**
  *
