@@ -17,7 +17,6 @@ import org.junit.Test;
  */
 public class CSVWriterTest {
     
-     @Test
      public void testEnclose() {
          String s = "Hello, World";
          assertEquals(  CVSCommon.GENERAL_ENCLOSE + "Hello, World" + CVSCommon.GENERAL_ENCLOSE,
