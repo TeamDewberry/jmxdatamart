@@ -26,6 +26,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package org.jmxdatamart.Extractor.Setting;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
 import org.jmxdatamart.common.DataType;
 /**
  * This class contains information related to any given attribute such as name,
@@ -83,6 +87,27 @@ public class Attribute {
      */
     public void setAlias(String alias) {
         this.alias = alias;
+    }
+    
+    /**
+     * Check if alias of an attribute is correctly formated
+     * @return true if alias contains only alphanumeric, false otherwise
+     */
+    public boolean check() {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+    
+    /**
+     * Check if attribute name is a pattern, throw RunTimeException if name is
+     * malformed
+     * @return true if attribute is a pattern, false if it's a single attribute
+     */
+    public boolean isPattern() {
+        try {
+            return (new ObjectName(this.name)).isPattern();
+        } catch (MalformedObjectNameException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     public Attribute(String name, String alias, DataType dataType) {
