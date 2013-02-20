@@ -46,7 +46,7 @@ public class TestSettings extends TestCase {
     Attribute attr = new Attribute("age", "age", DataType.INT);
     bean.setAttributes(Collections.singletonList(attr));
 
-    settings.setBeans(Collections.singletonList((BeanData)bean));
+    settings.setBeans(Collections.singletonList(bean));
 
     String s = settings.toXML();
     

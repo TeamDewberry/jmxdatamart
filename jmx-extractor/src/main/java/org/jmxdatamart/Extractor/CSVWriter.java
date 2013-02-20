@@ -56,7 +56,7 @@ public class CSVWriter {
      * @param bd related BeanData
      * @param folderLocation output folder location
      */
-    public CSVWriter(BeanData bd, String folderLocation) {
+    public CSVWriter(MBeanData bd, String folderLocation) {
         seen = new HashMap<String, DataType>();
         
         try {

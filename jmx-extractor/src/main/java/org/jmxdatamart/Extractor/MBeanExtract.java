@@ -41,12 +41,12 @@ import org.slf4j.LoggerFactory;
  */
 public class MBeanExtract implements Extractable{
 
-    BeanData mbd;
+    MBeanData mbd;
     MBeanServerConnection mbsc;
     private final org.slf4j.Logger logger = LoggerFactory.getLogger(MBeanExtract.class);
     ObjectName on;
 
-    public MBeanExtract(BeanData mbd, MBeanServerConnection mbsc) throws MalformedObjectNameException {
+    public MBeanExtract(MBeanData mbd, MBeanServerConnection mbsc) throws MalformedObjectNameException {
         this.mbd = mbd;
         this.mbsc = mbsc;
         try {

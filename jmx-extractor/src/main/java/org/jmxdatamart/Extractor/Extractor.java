@@ -97,7 +97,7 @@ public class Extractor {
         try{
             conn= hsql.connectDatabase(dbname,props);
 
-            for (BeanData bdata : this.configData.getBeans()) {
+            for (MBeanData bdata : this.configData.getBeans()) {
                 MBeanExtract mbe = new MBeanExtract(bdata, mbsc);
                 Map<Attribute, Object> result = mbe.extract();
                 bd.export2DB(conn, bdata, result);
