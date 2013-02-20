@@ -130,7 +130,7 @@ public enum DataType {
      * @param obj the object that need checking
      * @return the supported type, or UNKNOWN if not supported
      */
-    public Bool isSupported(Object obj) {
+    public boolean isSupported(Object obj) {
         for (DataType d : values()) {
             if (d.javaType != null &&
                     d.javaType.isAssignableFrom(obj.getClass())) {
