@@ -27,6 +27,8 @@
  */
 package org.jmxdatamart.Extractor;
 
+import org.jmxdatamart.Extractor.Setting.Attribute;
+import org.jmxdatamart.Extractor.Setting.MBeanData;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.List;

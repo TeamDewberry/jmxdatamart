@@ -1,5 +1,8 @@
 package org.jmxdatamart.Extractor;
 
+import org.jmxdatamart.Extractor.Setting.Settings;
+import org.jmxdatamart.Extractor.Setting.Attribute;
+import org.jmxdatamart.Extractor.Setting.MBeanData;
 import org.jmxdatamart.JMXTestServer.TestBean;
 import org.jmxdatamart.common.*;
 import javax.management.MBeanServer;

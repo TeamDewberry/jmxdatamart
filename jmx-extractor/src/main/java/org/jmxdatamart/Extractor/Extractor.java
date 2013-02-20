@@ -27,6 +27,9 @@
  */
 package org.jmxdatamart.Extractor;
 
+import org.jmxdatamart.Extractor.Setting.Settings;
+import org.jmxdatamart.Extractor.Setting.Attribute;
+import org.jmxdatamart.Extractor.Setting.MBeanData;
 import com.google.inject.Inject;
 import org.slf4j.LoggerFactory;
 

@@ -27,6 +27,8 @@
  */
 package org.jmxdatamart.Extractor;
 
+import org.jmxdatamart.Extractor.Setting.Attribute;
+import org.jmxdatamart.Extractor.Setting.MBeanData;
 import org.jmxdatamart.JMXTestServer.TestBean;
 import java.lang.management.ManagementFactory;
 import java.util.Collections;

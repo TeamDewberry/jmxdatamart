@@ -28,6 +28,9 @@
 
 package org.jmxdatamart.Extractor;
 
+import org.jmxdatamart.Extractor.Setting.Settings;
+import org.jmxdatamart.Extractor.Setting.MBeanData;
+import org.jmxdatamart.Extractor.Setting.Attribute;
 import java.util.Collections;
 import junit.framework.TestCase;
 import org.jmxdatamart.common.DataType;
