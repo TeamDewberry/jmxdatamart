@@ -32,5 +32,73 @@ package org.jmxdatamart.common;
  * @author Binh Tran <mynameisbinh@gmail.com>
  */
 public enum DataType {
-    INT, FLOAT, STRING  //MS SQLserve doesn't support Boolean type
+    BYTE(
+            java.lang.Byte.class,
+            "MS SQL type",
+            "Derby type"
+        ),    // 8 bit integer
+    
+    SHORT(
+            java.lang.Short.class,
+            "MS SQL type",
+            "Derby type"
+         ),  // 16 bit integer
+    
+    INT(
+            java.lang.Integer.class,
+            "MS SQL type",
+            "Derby type"
+       ),  // 32 bit integer
+    
+    LONG(
+            java.lang.Long.class,
+            "MS SQL type",
+            "Derby type"
+        ),    // 64 bit integer
+    
+    FLOAT(
+            java.lang.Float.class,
+            "MS SQL type",
+            "Derby type"
+         ),  // 32 bit single precision
+    
+    DOUBLE(
+            java.lang.Double.class,
+            "MS SQL type",
+            "Derby type"
+          ),// 64 bit double precision
+    //BOOLEAN,   ms sql doesn't support boolean
+    CHAR(
+            java.lang.Character.class,
+            "MS SQL type",
+            "Derby type"
+        ),// 16 bit UFT-8 character
+    
+    STRING(
+            java.lang.String.class,
+            "MS SQL type",
+            "Derby type"
+          ); // unlimited-length character sequence type
+    
+    Class javaType;
+    String mssqlType;
+    String derbyType;
+
+    private DataType(Class javaType, String mssqlType, String derbyType) {
+        this.javaType = javaType;
+        this.mssqlType = mssqlType;
+        this.derbyType = derbyType;
+    }
+    
+    public String getMsSqlType() {
+        return mssqlType;
+    }
+    
+    public String getDerbyType() {
+        return derbyType;
+    }
+    
+    public Class getJavaType() {
+        return javaType;
+    }
 }

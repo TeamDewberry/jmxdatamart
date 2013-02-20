@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.jmxdatamart.common.CVSCommon;
 import org.jmxdatamart.common.DataType;
 import org.slf4j.LoggerFactory;
 
@@ -44,12 +45,11 @@ import org.slf4j.LoggerFactory;
  */
 public class CSVWriter {
     
+    //TODO: handle string
+    
     private final Map<String, DataType> seen;
     private final String filePath;
     private final org.slf4j.Logger logger = LoggerFactory.getLogger(CSVWriter.class);
-    
-    public static final String DELIMITER = ",";
-    public static final String DOUBLE_QUOTE = "";
     
     
     /**
@@ -97,9 +97,9 @@ public class CSVWriter {
      */
     static StringBuilder enclose(CharSequence cs) {
         return (new StringBuilder()).
-                append(DOUBLE_QUOTE).
+                append(CVSCommon.GENERAL_ENCLOSE).
                 append(cs).
-                append(DOUBLE_QUOTE);
+                append(CVSCommon.GENERAL_ENCLOSE);
     }
     
     /**
@@ -109,7 +109,7 @@ public class CSVWriter {
      */
     static StringBuilder getEpocTime() {
         Long l = new Long(System.currentTimeMillis());
-        return (new StringBuilder(enclose(l.toString())).append(DELIMITER));
+        return (new StringBuilder(enclose(l.toString())).append(CVSCommon.DELIMITER));
     }
     
     /**
@@ -124,10 +124,10 @@ public class CSVWriter {
         StringBuilder sb = new StringBuilder();
         
         sb.append(enclose(alias))
-          .append(DELIMITER);
+          .append(CVSCommon.DELIMITER);
         
         sb.append(enclose(dataType))
-          .append(DELIMITER);
+          .append(CVSCommon.DELIMITER);
         
         sb.append(enclose(value));
         
@@ -156,7 +156,7 @@ public class CSVWriter {
                             dataType,
                             pair.getValue().toString())
                         )
-                .append(DELIMITER);
+                .append(CVSCommon.DELIMITER);
         }
         return line.deleteCharAt(line.length() - 1); // remove the last DELIMINATOR
     }

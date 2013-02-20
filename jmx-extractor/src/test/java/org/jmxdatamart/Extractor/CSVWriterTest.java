@@ -6,6 +6,7 @@ package org.jmxdatamart.Extractor;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.jmxdatamart.common.CVSCommon;
 import org.jmxdatamart.common.DataType;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -19,7 +20,7 @@ public class CSVWriterTest {
      @Test
      public void testEnclose() {
          String s = "Hello, World";
-         assertEquals(  CSVWriter.DOUBLE_QUOTE + "Hello, World" + CSVWriter.DOUBLE_QUOTE,
+         assertEquals(  CVSCommon.GENERAL_ENCLOSE + "Hello, World" + CVSCommon.GENERAL_ENCLOSE,
                         CSVWriter.enclose(s).toString());
      }
      
