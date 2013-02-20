@@ -98,16 +98,11 @@ public class Attribute {
     }
     
     /**
-     * Check if attribute name is a pattern, throw RunTimeException if name is
-     * malformed
+     * Check if attribute name is a pattern
      * @return true if attribute is a pattern, false if it's a single attribute
      */
     public boolean isPattern() {
-        try {
-            return (new ObjectName(this.name)).isPattern();
-        } catch (MalformedObjectNameException ex) {
-            throw new RuntimeException(ex);
-        }
+        return name.contains("*?");
     }
 
     public Attribute(String name, String alias, DataType dataType) {
