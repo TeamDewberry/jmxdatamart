@@ -35,37 +35,43 @@ public enum DataType {
     BYTE(
             java.lang.Byte.class,
             "MS SQL type",
-            "Derby type"
+            "Derby type",
+            "HSQL type"
         ),      // 8 bit integer
     
     SHORT(
             java.lang.Short.class,
             "MS SQL type",
-            "Derby type"
+            "Derby type",
+            "HSQL type"
          ),     // 16 bit integer
     
     INT(
             java.lang.Integer.class,
             "MS SQL type",
-            "Derby type"
+            "Derby type",
+            "HSQL type"
        ),       // 32 bit integer
     
     LONG(
             java.lang.Long.class,
             "MS SQL type",
-            "Derby type"
+            "Derby type",
+            "HSQL type"
         ),      // 64 bit integer
     
     FLOAT(
             java.lang.Float.class,
             "MS SQL type",
-            "Derby type"
+            "Derby type",
+            "HSQL type"
          ),     // 32 bit single precision
     
     DOUBLE(
             java.lang.Double.class,
             "MS SQL type",
-            "Derby type"
+            "Derby type",
+            "HSQL type"
           ),    // 64 bit double precision
     
     //BOOLEAN,   ms sql doesn't support boolean
@@ -73,16 +79,19 @@ public enum DataType {
     CHAR(
             java.lang.Character.class,
             "MS SQL type",
-            "Derby type"
+            "Derby type",
+            "HSQL type"
         ),  // 16 bit UFT-8 character
     
     STRING(
             java.lang.String.class,
             "MS SQL type",
-            "Derby type"
+            "Derby type",
+            "HSQL type"
           ),    // unlimited-length character sequence type
     
     UNKNOWN(
+            null,
             null,
             null,
             null
@@ -92,11 +101,13 @@ public enum DataType {
     private final Class javaType;
     private final String mssqlType;
     private final String derbyType;
+    private final String hsqlType;
 
-    private DataType(Class javaType, String mssqlType, String derbyType) {
+    private DataType(Class javaType, String mssqlType, String derbyType, String hsqlType) {
         this.javaType = javaType;
         this.mssqlType = mssqlType;
         this.derbyType = derbyType;
+        this.hsqlType = hsqlType;
     }
     
     public String getMsSqlType() {
