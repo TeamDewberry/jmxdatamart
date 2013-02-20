@@ -98,14 +98,14 @@ public class Extractor {
             conn= hsql.connectDatabase(dbname,props);
 
             for (MBeanData bdata : this.configData.getBeans()) {
-                MBeanExtract mbe = new MBeanExtract(bdata, mbsc);
-                Map<Attribute, Object> result = mbe.extract();
-                bd.export2DB(conn, bdata, result);
+                if(bdata.isEnable()) {
+                    Map<Attribute, Object> result = MBeanExtract.extract(bdata, mbsc);
+                    bd.export2DB(conn, bdata, result);
+                }
             }
 
             hsql.shutdownDatabase(conn);
-            hsql.disconnectDatabase(null,null,null,conn);
-            conn = null;
+            HypersqlHandler.disconnectDatabase(null,null,null,conn);
         } finally {
             connLock.unlock();
         }

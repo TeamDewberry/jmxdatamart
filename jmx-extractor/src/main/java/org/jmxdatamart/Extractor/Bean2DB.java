@@ -32,8 +32,7 @@ public class Bean2DB {
         MBeanData mbd = new MBeanData(mbName, "testMBean", Collections.singletonList(a), true);
 
         //Init MBeanExtract
-        MBeanExtract instance = new MBeanExtract(mbd, mbs);
-        Map result = instance.extract();
+        Map result = MBeanExtract.extract(mbd, mbs);
 
         Settings s = new Settings();
         s.setBeans(Collections.singletonList(mbd));

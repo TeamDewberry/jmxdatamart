@@ -27,18 +27,16 @@
  */
 package org.jmxdatamart.Extractor;
 
-import org.jmxdatamart.JMXTestServer.CarBean;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+import org.jmxdatamart.JMXTestServer.CarBean;
 import org.jmxdatamart.common.*;
 import static org.junit.Assert.*;
 import org.junit.Test;
-import org.hamcrest.Matchers.*;
-import org.hamcrest.core.*;
 
 /**
  *
@@ -69,9 +67,7 @@ public class MXBeanExtractTest {
         
         MBeanData mbd = new MBeanData(on.getCanonicalName(), "Dream Car", attributes, true);
         
-        MBeanExtract mxbe = new MBeanExtract(mbd, mbs);
-        
-        Map<Attribute, Object> result = mxbe.extract();
+        Map<Attribute, Object> result = MBeanExtract.extract(mbd, mbs);
  
         assertEquals(result.get(a1), CarBean.NAME);
         assertEquals(result.get(a2), CarBean.YEAR);

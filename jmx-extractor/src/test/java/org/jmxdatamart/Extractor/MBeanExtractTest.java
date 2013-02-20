@@ -67,8 +67,7 @@ public class MBeanExtractTest {
                                         Collections.singletonList(a), true);
         
         //Init MBeanExtract
-        MBeanExtract instance = new MBeanExtract(mbd, mbs);
-        Map result = instance.extract();
+        Map result = MBeanExtract.extract(mbd, mbs);
         assertEquals(1, result.size());
         assertTrue(result.keySet().contains(a));
         assertEquals(expected, result.get(a));
