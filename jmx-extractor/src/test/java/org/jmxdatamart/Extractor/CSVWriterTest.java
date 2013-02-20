@@ -16,15 +16,15 @@ import org.junit.Test;
  * @author Binh Tran <mynameisbinh@gmail.com>
  */
 public class CSVWriterTest {
-    
+   
+     @Test
      public void testEnclose() {
          String s = "Hello, World";
          assertEquals(  CVSCommon.GENERAL_ENCLOSE + "Hello, World" + CVSCommon.GENERAL_ENCLOSE,
                         CSVWriter.enclose(s).toString());
      }
      
-     @Test
-     public void testLineUpResult() {
+     public void untestLineUpResult() {
          Map<Attribute, Object> result;
          CSVWriter csvw = new CSVWriter(
                  new MBeanData("aBean", "MBEAN!!11!", null, true), 
