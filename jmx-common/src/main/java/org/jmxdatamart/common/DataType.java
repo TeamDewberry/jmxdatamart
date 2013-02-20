@@ -36,53 +36,62 @@ public enum DataType {
             java.lang.Byte.class,
             "MS SQL type",
             "Derby type"
-        ),    // 8 bit integer
+        ),      // 8 bit integer
     
     SHORT(
             java.lang.Short.class,
             "MS SQL type",
             "Derby type"
-         ),  // 16 bit integer
+         ),     // 16 bit integer
     
     INT(
             java.lang.Integer.class,
             "MS SQL type",
             "Derby type"
-       ),  // 32 bit integer
+       ),       // 32 bit integer
     
     LONG(
             java.lang.Long.class,
             "MS SQL type",
             "Derby type"
-        ),    // 64 bit integer
+        ),      // 64 bit integer
     
     FLOAT(
             java.lang.Float.class,
             "MS SQL type",
             "Derby type"
-         ),  // 32 bit single precision
+         ),     // 32 bit single precision
     
     DOUBLE(
             java.lang.Double.class,
             "MS SQL type",
             "Derby type"
-          ),// 64 bit double precision
+          ),    // 64 bit double precision
+    
     //BOOLEAN,   ms sql doesn't support boolean
+    
     CHAR(
             java.lang.Character.class,
             "MS SQL type",
             "Derby type"
-        ),// 16 bit UFT-8 character
+        ),  // 16 bit UFT-8 character
     
     STRING(
             java.lang.String.class,
             "MS SQL type",
             "Derby type"
-          ); // unlimited-length character sequence type
+          ),    // unlimited-length character sequence type
     
-    Class javaType;
-    String mssqlType;
-    String derbyType;
+    UNKNOWN(
+            null,
+            null,
+            null
+           )    // internal error type.
+    ;
+    
+    private final Class javaType;
+    private final String mssqlType;
+    private final String derbyType;
 
     private DataType(Class javaType, String mssqlType, String derbyType) {
         this.javaType = javaType;
@@ -100,5 +109,34 @@ public enum DataType {
     
     public Class getJavaType() {
         return javaType;
+    }
+    
+    /**
+     * This function return the value of supported argument type as string, and
+     * throws IllegalArgumentException if doesn't supported that type. 
+     * @param obj the object that need to obtain the value
+     * @return string of corresponding value
+     */
+    public String toString(Object obj) {
+        if (this.javaType.isAssignableFrom(obj.getClass())) {
+            return obj.toString();
+        } else {
+            throw new IllegalArgumentException("Does not support " + obj.getClass().toString());
+        }
+    }
+    
+    /**
+     * Get the supported type of an object
+     * @param obj the object that need checking
+     * @return the supported type, or UNKNOWN if not supported
+     */
+    public Bool isSupported(Object obj) {
+        for (DataType d : values()) {
+            if (d.javaType != null &&
+                    d.javaType.isAssignableFrom(obj.getClass())) {
+                return true;
+            }
+        }
+        return false;
     }
 }
