@@ -33,8 +33,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.jmxdatamart.common.CVSCommon;
 import org.jmxdatamart.common.DataType;
 import org.slf4j.LoggerFactory;
@@ -82,7 +80,6 @@ public class CSVWriter {
             bw.write(bd.getAlias());
             bw.newLine();
             bw.close();
-            
         } catch (IOException ex) {
             logger.error("Can not open " + bd.getAlias() + ".csv", ex);
             throw new RuntimeException(ex);
@@ -179,5 +176,12 @@ public class CSVWriter {
             logger.error("Can not open " + filePath, ex);
             throw new RuntimeException(ex);
         }
+    }
+
+    /**
+     * @return the filePath
+     */
+    public String getFilePath() {
+        return filePath;
     }
 }

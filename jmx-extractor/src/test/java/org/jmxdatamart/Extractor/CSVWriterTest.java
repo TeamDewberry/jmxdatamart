@@ -4,6 +4,7 @@
  */
 package org.jmxdatamart.Extractor;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import org.jmxdatamart.common.CVSCommon;
@@ -24,11 +25,13 @@ public class CSVWriterTest {
                         CSVWriter.enclose(s).toString());
      }
      
-     public void untestLineUpResult() {
+     @Test
+     public void testLineUpResult() {
          Map<Attribute, Object> result;
+         final String alias = "MBEAN";
          CSVWriter csvw = new CSVWriter(
-                 new MBeanData("aBean", "MBEAN!!11!", null, true), 
-                 "");
+                 new MBeanData("aBean", alias, null, true), 
+                 System.getProperty("user.dir"));
          
          result = new HashMap<Attribute, Object>();
          result.put(new Attribute("A", "Alpha", DataType.INT), new Integer(7));
@@ -45,5 +48,9 @@ public class CSVWriterTest {
          result.put(new Attribute("B", "Beta", DataType.STRING), "Bye World");
          csvw.writeResult(result);
                  
+         File f = new File(csvw.getFilePath());
+         assertTrue(f.exists());
+         f.delete();
+         assertFalse(f.exists());
      }
 }
