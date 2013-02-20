@@ -28,6 +28,8 @@
 package org.jmxdatamart.Extractor.Setting;
 
 import java.util.*;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
 
 /**
  * This class contains data related to any MBean such as name, alias and its
@@ -114,6 +116,30 @@ public class MBeanData {
      */
     public void setEnable(boolean enable) {
         this.enable = enable;
+    }
+    
+    /**
+     * Check if the MBeanData object's alias is correctly formated
+     * @return true if correctly formated, false if not
+     */
+    public boolean check() {
+        for (Attribute a : this.attributes) {
+            if (!a.check()) {
+                return false;
+            }
+        }
+        
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+    
+    /**
+     * Check if the MBeanData represent a pattern or a single MBean
+     * @return true if MBeanData's name is a valid JMX pattern, false if not
+     * @throws MalformedObjectNameException if MBeanData's name is not a valid
+     * ObjectName's name
+     */
+    public boolean isPattern() throws MalformedObjectNameException {
+        return (new ObjectName(this.name)).isPattern();
     }
 
     @Override
