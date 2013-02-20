@@ -158,6 +158,7 @@ public class Settings {
      * @return true if setting is well formatted, false if not
      * @throws MalformedObjectNameException if a MBean name in setting is malformated
      */
+    // Task 3041
     public boolean check() throws MalformedObjectNameException {
         for (MBeanData mbd : this.beans) {
             if (!mbd.check()) {
