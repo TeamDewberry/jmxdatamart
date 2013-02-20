@@ -117,6 +117,10 @@ public enum DataType {
     public String getDerbyType() {
         return derbyType;
     }
+
+    public String getHsqlType() {
+        return hsqlType;
+    }
     
     public Class getJavaType() {
         return javaType;
@@ -130,7 +134,7 @@ public enum DataType {
      */
     public String toString(Object obj) {
         if (this.javaType.isAssignableFrom(obj.getClass())) {
-            return obj.toString();
+            return obj.toString();      // doesn't need class because already have isAssignableFrom guard
         } else {
             throw new IllegalArgumentException("Does not support " + obj.getClass().toString());
         }
@@ -143,7 +147,7 @@ public enum DataType {
      */
     public boolean isSupported(Object obj) {
         for (DataType d : values()) {
-            if (d.javaType != null &&
+            if (d != UNKNOWN &&
                     d.javaType.isAssignableFrom(obj.getClass())) {
                 return true;
             }
