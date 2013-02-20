@@ -30,10 +30,13 @@ package org.jmxdatamart.Extractor.Setting;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
-import org.jmxdatamart.common.DataType;
-
 import java.io.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.management.MalformedObjectNameException;
+import org.jmxdatamart.common.DataType;
+import org.slf4j.LoggerFactory;
 
 
 
@@ -150,17 +153,19 @@ public class Settings {
         xstream.alias("Attribute", Attribute.class);
     }
     
-    public void sanitize() {
-        for (MBeanData bd : getBeans()) {
-            if ("".equals(bd.getAlias())) {
-                bd.setAlias(bd.getName());
+    /**
+     * Check if the setting is well formatted.
+     * @return true if setting is well formatted, false if not
+     * @throws MalformedObjectNameException if a MBean name in setting is malformated
+     */
+    public boolean check() throws MalformedObjectNameException {
+        for (MBeanData mbd : this.beans) {
+            if (!mbd.check()) {
+                return false;
             }
-            for (Attribute a : bd.getAttributes()) {
-                if ("".equals(a.getAlias())) {
-                    a.setAlias(a.getName());
-                }
-            }
+            mbd.isPattern();
         }
+        return true;
     }
     
     public String toXML() {
@@ -183,7 +188,12 @@ public class Settings {
         xstream.alias("Attribute", Attribute.class);
         
         Settings settings = (Settings)xstream.fromXML(s);
-        settings.sanitize();
+        try {
+            settings.check();
+        } catch (MalformedObjectNameException ex) {
+            LoggerFactory.getLogger(Settings.class).error("Setting is malformated", ex);
+            throw new RuntimeException(ex);
+        }
         return settings;
         
     }
@@ -197,7 +207,12 @@ public class Settings {
         xstream.alias("Attribute", Attribute.class);
 
         Settings settings = (Settings)xstream.fromXML(s);
-        settings.sanitize();
+        try {
+            settings.check();
+        } catch (MalformedObjectNameException ex) {
+            LoggerFactory.getLogger(Settings.class).error("Setting is malformated", ex);
+            throw new RuntimeException(ex);
+        }
         return settings;
     }
     
@@ -211,30 +226,30 @@ public class Settings {
         
     }
     
-    public static void main( String[] args ) throws IOException
-    {
-        //Test reading file
-        Settings s1 = Settings.fromXML(new FileInputStream("Settings.xml"));
-        System.out.println(s1.toString());
-        System.out.println("Read xml settings complete");
-        
-        Settings s = new Settings();
-        s.setFolderLocation("\\project\\");
-        s.setPollingRate(5);
-        s.setUrl("service:jmx:rmi:///jndi/rmi://:9999/jmxrmi");
-        s.setBeans(new ArrayList<MBeanData>());
-        
-        MBeanData bd = new MBeanData("com.example:type=Hello","", new ArrayList<Attribute>(), true);
-        bd.getAttributes().add(new Attribute("Name", "", DataType.STRING));
-        bd.getAttributes().add(new Attribute("CacheSize", "", DataType.INT));
-        s.getBeans().add(bd);
-        s.sanitize();
-        System.out.println(s.toString());
-        
-        String sXML = s.toXML();
-        System.out.println(sXML);
-        FileWriter out = new FileWriter("settings.xml");
-        out.write(sXML);
-        out.close();
-    }
+//    public static void main( String[] args ) throws IOException, MalformedObjectNameException
+//    {
+//        //Test reading file
+//        Settings s1 = Settings.fromXML(new FileInputStream("Settings.xml"));
+//        System.out.println(s1.toString());
+//        System.out.println("Read xml settings complete");
+//        
+//        Settings s = new Settings();
+//        s.setFolderLocation("\\project\\");
+//        s.setPollingRate(5);
+//        s.setUrl("service:jmx:rmi:///jndi/rmi://:9999/jmxrmi");
+//        s.setBeans(new ArrayList<MBeanData>());
+//        
+//        MBeanData bd = new MBeanData("com.example:type=Hello","", new ArrayList<Attribute>(), true);
+//        bd.getAttributes().add(new Attribute("Name", "", DataType.STRING));
+//        bd.getAttributes().add(new Attribute("CacheSize", "", DataType.INT));
+//        s.getBeans().add(bd);
+//        s.check();
+//        System.out.println(s.toString());
+//        
+//        String sXML = s.toXML();
+//        System.out.println(sXML);
+//        FileWriter out = new FileWriter("settings.xml");
+//        out.write(sXML);
+//        out.close();
+//    }
 }
