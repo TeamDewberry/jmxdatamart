@@ -29,7 +29,7 @@ public class CSVWriterTest {
          Map<Attribute, Object> result;
          CSVWriter csvw = new CSVWriter(
                  new MBeanData("aBean", "MBEAN!!11!", null, true), 
-                 "/home/ankel/jmx1");
+                 "");
          
          result = new HashMap<Attribute, Object>();
          result.put(new Attribute("A", "Alpha", DataType.INT), new Integer(7));
