@@ -1,16 +1,16 @@
 package org.jmxdatamart.Extractor;
 
-import org.jmxdatamart.Extractor.Setting.Settings;
-import org.jmxdatamart.Extractor.Setting.Attribute;
-import org.jmxdatamart.Extractor.Setting.MBeanData;
-import org.jmxdatamart.JMXTestServer.TestBean;
-import org.jmxdatamart.common.*;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import org.jmxdatamart.Extractor.Setting.Attribute;
+import org.jmxdatamart.Extractor.Setting.MBeanData;
+import org.jmxdatamart.Extractor.Setting.Settings;
+import org.jmxdatamart.JMXTestServer.TestBean;
+import org.jmxdatamart.common.*;
 /**
  * Created with IntelliJ IDEA.
  * User: Xiao Han
@@ -112,18 +112,19 @@ public class Bean2DB {
         //need to think about how to avoid retrieving the map twice
         int i=0;
         for (Map.Entry<Attribute, Object> m : result.entrySet()) {
-            switch (((Attribute)m.getKey()).getDataType())
-            {
-                case INT:
-                    ps.setInt(++i,(Integer)m.getValue());
-                    break;
-                case STRING:
-                    ps.setString(++i,m.getValue().toString());
-                    break;
-                case FLOAT:
-                    ps.setFloat(++i,(Float)m.getValue());
-                    break;
-            }
+//            switch (((Attribute)m.getKey()).getDataType())
+//            {
+//                case INT:
+//                    ps.setInt(++i,(Integer)m.getValue());
+//                    break;
+//                case STRING:
+//                    ps.setString(++i,m.getValue().toString());
+//                    break;
+//                case FLOAT:
+//                    ps.setFloat(++i,(Float)m.getValue());
+//                    break;
+//            }
+            m.getKey().getDataType().addToSqlPreparedStatement(ps, i++, m.getValue());
         }
         ps.setTimestamp(++i, new Timestamp((new java.util.Date()).getTime()));
 
@@ -173,7 +174,10 @@ public class Bean2DB {
                 //All above requirements must be set to a DTD for the setting xml file!!!
                 sb.append("create table ").append(tablename).append("(");
                 for (Attribute ab: bean.getAttributes()){
-                    sb.append(ab.getName()).append(" ").append(ab.getDataType()).append(",");
+                    sb.append(ab.getName())
+                            .append(" ")
+                            .append(ab.getDataType().getHsqlType())
+                            .append(",");
                 }
                 sb.append("time TIMESTAMP)");
                 st.executeUpdate(sb.toString());
