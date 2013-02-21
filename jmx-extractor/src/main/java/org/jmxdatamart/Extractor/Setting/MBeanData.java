@@ -122,9 +122,10 @@ public class MBeanData {
      * Check if the MBeanData object's alias is correctly formated
      * @return true if correctly formated, false if not
      */
-    public boolean check() {
+    // Task 3041
+    public boolean checkForValidAlias() {
         for (Attribute a : this.attributes) {
-            if (!a.check()) {
+            if (!a.checkForValidAlias()) {
                 return false;
             }
         }

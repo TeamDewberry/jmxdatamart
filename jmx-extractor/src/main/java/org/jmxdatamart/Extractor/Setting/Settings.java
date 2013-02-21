@@ -32,10 +32,7 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import java.io.*;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.management.MalformedObjectNameException;
-import org.jmxdatamart.common.DataType;
 import org.slf4j.LoggerFactory;
 
 
@@ -159,9 +156,9 @@ public class Settings {
      * @throws MalformedObjectNameException if a MBean name in setting is malformated
      */
     // Task 3041
-    public boolean check() throws MalformedObjectNameException {
+    public boolean checkForValidAlias() throws MalformedObjectNameException {
         for (MBeanData mbd : this.beans) {
-            if (!mbd.check()) {
+            if (!mbd.checkForValidAlias()) {
                 return false;
             }
             mbd.isPattern();
@@ -190,7 +187,7 @@ public class Settings {
         
         Settings settings = (Settings)xstream.fromXML(s);
         try {
-            settings.check();
+            settings.checkForValidAlias();
         } catch (MalformedObjectNameException ex) {
             LoggerFactory.getLogger(Settings.class).error("Setting is malformated", ex);
             throw new RuntimeException(ex);
@@ -209,7 +206,7 @@ public class Settings {
 
         Settings settings = (Settings)xstream.fromXML(s);
         try {
-            settings.check();
+            settings.checkForValidAlias();
         } catch (MalformedObjectNameException ex) {
             LoggerFactory.getLogger(Settings.class).error("Setting is malformated", ex);
             throw new RuntimeException(ex);

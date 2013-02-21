@@ -26,10 +26,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 package org.jmxdatamart.Extractor.Setting;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectName;
 import org.jmxdatamart.common.DataType;
 /**
  * This class contains information related to any given attribute such as name,
@@ -93,7 +89,8 @@ public class Attribute {
      * Check if alias of an attribute is correctly formated
      * @return true if alias contains only alphanumeric, false otherwise
      */
-    public boolean check() {
+    // Task 3041
+    public boolean checkForValidAlias() {
         throw new UnsupportedOperationException("Not yet implemented");
     }
     
@@ -102,7 +99,7 @@ public class Attribute {
      * @return true if attribute is a pattern, false if it's a single attribute
      */
     public boolean isPattern() {
-        return name.contains("*?");
+        return name.contains("*") || name.contains("?");
     }
 
     public Attribute(String name, String alias, DataType dataType) {
