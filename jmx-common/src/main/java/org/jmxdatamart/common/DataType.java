@@ -35,7 +35,8 @@ import java.sql.SQLException;
  * @author Binh Tran <mynameisbinh@gmail.com>
  */
 public enum DataType {
-    BYTE(
+    BYTE    // 8 bit integer
+        (
             java.lang.Byte.class,
             "MS SQL type",
             "Derby type",
@@ -48,9 +49,10 @@ public enum DataType {
                 ps.setByte(index, ((Byte)value).byteValue());
             }
         }
-    },      // 8 bit integer
+    },      
     
-    SHORT(
+    SHORT   // 16 bit integer
+         (
             java.lang.Short.class,
             "MS SQL type",
             "Derby type",
@@ -63,9 +65,10 @@ public enum DataType {
                 ps.setShort(index, ((Short)value).shortValue());
             }
         }
-    },     // 16 bit integer
+    },     
     
-    INT(
+    INT     // 32 bit integer
+       (
             java.lang.Integer.class,
             "MS SQL type",
             "Derby type",
@@ -78,9 +81,10 @@ public enum DataType {
                 ps.setInt(index, ((Integer)value).intValue());
             }
         }
-    },       // 32 bit integer
+    },       
     
-    LONG(
+    LONG    // 64 bit integer
+        (
             java.lang.Long.class,
             "MS SQL type",
             "Derby type",
@@ -93,9 +97,10 @@ public enum DataType {
                 ps.setLong(index, ((Long)value).longValue());
             }
         }
-    },      // 64 bit integer
+    },      
     
-    FLOAT(
+    FLOAT   // 32 bit single precision
+         (
             java.lang.Float.class,
             "MS SQL type",
             "Derby type",
@@ -108,9 +113,10 @@ public enum DataType {
                 ps.setFloat(index, ((Float)value).floatValue());
             }
         }
-    },     // 32 bit single precision
+    },     
     
-    DOUBLE(
+    DOUBLE  // 64 bit double precision
+          (
             java.lang.Double.class,
             "MS SQL type",
             "Derby type",
@@ -123,11 +129,12 @@ public enum DataType {
                 ps.setDouble(index, ((Double)value).doubleValue());
             }
         }
-    },    // 64 bit double precision
+    },    
     
     //BOOLEAN,   ms sql doesn't support boolean
     
-    CHAR(
+    CHAR    // 16 bit UFT-8 character
+        (
             java.lang.Character.class,
             "MS SQL type",
             "Derby type",
@@ -140,9 +147,10 @@ public enum DataType {
                 ps.setString(index, value.toString());
             }
         }
-    },  // 16 bit UFT-8 character
+    },  
     
-    STRING(
+    STRING  // unlimited-length character sequence type
+          (
             java.lang.String.class,
             "MS SQL type",
             "Derby type",
@@ -155,7 +163,7 @@ public enum DataType {
                 ps.setString(index, value.toString());
             }
         }
-    },    // unlimited-length character sequence type
+    },    
     
     UNKNOWN(
             null,

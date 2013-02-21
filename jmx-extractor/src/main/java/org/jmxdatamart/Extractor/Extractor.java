@@ -27,13 +27,7 @@
  */
 package org.jmxdatamart.Extractor;
 
-import org.jmxdatamart.Extractor.Setting.Settings;
-import org.jmxdatamart.Extractor.Setting.Attribute;
-import org.jmxdatamart.Extractor.Setting.MBeanData;
 import com.google.inject.Inject;
-import org.slf4j.LoggerFactory;
-
-import javax.management.*;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.sql.Connection;
@@ -44,11 +38,14 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.management.*;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
+import org.jmxdatamart.Extractor.Setting.Attribute;
+import org.jmxdatamart.Extractor.Setting.MBeanData;
+import org.jmxdatamart.Extractor.Setting.Settings;
 import org.jmxdatamart.common.HypersqlHandler;
+import org.slf4j.LoggerFactory;
 
 public class Extractor {
 
@@ -126,7 +123,7 @@ public class Extractor {
                         connLock.lock();
                         if (conn != null && !conn.isClosed()) {
                             hsql.shutdownDatabase(conn);
-                            hsql.disconnectDatabase(null,null,null,conn);
+                            HypersqlHandler.disconnectDatabase(null,null,null,conn);
                         }
                     } catch (SQLException ex) {
                             LoggerFactory.getLogger(Extractor.class)

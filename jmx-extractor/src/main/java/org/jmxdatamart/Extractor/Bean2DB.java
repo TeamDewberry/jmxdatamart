@@ -108,7 +108,7 @@ public class Bean2DB {
         sql += insertvalue.append("?)").toString();
         //System.out.println(sql);
         ps = conn.prepareStatement(sql);
-
+        
         //need to think about how to avoid retrieving the map twice
         int i=0;
         for (Map.Entry<Attribute, Object> m : result.entrySet()) {
@@ -171,9 +171,9 @@ public class Bean2DB {
                 //2.the field name of "time"(or whatever) should be reserved,  can't be used as an attribute name
                 //3.the datatyype should be valid in embedded SQL (ie. HyperSQL)
                 //All above requirements must be set to a DTD for the setting xml file!!!
-                sb.append("create table " + tablename + "(");
+                sb.append("create table ").append(tablename).append("(");
                 for (Attribute ab: bean.getAttributes()){
-                    sb.append(ab.getName() + " " + ab.getDataType() + ",");
+                    sb.append(ab.getName()).append(" ").append(ab.getDataType()).append(",");
                 }
                 sb.append("time TIMESTAMP)");
                 st.executeUpdate(sb.toString());
