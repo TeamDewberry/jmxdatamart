@@ -114,7 +114,7 @@ public class Extractor {
         System.out.println("Extracted");
     }
 
-    public void Stop() {
+    public void stop() {
         this.stop = true;
     }
 
