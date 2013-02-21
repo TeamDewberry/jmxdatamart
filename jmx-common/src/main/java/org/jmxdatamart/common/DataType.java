@@ -27,6 +27,9 @@
  */
 package org.jmxdatamart.common;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
 /**
  * Supported data types
  * @author Binh Tran <mynameisbinh@gmail.com>
@@ -37,42 +40,90 @@ public enum DataType {
             "MS SQL type",
             "Derby type",
             "HSQL type"
-        ),      // 8 bit integer
+        )
+    {
+        @Override
+        public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
+            if (checkTypeOf(value)) {
+                ps.setByte(index, ((Byte)value).byteValue());
+            }
+        }
+    },      // 8 bit integer
     
     SHORT(
             java.lang.Short.class,
             "MS SQL type",
             "Derby type",
             "HSQL type"
-         ),     // 16 bit integer
+         )
+    {
+        @Override
+        public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
+            if (checkTypeOf(value)) {
+                ps.setShort(index, ((Short)value).shortValue());
+            }
+        }
+    },     // 16 bit integer
     
     INT(
             java.lang.Integer.class,
             "MS SQL type",
             "Derby type",
             "HSQL type"
-       ),       // 32 bit integer
+       )
+    {
+        @Override
+        public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
+            if (checkTypeOf(value)) {
+                ps.setInt(index, ((Integer)value).intValue());
+            }
+        }
+    },       // 32 bit integer
     
     LONG(
             java.lang.Long.class,
             "MS SQL type",
             "Derby type",
             "HSQL type"
-        ),      // 64 bit integer
+        )
+    {
+        @Override
+        public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
+            if (checkTypeOf(value)) {
+                ps.setLong(index, ((Long)value).longValue());
+            }
+        }
+    },      // 64 bit integer
     
     FLOAT(
             java.lang.Float.class,
             "MS SQL type",
             "Derby type",
             "HSQL type"
-         ),     // 32 bit single precision
+         )
+    {
+        @Override
+        public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
+            if (checkTypeOf(value)) {
+                ps.setFloat(index, ((Float)value).floatValue());
+            }
+        }
+    },     // 32 bit single precision
     
     DOUBLE(
             java.lang.Double.class,
             "MS SQL type",
             "Derby type",
             "HSQL type"
-          ),    // 64 bit double precision
+          )
+    {
+        @Override
+        public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
+            if (checkTypeOf(value)) {
+                ps.setDouble(index, ((Double)value).doubleValue());
+            }
+        }
+    },    // 64 bit double precision
     
     //BOOLEAN,   ms sql doesn't support boolean
     
@@ -81,21 +132,43 @@ public enum DataType {
             "MS SQL type",
             "Derby type",
             "HSQL type"
-        ),  // 16 bit UFT-8 character
+        )
+    {
+        @Override
+        public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
+            if (checkTypeOf(value)) {
+                ps.setString(index, value.toString());
+            }
+        }
+    },  // 16 bit UFT-8 character
     
     STRING(
             java.lang.String.class,
             "MS SQL type",
             "Derby type",
             "HSQL type"
-          ),    // unlimited-length character sequence type
+          )
+    {
+        @Override
+        public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
+            if (checkTypeOf(value)) {
+                ps.setString(index, value.toString());
+            }
+        }
+    },    // unlimited-length character sequence type
     
     UNKNOWN(
             null,
             null,
             null,
             null
-           )    // internal error type.
+           )
+            {
+        @Override
+        public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) {
+            throw new UnsupportedOperationException("Type UNKNOWN doesn't support this operation");
+        }
+    }    // internal error type.
     ;
     
     private final Class javaType;
@@ -141,17 +214,16 @@ public enum DataType {
     }
     
     /**
-     * Get the supported type of an object
-     * @param obj the object that need checking
-     * @return the supported type, or UNKNOWN if not supported
+     * Check if obj has the compatible type
+     * @param obj obj whose type is to be checked
+     * @return true if obj has compatible type, otherwise false
      */
-    public boolean isSupported(Object obj) {
-        for (DataType d : values()) {
-            if (d != UNKNOWN &&
-                    d.javaType.isAssignableFrom(obj.getClass())) {
-                return true;
-            }
-        }
-        return false;
+    public boolean checkTypeOf(Object obj) {
+        return javaType.isAssignableFrom(obj.getClass());
     }
+    
+    public abstract void addToSqlPreparedStatement(
+            PreparedStatement ps,
+            int index,
+            Object value) throws SQLException;
 }
