@@ -38,9 +38,9 @@ public enum DataType {
     BYTE    // 8 bit integer
         (
             java.lang.Byte.class,
-            "MS SQL type",
-            "Derby type",
-            "HSQL type"
+            "SMALLINT", // 8bit data type in T-SQL is only 0-255
+            "SMALLINT", // Derby doesnt support 1Byte 
+            "TINYINT" // -127 to 128 like Java
         )
     {
         @Override
@@ -54,9 +54,9 @@ public enum DataType {
     SHORT   // 16 bit integer
          (
             java.lang.Short.class,
-            "MS SQL type",
-            "Derby type",
-            "HSQL type"
+            "SMALLINT",
+            "SMALLINT",
+            "SMALLINT"
          )
     {
         @Override
@@ -70,9 +70,9 @@ public enum DataType {
     INT     // 32 bit integer
        (
             java.lang.Integer.class,
-            "MS SQL type",
-            "Derby type",
-            "HSQL type"
+            "INT",
+            "INT",
+            "INTEGER"
        )
     {
         @Override
@@ -86,9 +86,9 @@ public enum DataType {
     LONG    // 64 bit integer
         (
             java.lang.Long.class,
-            "MS SQL type",
-            "Derby type",
-            "HSQL type"
+            "BIGINT",
+            "BIGINT",
+            "BIGINT"
         )
     {
         @Override
@@ -102,9 +102,9 @@ public enum DataType {
     FLOAT   // 32 bit single precision
          (
             java.lang.Float.class,
-            "MS SQL type",
-            "Derby type",
-            "HSQL type"
+            "REAL", //T-SQL does not conform to standards but this is close 4Bytes
+            "REAL", //Derby has different limits than Java 4Bytes
+            "DOUBLE" //"REAL, FLOAT and DOUBLE values are all stored in the database as java.lang.Double objects"
          )
     {
         @Override
@@ -118,9 +118,9 @@ public enum DataType {
     DOUBLE  // 64 bit double precision
           (
             java.lang.Double.class,
-            "MS SQL type",
-            "Derby type",
-            "HSQL type"
+            "FLOAT(53)", //T-SQL does not conform to standards but this is close 8Bytes
+            "DOUBLE",  //Derby limits are different than Java 8Bytes
+            "DOUBLE" 
           )
     {
         @Override
@@ -136,9 +136,9 @@ public enum DataType {
     CHAR    // 16 bit UFT-8 character
         (
             java.lang.Character.class,
-            "MS SQL type",
-            "Derby type",
-            "HSQL type"
+            "NCHAR(1)", 
+            "CHAR(1)",
+            "CHAR(1)"
         )
     {
         @Override
@@ -152,9 +152,9 @@ public enum DataType {
     STRING  // unlimited-length character sequence type
           (
             java.lang.String.class,
-            "MS SQL type",
-            "Derby type",
-            "HSQL type"
+            "NVARCHAR(MAX)",
+            "VARCHAR (32672)", // Derby max is Integer.Max_Value, not padded
+            "LONGVARCHAR"
           )
     {
         @Override
