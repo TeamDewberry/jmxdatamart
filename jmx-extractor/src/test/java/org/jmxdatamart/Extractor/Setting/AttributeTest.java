@@ -22,6 +22,10 @@ public class AttributeTest {
         assertTrue(a.checkForValidAlias());
         a = new Attribute("edu.jmx:type=TestBean", null, DataType.BYTE);
         assertTrue(a.checkForValidAlias());
+        a = new Attribute("edu.jmx:type=TestBean", "ID", DataType.BYTE);
+        assertFalse(a.checkForValidAlias());
+        a = new Attribute("edu.jmx:type=TestBean", "TimeCollected", DataType.BYTE);
+        assertFalse(a.checkForValidAlias());
         a = new Attribute("edu.jmx:type=TestBean", "!@#$%^&*()_+=", DataType.BYTE);
         assertFalse(a.checkForValidAlias());
         a = new Attribute("edu.jmx:type=TestBean", "!TestBean", DataType.BYTE);
