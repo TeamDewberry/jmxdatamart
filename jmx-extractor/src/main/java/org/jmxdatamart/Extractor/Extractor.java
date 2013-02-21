@@ -57,9 +57,11 @@ public class Extractor {
     private final HypersqlHandler hsql;
     private Connection conn;
     private final Lock connLock = new ReentrantLock();
+    private boolean stop;
 
     @Inject
     public Extractor(Settings configData) throws IOException, SQLException {
+        this.stop = false;
         this.configData = configData;
         if (configData.getUrl() == null || configData.getUrl().isEmpty()) {
             mbsc = ManagementFactory.getPlatformMBeanServer();
@@ -67,7 +69,7 @@ public class Extractor {
             JMXServiceURL url = new JMXServiceURL(configData.getUrl());
             mbsc = JMXConnectorFactory.connect(url).getMBeanServerConnection();
         }
-               
+
         hsql = new HypersqlHandler();
         dbname = bd.generateMBeanDB(configData);
 
@@ -92,29 +94,33 @@ public class Extractor {
         Properties props = new Properties();
         props.put("username", "sa");
         props.put("password", "whatever");
-        
+
         connLock.lock();
-        try{
-            conn= hsql.connectDatabase(dbname,props);
+        try {
+            conn = hsql.connectDatabase(dbname, props);
 
             for (MBeanData bdata : this.configData.getBeans()) {
-                if(bdata.isEnable()) {
+                if (bdata.isEnable()) {
                     Map<Attribute, Object> result = MBeanExtract.extract(bdata, mbsc);
                     bd.export2DB(conn, bdata, result);
                 }
             }
 
             hsql.shutdownDatabase(conn);
-            HypersqlHandler.disconnectDatabase(null,null,null,conn);
+            HypersqlHandler.disconnectDatabase(null, null, null, conn);
         } finally {
             connLock.unlock();
         }
         System.out.println("Extracted");
     }
 
+    void Stop() {
+        this.stop = true;
+    }
+
     private class Extract extends TimerTask {
 
-        public Extract(){
+        public Extract() {
             super();
             Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
                 @Override
@@ -123,24 +129,28 @@ public class Extractor {
                         connLock.lock();
                         if (conn != null && !conn.isClosed()) {
                             hsql.shutdownDatabase(conn);
-                            HypersqlHandler.disconnectDatabase(null,null,null,conn);
+                            HypersqlHandler.disconnectDatabase(null, null, null, conn);
                         }
                     } catch (SQLException ex) {
-                            LoggerFactory.getLogger(Extractor.class)
-                                    .error("Error while closing conn durring JVM shutdown", ex);
+                        LoggerFactory.getLogger(Extractor.class)
+                                .error("Error while closing conn durring JVM shutdown", ex);
                     } finally {
                         connLock.unlock();
                     }
                 }
             }));
         }
-        
+
         @Override
         public void run() {
-            try {
-                extract();
-            } catch (Exception e) {
-                logger.debug("While extracting MBeans", e);
+            if (stop) {
+                this.cancel();
+            } else {
+                try {
+                    extract();
+                } catch (Exception e) {
+                    logger.debug("While extracting MBeans", e);
+                }
             }
         }
     }
