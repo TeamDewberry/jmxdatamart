@@ -163,10 +163,18 @@ public enum DataType {
             null,
             null
            )
-            {
+    {
         @Override
         public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) {
             throw new UnsupportedOperationException("Type UNKNOWN doesn't support this operation");
+        }
+        @Override
+        public boolean checkTypeOf(Object obj) {
+            return false;
+        } 
+        @Override
+        public String toString(Object obj) {
+            return toString();
         }
     }    // internal error type.
     ;
