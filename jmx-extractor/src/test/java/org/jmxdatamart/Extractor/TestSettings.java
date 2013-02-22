@@ -28,9 +28,12 @@
 
 package org.jmxdatamart.Extractor;
 
-import junit.framework.TestCase;
-import org.jmxdatamart.common.DataType;
 import java.util.Collections;
+import junit.framework.TestCase;
+import org.jmxdatamart.Extractor.Setting.Attribute;
+import org.jmxdatamart.Extractor.Setting.MBeanData;
+import org.jmxdatamart.Extractor.Setting.Settings;
+import org.jmxdatamart.common.DataType;
 
 public class TestSettings extends TestCase {
 
@@ -46,7 +49,7 @@ public class TestSettings extends TestCase {
     Attribute attr = new Attribute("age", "age", DataType.INT);
     bean.setAttributes(Collections.singletonList(attr));
 
-    settings.setBeans(Collections.singletonList((BeanData)bean));
+    settings.setBeans(Collections.singletonList(bean));
 
     String s = settings.toXML();
     
