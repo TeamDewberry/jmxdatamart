@@ -16,7 +16,8 @@ public class AttributeTest {
 
     @Test
     public void testCheck() {
-        Attribute a = new Attribute("randomName", "TestBean", DataType.BYTE);
+        Attribute a;
+        a = new Attribute("randomName", "TestBean", DataType.BYTE);
         assertTrue(a.checkForValidAlias());
         a = new Attribute("edu.jmx:type=TestBean", "", DataType.BYTE);
         assertTrue(a.checkForValidAlias());
