@@ -27,6 +27,8 @@
  */
 package org.jmxdatamart.Extractor;
 
+import org.jmxdatamart.Extractor.Setting.Attribute;
+import org.jmxdatamart.Extractor.Setting.MBeanData;
 import org.jmxdatamart.JMXTestServer.TestBean;
 import java.lang.management.ManagementFactory;
 import java.util.Collections;
@@ -34,10 +36,6 @@ import java.util.Map;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import org.jmxdatamart.common.*;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -47,25 +45,6 @@ import static org.junit.Assert.*;
  */
 public class MBeanExtractTest {
     
-    public MBeanExtractTest() {
-    }
-    
-    @BeforeClass
-    public static void setUpClass() {
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
-    }
-    
-    @Before
-    public void setUp() {
-    }
-    
-    @After
-    public void tearDown() {
-    }
-
     /**
      * Test of extract method, of class MBeanExtract.
      */
@@ -90,8 +69,7 @@ public class MBeanExtractTest {
                                         Collections.singletonList(a), true);
         
         //Init MBeanExtract
-        MBeanExtract instance = new MBeanExtract(mbd, mbs);
-        Map result = instance.extract();
+        Map result = MBeanExtract.extract(mbd, mbs);
         assertEquals(1, result.size());
         assertTrue(result.keySet().contains(a));
         assertEquals(expected, result.get(a));
