@@ -208,12 +208,12 @@ public class Settings {
         xstream.alias("Attribute", Attribute.class);
 
         Settings settings = (Settings)xstream.fromXML(s);
-        try {
-            settings.check();
-        } catch (MalformedObjectNameException ex) {
-            LoggerFactory.getLogger(Settings.class).error("Setting is malformated", ex);
-            throw new RuntimeException(ex);
-        }
+//        try {
+//            settings.check();
+//        } catch (MalformedObjectNameException ex) {
+//            LoggerFactory.getLogger(Settings.class).error("Setting is malformated", ex);
+//            throw new RuntimeException(ex);
+//        }
         return settings;
     }
     

@@ -34,7 +34,35 @@ import java.lang.management.ManagementFactory;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import org.jmxdatamart.JMXTestServer.TestBean;
+import java.util.Date;
 
+public class Main {   
+ 
+  public static void main(String[] args) throws Exception {
+        System.out.println("extract");
+        
+        Long timeStart = new Long(System.currentTimeMillis());
+        Long durationMilli = new Long(Long.parseLong(args[0])*1000*60); //convert minutes to millisecs
+        
+        //System.out.println(durationMilli.toString());
+    
+        Settings s = Settings.fromXML(
+                new FileInputStream("C:\\Extracted\\s1.xml"));
+        
+        Extractor etor = new Extractor(s);
+        
+        Long sleeptime = s.getPollingRate()*1000;
+        Long timeEnd = timeStart + durationMilli;
+        
+        while(timeEnd > System.currentTimeMillis() )
+        {
+            Thread.sleep(sleeptime);
+        }
+        
+  }
+}
+// Old code for reference
+/*
 public class Main {
     
     static final int GET_A = 0x01;
@@ -95,7 +123,7 @@ public class Main {
         
         // Main extract
         
-        int toBeExtracted = GET_BOTH;
+        int toBeExtracted = GET_A;
         
         switch (toBeExtracted){
             case GET_A:
@@ -110,3 +138,4 @@ public class Main {
         }
   }
 }
+*/

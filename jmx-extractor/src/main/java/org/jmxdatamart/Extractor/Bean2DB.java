@@ -124,7 +124,7 @@ public class Bean2DB {
 //                    ps.setFloat(++i,(Float)m.getValue());
 //                    break;
 //            }
-            m.getKey().getDataType().addToSqlPreparedStatement(ps, i++, m.getValue());
+            m.getKey().getDataType().addToSqlPreparedStatement(ps,++i, m.getValue());
         }
         ps.setTimestamp(++i, new Timestamp((new java.util.Date()).getTime()));
 
