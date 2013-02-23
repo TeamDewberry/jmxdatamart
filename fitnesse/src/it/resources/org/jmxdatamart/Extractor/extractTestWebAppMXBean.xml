@@ -1,0 +1,42 @@
+<Settings>
+  <pollingRate>2</pollingRate>
+  <folderLocation>${project.build.directory}/extractTestWebAppMBean</folderLocation>
+  <url>service:jmx:rmi:///jndi/rmi://:8888/jmxrmi</url>
+  <BeanList>
+    <Bean>
+      <name>org.jmxdatamart:Type=TestWebAppMBean</name>
+      <alias>TestWebAppMBean</alias>
+      <AttributeList>
+<!--         <Attribute> -->
+<!--           <dataType>FLOAT</dataType> -->
+<!--           <name>Age</name> -->
+<!--         </Attribute> -->
+        <Attribute>
+          <dataType>INT</dataType>
+          <name>NumberOfInvocations</name>
+        </Attribute>
+        <Attribute>
+          <dataType>FLOAT</dataType>
+          <name>RandomFloat</name>
+        </Attribute>
+        <Attribute>
+          <dataType>STRING</dataType>
+          <name>AsciiString</name>
+        </Attribute>
+        <Attribute>
+          <dataType>STRING</dataType>
+          <name>Latin1String</name>
+        </Attribute>
+        <Attribute>
+          <dataType>STRING</dataType>
+          <name>UnicodeString</name>
+        </Attribute>
+        <Attribute>
+          <dataType>STRING</dataType>
+          <name>AnotherUnicodeString</name>
+        </Attribute>
+      </AttributeList>
+      <enable>true</enable>
+    </Bean>
+  </BeanList>
+</Settings>
