@@ -2,8 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.jmxdatamart.Extractor;
+package org.jmxdatamart.Extractor.MXBean;
 
+import org.jmxdatamart.Extractor.MXBean.MXNameParser;
 import java.util.logging.Logger;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -150,21 +151,27 @@ public class MXNameParserTest {
         // Binh's note: these are unexpected behaviors. Feel free to redefine it
         // as you see fit. Easiest way would be to throw an exception.        
         
+        MXNameParser instance;
+        
         // case 1: no close quote.
-        MXNameParser instance = new MXNameParser("AA.\"BB.CC");
-        assertTrue(instance.hasNext());
-        assertThat(instance.nextToken(), equalTo("AA"));
-        assertTrue(instance.hasNext());
-        assertThat(instance.nextToken(), equalTo("BB.CC"));
-        assertFalse(instance.hasNext());
+        try {
+            instance = new MXNameParser("AA.\"BB.CC");
+        } catch (IllegalArgumentException ex) {
+            assertThat(ex.getMessage(), equalTo("Not a valid pattern - uneven quote"));
+        }
 
         // case 2: quote is also separator
-        instance = new MXNameParser("AA\"BB.CC");
-        assertTrue(instance.hasNext());
-        assertThat(instance.nextToken(), equalTo("AA"));
-        assertTrue(instance.hasNext());
-        assertThat(instance.nextToken(), equalTo("BB.CC"));
-        assertFalse(instance.hasNext());
+        try {
+            instance = new MXNameParser("AA\"BB.CC\"");
+        } catch (IllegalArgumentException ex) {
+            assertThat(ex.getMessage(), equalTo("Quote sign indicates key without TabularData name"));
+        }
+        
+        try {
+            instance = new MXNameParser("\"AABB.CC\"");
+        } catch (IllegalArgumentException ex) {
+            assertThat(ex.getMessage(), equalTo("Attribute can not starts with TabularData key"));
+        }
         
         // case 3: end with a separator
         instance = new MXNameParser("AA.CC.");
