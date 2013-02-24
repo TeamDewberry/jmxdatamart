@@ -58,10 +58,12 @@ public class Extractor {
     private Connection conn;
     private final Lock connLock = new ReentrantLock();
     private boolean stop;
+    private Timer timer;
 
     @Inject
     public Extractor(Settings configData) throws IOException, SQLException {
         this.stop = false;
+        timer = null;
         this.configData = configData;
         if (configData.getUrl() == null || configData.getUrl().isEmpty()) {
             mbsc = ManagementFactory.getPlatformMBeanServer();
@@ -80,7 +82,7 @@ public class Extractor {
 
     private void periodicallyExtract() {
         boolean isDaemon = true;
-        Timer timer = new Timer("JMX Statistics Extractor", isDaemon);
+        timer = new Timer("JMX Statistics Extractor", isDaemon);
         long rate = configData.getPollingRate() * 1000;
         int delay = 0;
         timer.scheduleAtFixedRate(new Extract(), delay, rate);
@@ -115,7 +117,9 @@ public class Extractor {
     }
 
     public void stop() {
-        this.stop = true;
+        if (timer != null) {
+            timer.cancel();
+        }
     }
 
     private class Extract extends TimerTask {
@@ -143,14 +147,10 @@ public class Extractor {
 
         @Override
         public void run() {
-            if (stop) {
-                this.cancel();
-            } else {
-                try {
-                    extract();
-                } catch (Exception e) {
-                    logger.debug("While extracting MBeans", e);
-                }
+            try {
+                extract();
+            } catch (Exception e) {
+                logger.debug("While extracting MBeans", e);
             }
         }
     }
