@@ -39,26 +39,89 @@ import java.util.Date;
 public class Main {   
  
   public static void main(String[] args) throws Exception {
-        System.out.println("extract");
-        
-        Long timeStart = new Long(System.currentTimeMillis());
-        Long durationMilli = new Long(Long.parseLong(args[0])*1000*60); //convert minutes to millisecs
-        
-        //System.out.println(durationMilli.toString());
-    
-        Settings s = Settings.fromXML(
-                new FileInputStream("C:\\Extracted\\s1.xml"));
-        
-        Extractor etor = new Extractor(s);
-        
-        Long sleeptime = s.getPollingRate()*1000;
-        Long timeEnd = timeStart + durationMilli;
-        
-        while(timeEnd > System.currentTimeMillis() )
-        {
-            Thread.sleep(sleeptime);
+        if (args.length != 2) {
+            printHelp();
         }
+        else {
+            if (lookForHelp(args)){
+                printHelp();                       
+            }
+            else{
+                Long timeStart = new Long(System.currentTimeMillis());
+                Long durationMilli = new Long(getRuntime(args));
+                
+                Settings s = Settings.fromXML(new FileInputStream(getConfig(args)));
         
+                Extractor etor = new Extractor(s);
+        
+                Long sleeptime = s.getPollingRate()*1000;
+                Long timeEnd = timeStart + durationMilli;
+        
+                while(timeEnd >= System.currentTimeMillis() )
+                {
+                    Thread.sleep(sleeptime);
+                }
+            }  
+        }
+  }
+  public static void printHelp(){
+      System.out.println("Extractor Syntax:");
+      System.out.println("Extractor -h | h | ? | help , brings up this display");
+      System.out.println("Extractor config.xml ##t , runs the extractor for ## time");
+      System.out.println("    t must be either h (hours), m (minutes), s (seconds)");
+      System.out.println("   ## must be an integer value");
+      System.out.println("Example: Extractor s1.xml 60s (runs the extractor for 60 seconds)");
+  }
+  private static Long getRuntime(String[] argArray){
+      //returns runTime in millisecs
+      Long runTime = new Long(0);
+      String timeUnit;
+      for (int i = 0; i < argArray.length;i++)
+      {
+          timeUnit = argArray[i].substring(argArray[i].length()-1);
+          
+          if (timeUnit.equals("s")){
+              runTime = stringToLong(argArray[i])*1000;
+          }
+          if (timeUnit.equals("m")){
+              runTime = stringToLong(argArray[i])*60000;
+          }
+          if (timeUnit.equals("h")){
+              runTime = stringToLong(argArray[i])*3600000;
+          }
+      }
+      
+      return runTime;
+  }
+  private static Long stringToLong(String num){
+      // This method chops off the last char and tries to covert the rest to Long 
+      //  returns 0 if error
+      Long r = new Long(0);
+      try {  
+          r = Long.parseLong(num.substring(0, num.length()-1));
+      }  
+      catch(Exception e){ 
+          r = (long)0;
+      }  
+      return r;    
+  }
+  private static String getConfig(String[] argArray){
+      String extension;
+      for(int i = 0; i<argArray.length; i++){
+          extension = argArray[i].substring(argArray[i].length()-3);
+          if (extension.equals("xml")){
+              return argArray[i];
+          }
+      }
+      return "";
+  }
+  private static Boolean lookForHelp(String[] argArray){
+      for(int i = 0; i < argArray.length; i++){
+          if (argArray[i].equals("-h") | argArray[i].equals("h") | argArray[i].equals("?") | argArray[i].equals("help")){
+              return true;
+          }
+      }
+      return false;
   }
 }
 // Old code for reference
