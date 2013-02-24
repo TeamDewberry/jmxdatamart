@@ -4,8 +4,6 @@
  */
 package org.jmxdatamart.Extractor.MXBean;
 
-import org.jmxdatamart.Extractor.MXBean.MXNameParser;
-import java.util.logging.Logger;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -87,7 +85,7 @@ public class MXNameParserTest {
      */
     @Test
     public void testQuote() {
-        MXNameParser instance = new MXNameParser("AA.\"BB\"");
+        MXNameParser instance = new MXNameParser("AA.\"B B\"");
 
         for (int i = 0; i < 100; ++i) {
             assertTrue((new Integer(i)).toString(), instance.hasNext());
@@ -99,13 +97,13 @@ public class MXNameParserTest {
             assertTrue((new Integer(i)).toString(), instance.hasNext());
         }
 
-        assertThat(instance.nextToken(), equalTo("BB"));
+        assertThat(instance.nextToken(), equalTo("B B"));
 
         for (int i = 0; i < 100; ++i) {
             assertFalse((new Integer(i)).toString(), instance.hasNext());
         }
 
-        instance = new MXNameParser("AA.AC.\"BB.CC\".DD.EE");
+        instance = new MXNameParser("AA.AC.\"BB .CC\".DD.EE");
 
         for (int i = 0; i < 100; ++i) {
             assertTrue((new Integer(i)).toString(), instance.hasNext());
@@ -123,7 +121,7 @@ public class MXNameParserTest {
             assertTrue((new Integer(i)).toString(), instance.hasNext());
         }
 
-        assertThat(instance.nextToken(), equalTo("BB.CC"));
+        assertThat(instance.nextToken(), equalTo("BB .CC"));
 
         for (int i = 0; i < 100; ++i) {
             assertTrue((new Integer(i)).toString(), instance.hasNext());

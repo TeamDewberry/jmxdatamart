@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
  */
 public final class MXNameParser {
 
-    private final Pattern nameRegex = Pattern.compile("\"([^\"]*)\"|(?<=\\.|^)([^\\.]*)(?=\\.|$)");
+    private final Pattern nameRegex = Pattern.compile("\"([^\"]*)\"|(?<=\\.|^)([^\\.]*)(?=\\.|$)"); // magic --> more 
     private String input;
     private List<String> matches = new ArrayList<String>();
     private int curr = 0;
@@ -42,6 +42,11 @@ public final class MXNameParser {
                 }
             }
         }
+    }
+    
+    
+    public List<String> getMatches() {
+        return matches;
     }
 
     public void checkValidPattern(String s) {
