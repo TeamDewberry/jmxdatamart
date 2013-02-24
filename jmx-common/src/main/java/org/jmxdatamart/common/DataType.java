@@ -238,27 +238,6 @@ public enum DataType {
         return javaType.isAssignableFrom(obj.getClass());
     }
     
-    /**
-     * Get the corresponding DataType of a object
-     * @param obj object to querry for DataType
-     * @return the type supported, or null if not supported
-     */
-    public DataType getSupportedType(Object obj) {
-        for (DataType dt : values()) {
-            if (dt.checkTypeOf(obj)) {
-                return dt;
-            }
-        }
-        return null;
-    }
-    
-    /**
-     * Add the current value to a PreparedStatement
-     * @param ps the statement
-     * @param index index of the value
-     * @param value the value itself
-     * @throws SQLException 
-     */
     public abstract void addToSqlPreparedStatement(
             PreparedStatement ps,
             int index,
