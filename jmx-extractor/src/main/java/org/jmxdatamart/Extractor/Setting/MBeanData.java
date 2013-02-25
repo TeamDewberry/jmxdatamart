@@ -25,7 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.jmxdatamart.Extractor;
+package org.jmxdatamart.Extractor.Setting;
 
 import java.util.*;
 
@@ -34,7 +34,7 @@ import java.util.*;
  * attributes
  * @author Binh Tran <mynameisbinh@gmail.com>
  */
-public class MBeanData implements BeanData {
+public class MBeanData{
     private String name;
     private String alias;
     private List<Attribute> attributes;
@@ -43,7 +43,6 @@ public class MBeanData implements BeanData {
     /**
      * @return the name
      */
-    @Override
     public String getName() {
         return name;
     }
@@ -58,7 +57,6 @@ public class MBeanData implements BeanData {
     /**
      * @return the alias
      */
-    @Override
     public String getAlias() {
         return alias;
     }
@@ -107,7 +105,6 @@ public class MBeanData implements BeanData {
     /**
      * @return the enable
      */
-    @Override
     public boolean isEnable() {
         return enable;
     }
