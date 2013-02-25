@@ -32,6 +32,7 @@ import java.io.FileInputStream;
 import java.lang.management.ManagementFactory;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+import org.jmxdatamart.Extractor.Setting.Settings;
 import org.jmxdatamart.JMXTestServer.TestBean;
 
 public class Main {

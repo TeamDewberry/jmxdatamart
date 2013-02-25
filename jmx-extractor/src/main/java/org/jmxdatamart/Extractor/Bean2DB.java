@@ -8,6 +8,9 @@ import java.lang.management.ManagementFactory;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import org.jmxdatamart.Extractor.Setting.Attribute;
+import org.jmxdatamart.Extractor.Setting.MBeanData;
+import org.jmxdatamart.Extractor.Setting.Settings;
 /**
  * Created with IntelliJ IDEA.
  * User: Xiao Han
@@ -36,7 +39,7 @@ public class Bean2DB {
         Map result = instance.extract();
 
         Settings s = new Settings();
-        s.setBeans(Collections.singletonList((BeanData)mbd));
+        s.setBeans(Collections.singletonList(mbd));
         s.setFolderLocation("HyperSQL/");
         s.setPollingRate(2);
         s.setUrl("service:jmx:rmi:///jndi/rmi://:9999/jmxrmi");
@@ -84,7 +87,7 @@ public class Bean2DB {
         conn.setAutoCommit(bl);
     }
 
-    public void export2DB(Connection conn, BeanData mbd, Map<Attribute, Object> result) throws  SQLException,DBException{
+    public void export2DB(Connection conn, MBeanData mbd, Map<Attribute, Object> result) throws  SQLException,DBException{
 
         String tablename = convertIllegalTableName(mbd.getName());
         //deal with dynamic bean
@@ -161,7 +164,7 @@ public class Bean2DB {
             st = conn.createStatement();
             conn.setAutoCommit(false);
 
-            for (BeanData bean:s.getBeans()){
+            for (MBeanData bean:s.getBeans()){
                 sb = new StringBuilder();
                 tablename = convertIllegalTableName(bean.getName());
 

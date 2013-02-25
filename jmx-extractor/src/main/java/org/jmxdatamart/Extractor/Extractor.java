@@ -102,7 +102,8 @@ public class Extractor {
 
             for (MBeanData bdata : this.configData.getBeans()) {
                 if (bdata.isEnable()) {
-                    Map<Attribute, Object> result = MBeanExtract.extract(bdata, mbsc);
+                    MBeanExtract mbe = new MBeanExtract(bdata, mbsc);
+                    Map<Attribute, Object> result = mbe.extract();
                     bd.export2DB(conn, bdata, result);
                 }
             }

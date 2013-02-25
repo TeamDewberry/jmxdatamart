@@ -33,20 +33,22 @@ import javax.management.MBeanServerConnection;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.openmbean.CompositeData;
+import org.jmxdatamart.Extractor.Setting.Attribute;
+import org.jmxdatamart.Extractor.Setting.MBeanData;
 import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Binh Tran <mynameisbinh@gmail.com>
  */
-public class MBeanExtract implements Extractable{
+public class MBeanExtract{
 
-    BeanData mbd;
+    MBeanData mbd;
     MBeanServerConnection mbsc;
     private final org.slf4j.Logger logger = LoggerFactory.getLogger(MBeanExtract.class);
     ObjectName on;
 
-    public MBeanExtract(BeanData mbd, MBeanServerConnection mbsc) throws MalformedObjectNameException {
+    public MBeanExtract(MBeanData mbd, MBeanServerConnection mbsc) throws MalformedObjectNameException {
         this.mbd = mbd;
         this.mbsc = mbsc;
         try {
@@ -57,8 +59,6 @@ public class MBeanExtract implements Extractable{
         }
     }
     
-    
-    @Override
     public Map<Attribute, Object> extract() throws Exception {
         Map<Attribute, Object> retVal = new HashMap<Attribute, Object>();
         
