@@ -67,16 +67,19 @@ public class Extractor {
             mbsc = ManagementFactory.getPlatformMBeanServer();
         } else {
             JMXServiceURL url = null;
-			try {
-				url = new JMXServiceURL(configData.getUrl());
-			} catch (MalformedURLException e) {
-				logger.error("Error creating JMX service URL object", e);
-			}
             try {
-				mbsc = JMXConnectorFactory.connect(url).getMBeanServerConnection();
-			} catch (IOException e) {
-				logger.error(e.getMessage(), e);
-			}
+            	url = new JMXServiceURL(configData.getUrl());
+            } catch (MalformedURLException e) {
+            	logger.error("Error creating JMX service URL object", e);
+            	System.exit(0); //this is a fatal error and cannot be resolved later
+            }
+            
+            try {
+            	mbsc = JMXConnectorFactory.connect(url).getMBeanServerConnection();
+            } catch (IOException e) {
+            	logger.error(e.getMessage(), e);
+            	System.exit(0); //this is a fatal error and cannot be resolved later
+            }
         }
                
         hsql = new HypersqlHandler();
@@ -106,28 +109,31 @@ public class Extractor {
         
         connLock.lock();
         try{
-            try {
-				conn= hsql.connectDatabase(dbname,props);
-			} catch (SQLException e) {
-				logger.error("Error connecting to " + dbname + " database", e);
-			}
+        	try {
+        		conn = hsql.connectDatabase(dbname,props);
+        	} catch (SQLException e) {
+        		logger.error("Error connecting to " + dbname + " database", e);
+        		System.exit(0); //this is a fatal error and cannot be resolved later
+        	}
 
             for (BeanData bdata : this.configData.getBeans()) {
                 MBeanExtract mbe = null;
-				try {
-					mbe = new MBeanExtract(bdata, mbsc);
-				} catch (MalformedObjectNameException e) {
-					logger.error(e.getMessage(), e);
-				}
+                try {
+                	mbe = new MBeanExtract(bdata, mbsc);
+                } catch (MalformedObjectNameException e) {
+                	logger.error(e.getMessage(), e);
+                	System.exit(0); //this is a fatal error and cannot be resolved later
+                }
                 Map<Attribute, Object> result = mbe.extract();
                 bd.export2DB(conn, bdata, result);
             }
-
+            
             try {
-				hsql.shutdownDatabase(conn);
-			} catch (SQLException e) {
-				logger.error(e.getMessage(), e);
-			}
+            	hsql.shutdownDatabase(conn);
+            } catch (SQLException e) {
+            	logger.error(e.getMessage(), e);
+            }
+            
             hsql.disconnectDatabase(null,null,null,conn);
             conn = null;
         } finally {
@@ -144,34 +150,37 @@ public class Extractor {
         
         connLock.lock();
         try{
-            try {
-				conn= hsql.connectDatabase(dbname,props);
-			} catch (SQLException e) {
-				logger.error("Error connecting to " + dbname + " database", e);
-			}
+        	try {
+        		conn = hsql.connectDatabase(dbname,props);
+        	} catch (SQLException e) {
+        		logger.error("Error connecting to " + dbname + " database", e);
+        		System.exit(0); //this is a fatal error and cannot be resolved later
+        	}
 
             for (BeanData bdata : this.configData.getBeans()) {
             	if(bdata.getAlias().equals(beanAlias)) {
             		beanFound = true;
                     MBeanExtract mbe = null;
-    				try {
-    					mbe = new MBeanExtract(bdata, mbsc);
-    				} catch (MalformedObjectNameException e) {
-    					logger.error(e.getMessage(), e);
-    				}
-	                Map<Attribute, Object> result = mbe.extract();
+                    try {
+                    	mbe = new MBeanExtract(bdata, mbsc);
+                    } catch (MalformedObjectNameException e) {
+                    	logger.error(e.getMessage(), e);
+                    	System.exit(0); //this is a fatal error and cannot be resolved later
+                    }
+                    Map<Attribute, Object> result = mbe.extract();
 	                bd.export2DB(conn, bdata, result);
 	                System.out.println("Extracted");
             	}
             }
             if(!beanFound)
             	logger.info("Extraction failed: " + beanAlias + " MBean not found");
-
+            
             try {
-				hsql.shutdownDatabase(conn);
-			} catch (SQLException e) {
-				logger.error(e.getMessage(), e);
-			}
+            	hsql.shutdownDatabase(conn);
+            } catch (SQLException e) {
+            	logger.error(e.getMessage(), e);
+            }
+            
             hsql.disconnectDatabase(null,null,null,conn);
             conn = null;
         } finally {
@@ -186,16 +195,15 @@ public class Extractor {
             Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    try {
-                        connLock.lock();
-                        if (conn != null && !conn.isClosed()) {
-                            hsql.shutdownDatabase(conn);
-                            hsql.disconnectDatabase(null,null,null,conn);
-                        }
-                    } catch (SQLException ex) {
-                            LoggerFactory.getLogger(Extractor.class)
-                                    .error("Error while closing conn durring JVM shutdown", ex);
-                    } finally {
+                	try {
+                		connLock.lock();
+                		if (conn != null && !conn.isClosed()) {
+                			hsql.shutdownDatabase(conn);
+                			hsql.disconnectDatabase(null,null,null,conn);
+                			}
+                	} catch (SQLException ex) {
+                		LoggerFactory.getLogger(Extractor.class).error("Error while closing conn durring JVM shutdown", ex);
+                	} finally {
                         connLock.unlock();
                     }
                 }

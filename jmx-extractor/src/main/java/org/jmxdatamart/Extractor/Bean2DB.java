@@ -31,23 +31,27 @@ public class Bean2DB {
         MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
         String mbName = "org.jmxdatamart.JMXTestServer:type=TestBean";
         ObjectName mbeanName = null;
-		try {
-			mbeanName = new ObjectName(mbName);
-		} catch (MalformedObjectNameException e) {
-			logger.error("Error creating MBean object name", e);
-		} catch (NullPointerException e) {
-			logger.error("Error: no MBean object name provided", e);
-		}
-		
         try {
-			mbs.registerMBean(tb, mbeanName);
-		} catch (InstanceAlreadyExistsException e) {
-			logger.error("Error: " + mbeanName + " already registered with MBeanServer", e);
-		} catch (MBeanRegistrationException e) {
-			logger.error("Error registering " + mbeanName + " with MBeanServer", e);
-		} catch (NotCompliantMBeanException e) {
-			logger.error("Error: " + mbeanName + " is not compliant with MBeanServer", e);
-		}
+        	mbeanName = new ObjectName(mbName);
+        } catch (MalformedObjectNameException e) {
+        	logger.error("Error creating MBean object name", e);
+        	System.exit(0); //this is a fatal error and cannot be resolved later
+        } catch (NullPointerException e) {
+        	logger.error("Error: no MBean object name provided", e);
+        	System.exit(0); //this is a fatal error and cannot be resolved later
+        }
+        
+        try {
+        	mbs.registerMBean(tb, mbeanName);
+        } catch (InstanceAlreadyExistsException e) {
+        	logger.error("Error: " + mbeanName + " already registered with MBeanServer", e);
+        } catch (MBeanRegistrationException e) {
+        	logger.error("Error registering " + mbeanName + " with MBeanServer", e);
+        	System.exit(0); //this is a fatal error and cannot be resolved later
+        } catch (NotCompliantMBeanException e) {
+        	logger.error("Error: " + mbeanName + " is not compliant with MBeanServer", e);
+        	System.exit(0); //this is a fatal error and cannot be resolved later
+        }
 
         //Create test MBean's MBeanData
         Attribute a = new Attribute("A", "Alpha", DataType.INT);
@@ -60,6 +64,7 @@ public class Bean2DB {
 			instance = new MBeanExtract(mbd, mbs);
 		} catch (MalformedObjectNameException e) {
 			logger.error(e.getMessage(), e);
+			System.exit(0); //this is a fatal error and cannot be resolved later
 		}
         Map result = instance.extract();
 
@@ -76,33 +81,36 @@ public class Bean2DB {
         String dbname = bd.generateMBeanDB(s);
         HypersqlHandler hsql = new HypersqlHandler();
         Connection conn = null;
-		try {
-			conn = hsql.connectDatabase(dbname, props);
-		} catch (SQLException e) {
-			logger.error("Error connecting to SQL database", e);
-		}
+        try {
+        	conn = hsql.connectDatabase(dbname, props);
+        } catch (SQLException e) {
+        	logger.error("Error connecting to SQL database", e);
+        	System.exit(0); //this is a fatal error and cannot be resolved later
+        }
 
         bd.export2DB(conn,mbd,result);
 
         ResultSet rs = null;
         String query = "select * from " + bd.convertIllegalTableName(mbd.getName());
-		try {
-			rs = conn.createStatement().executeQuery(query);
-		} catch (SQLException e) {
-			logger.error("Error executing SQL query: " + query, e);
-		}
         try {
-			while(rs.next()){
-			    System.out.println(rs.getObject(1) + "\t" + rs.getObject(2));
-			}
-		} catch (SQLException e) {
-			logger.error(e.getMessage(), e);
-		}
+        	rs = conn.createStatement().executeQuery(query);
+        } catch (SQLException e) {
+        	logger.error("Error executing SQL query: " + query, e);
+        }
+        
         try {
-			hsql.shutdownDatabase(conn);
-		} catch (SQLException e) {
-			logger.error("Error shutting down SQL database", e);
-		}
+        	while(rs.next()){
+        		System.out.println(rs.getObject(1) + "\t" + rs.getObject(2));
+        	}
+        } catch (SQLException e) {
+        	logger.error(e.getMessage(), e);
+        }
+        
+        try {
+        	hsql.shutdownDatabase(conn);
+        } catch (SQLException e) {
+        	logger.error("Error shutting down SQL database", e);
+        }
         DBHandler.disconnectDatabase(rs, null, null, conn);
     }
 
@@ -116,44 +124,48 @@ public class Bean2DB {
 
     private void dealWithDynamicBean(Connection conn, String tableName , Map<Attribute, Object> result) {
         try {
-			if (!DBHandler.tableExists(tableName,conn))
-				logger.error("Error: " + tableName + " does not exist");
-		} catch (SQLException e) {
-			logger.error("Error accessing database handler", e);
-		}
+        	if (!DBHandler.tableExists(tableName,conn))
+        		logger.error("Error: " + tableName + " does not exist");
+        } catch (SQLException e) {
+        	logger.error("Error accessing database handler", e);
+        	System.exit(0); //this is a fatal error and cannot be resolved later
+        }
         
         String sql;
         boolean bl = false;
-		try {
-			bl = conn.getAutoCommit();
-		} catch (SQLException e) {
-			logger.error("Error getting auto commit from SQL database connection", e);
-		}
         try {
-			conn.setAutoCommit(false);
-		} catch (SQLException e) {
-			logger.error("Error setting auto commit in SQL database connection", e);
-		}
-        for (Map.Entry<Attribute, Object> m : result.entrySet()) {
-            try {
-				if (!DBHandler.columnExists(m.getKey().getName(),tableName,conn)){
-				    sql = "Alter table " + tableName +" add " +m.getKey().getName()+ " "+m.getKey().getDataType();
-				    conn.createStatement().executeUpdate(sql);
-				}
-			} catch (SQLException e) {
-				logger.error("Error accessing SQL database handler", e);
-			}
+        	bl = conn.getAutoCommit();
+        } catch (SQLException e) {
+        	logger.error("Error getting auto commit from SQL database connection", e);
         }
+        
         try {
-			conn.commit();
-		} catch (SQLException e) {
-			logger.error("Error with commit to SQL database", e);
-		}
+        	conn.setAutoCommit(false);
+        } catch (SQLException e) {
+        	logger.error("Error setting auto commit in SQL database connection", e);
+        }
+        for (Map.Entry<Attribute, Object> m : result.entrySet()) {
+        	try {
+        		if (!DBHandler.columnExists(m.getKey().getName(),tableName,conn)){
+        			sql = "Alter table " + tableName +" add " +m.getKey().getName()+ " "+m.getKey().getDataType();
+        			conn.createStatement().executeUpdate(sql);
+        		}
+        	} catch (SQLException e) {
+        		logger.error("Error accessing SQL database handler", e);
+        	}
+        }
+        
         try {
-			conn.setAutoCommit(bl);
-		} catch (SQLException e) {
-			logger.error("Error setting auto commit in SQL database connection", e);
-		}
+        	conn.commit();
+        } catch (SQLException e) {
+        	logger.error("Error with commit to SQL database", e);
+        }
+        
+        try {
+        	conn.setAutoCommit(bl);
+        } catch (SQLException e) {
+        	logger.error("Error setting auto commit in SQL database connection", e);
+        }
     }
 
     public void export2DB(Connection conn, BeanData mbd, Map<Attribute, Object> result) {
@@ -176,12 +188,12 @@ public class Bean2DB {
 
         String sql = insertstring.append("time)").toString();
         sql += insertvalue.append("?)").toString();
-        //System.out.println(sql);
         try {
-			ps = conn.prepareStatement(sql);
-		} catch (SQLException e1) {
-			logger.error("Error preparing statement for SQL database connection", e1);
-		}
+        	ps = conn.prepareStatement(sql);
+        } catch (SQLException e1) {
+        	logger.error("Error preparing statement for SQL database connection", e1);
+        	System.exit(0); //this is a fatal error and cannot be resolved later
+        }
 
         //need to think about how to avoid retrieving the map twice
         int i=0;
@@ -189,61 +201,59 @@ public class Bean2DB {
             switch (((Attribute)m.getKey()).getDataType())
             {
                 case INT:
-				try {
-					ps.setInt(++i,(Integer)m.getValue());
-				} catch (SQLException e) {
-					logger.error("Error setting statement for SQL prepared statement", e);
-				}
-                    break;
+                	try {
+                		ps.setInt(++i,(Integer)m.getValue());
+                	} catch (SQLException e) {
+                		logger.error("Error setting statement for SQL prepared statement", e);
+                	}
+                	break;
                 case STRING:
-				try {
-					ps.setString(++i,m.getValue().toString());
-				} catch (SQLException e) {
-					logger.error("Error setting statement for SQL prepared statement", e);
-				}
-                    break;
+                	try {
+                		ps.setString(++i,m.getValue().toString());
+                	} catch (SQLException e) {
+                		logger.error("Error setting statement for SQL prepared statement", e);
+                	}
+                	break;
                 case FLOAT:
-				try {
-					ps.setFloat(++i,(Float)m.getValue());
-				} catch (SQLException e) {
-					logger.error("Error setting statement for SQL prepared statement", e);
-				}
-                    break;
+                	try {
+                		ps.setFloat(++i,(Float)m.getValue());
+                	} catch (SQLException e) {
+                		logger.error("Error setting statement for SQL prepared statement", e);
+                	}
+                	break;
             }
         }
         try {
-			ps.setTimestamp(++i, new Timestamp((new java.util.Date()).getTime()));
-		} catch (SQLException e1) {
-			logger.error("Error setting timestamp for SQL prepared statement", e1);
-		}
+        	ps.setTimestamp(++i, new Timestamp((new java.util.Date()).getTime()));
+        } catch (SQLException e1) {
+        	logger.error("Error setting timestamp for SQL prepared statement", e1);
+        }
 
         boolean bl=false;
-        try{
-            bl = conn.getAutoCommit();
-            conn.setAutoCommit(false);
-            ps.executeUpdate();
-            conn.commit();
+        try {
+        	bl = conn.getAutoCommit();
+        	conn.setAutoCommit(false);
+        	ps.executeUpdate();
+        	conn.commit();
+        } catch (SQLException e){
+        	try {
+        		conn.rollback();
+        	} catch (SQLException e1) {
+        		logger.error("Error rolling back SQL database connection", e);
+        	}
+        } finally {
+        	try {
+        		ps.close();
+        	} catch (SQLException e) {
+        		logger.error("Error closing SQL prepared statement", e);
+        	}
+        	
+        	try {
+        		conn.setAutoCommit(bl);
+        	} catch (SQLException e) {
+        		logger.error("Error setting auto commit for SQL database connection", e);
+        	}
         }
-        catch (SQLException e){
-            try {
-				conn.rollback();
-			} catch (SQLException e1) {
-				logger.error("Error rolling back SQL database connection", e);
-			}
-        }
-        finally {
-            try {
-				ps.close();
-			} catch (SQLException e) {
-				logger.error("Error closing SQL prepared statement", e);
-			}
-            try {
-				conn.setAutoCommit(bl);
-			} catch (SQLException e) {
-				logger.error("Error setting auto commit for SQL database connection", e);
-			}
-        }
-
     }
 
     public String generateMBeanDB(Settings s) {
@@ -256,11 +266,11 @@ public class Bean2DB {
         StringBuilder sb;
         String tablename = null;
         try{
-            Properties props = new Properties();
-            props.put("username", "sa");
-            props.put("password", "whatever");
-            conn = hypersql.connectDatabase(dbName, props);
-            System.out.println("Database " + dbName + " is created.");
+        	Properties props = new Properties();
+        	props.put("username", "sa");
+        	props.put("password", "whatever");
+        	conn = hypersql.connectDatabase(dbName, props);
+        	System.out.println("Database " + dbName + " is created.");
 
             st = conn.createStatement();
             conn.setAutoCommit(false);
@@ -282,25 +292,23 @@ public class Bean2DB {
                 System.out.println("Table " + recoverOriginalTableName(tablename) + " is created.");
             }
             conn.commit();
-        }
-        catch (Exception e){
-            System.err.println(e.getMessage());
-            try {
-				conn.rollback();
-			} catch (SQLException e1) {
-				logger.error("Error rolling back SQL database connection", e);
-			}
-            return null;
+        } catch (Exception e){
+        	System.err.println(e.getMessage());
+        	try {
+        		conn.rollback();
+        	} catch (SQLException e1) {
+        		logger.error("Error rolling back SQL database connection", e);
+        	}
+        	return null;
         }
         finally {
-            try {
-				hypersql.shutdownDatabase(conn);
-			} catch (SQLException e) {
-				logger.error("Error shutting down SQL database", e);
-			} //we should shut down a Hsql DB
-            DBHandler.disconnectDatabase(null, st, null, conn);
+        	try {
+        		hypersql.shutdownDatabase(conn);
+        	} catch (SQLException e) {
+        		logger.error("Error shutting down SQL database", e);
+        	} //we should shut down a Hsql DB
+        	DBHandler.disconnectDatabase(null, st, null, conn);
         }
-
         return dbName;
     }
 }

@@ -57,6 +57,7 @@ public class Main {
 			        new FileInputStream("C:\\Extracted\\s1.xml"));
 		} catch (FileNotFoundException e) {
 			logger.error("Error while reading from settings file", e);
+			System.exit(0); //this is a fatal error and cannot be resolved later
 		}
         
         Extractor etor = new Extractor(s);
@@ -78,6 +79,7 @@ public class Main {
 			        new FileInputStream("C:\\Extracted\\s2.xml"));
 		} catch (FileNotFoundException e) {
 			logger.error("Error while reading from settings file", e);
+			System.exit(0); //this is a fatal error and cannot be resolved later
 		}
         
         Extractor etor = new Extractor(s);
@@ -99,6 +101,7 @@ public class Main {
 			        new FileInputStream("C:\\Extracted\\s3.xml"));
 		} catch (FileNotFoundException e) {
 			logger.error("Error while reading from settings file", e);
+			System.exit(0); //this is a fatal error and cannot be resolved later
 		}
         
 		Extractor etor = new Extractor(s);
@@ -131,8 +134,10 @@ public class Main {
 			mbeanName = new ObjectName(mbName);
 		} catch (MalformedObjectNameException e) {
 			logger.error(e.getMessage(), e);
+			System.exit(0); //this is a fatal error and cannot be resolved later
 		} catch (NullPointerException e) {
 			logger.error("Error creating MBean: no object name given", e);
+			System.exit(0); //this is a fatal error and cannot be resolved later
 		}
         try {
 			mbs.registerMBean(tb, mbeanName);
@@ -140,8 +145,10 @@ public class Main {
 			logger.error("Error: " + mbeanName + " already registered with MBeanServer", e);
 		} catch (MBeanRegistrationException e) {
 			logger.error("Error registering " + mbeanName + " with MBeanServer", e);
+			System.exit(0); //this is a fatal error and cannot be resolved later
 		} catch (NotCompliantMBeanException e) {
 			logger.error("Error: " + mbeanName + " is not compliant with MBeanServer", e);
+			System.exit(0); //this is a fatal error and cannot be resolved later
 		}
         
         // Main extract
