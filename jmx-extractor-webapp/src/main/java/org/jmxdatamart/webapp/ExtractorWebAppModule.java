@@ -31,7 +31,7 @@ package org.jmxdatamart.webapp;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import org.jmxdatamart.Extractor.Extractor;
-import org.jmxdatamart.Extractor.Setting.Settings;
+import org.jmxdatamart.Extractor.Settings;
 
 import javax.management.MBeanServerConnection;
 import javax.management.remote.JMXConnectorFactory;

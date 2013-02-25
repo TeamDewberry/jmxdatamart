@@ -28,7 +28,6 @@
 
 package org.jmxdatamart.Extractor;
 
-import org.jmxdatamart.Extractor.Setting.Settings;
 import java.io.FileInputStream;
 import java.lang.management.ManagementFactory;
 import javax.management.MBeanServer;
