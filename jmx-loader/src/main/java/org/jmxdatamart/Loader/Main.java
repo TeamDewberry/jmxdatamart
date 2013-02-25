@@ -29,25 +29,87 @@ package org.jmxdatamart.Loader;/*
 import org.jmxdatamart.common.DBException;
 
 import java.sql.SQLException;
+import java.util.HashSet;
+import java.util.Set;
+import java.io.File;
+import java.util.ArrayList;
 
 public class Main {
     public static void main(String[] args) throws SQLException, DBException {
-        if (args.length!=1){
-            System.err.println("Must have one argument");
-            //System.exit(0);
+        if (args.length!=2){
+            printHelp();
         }
-        //read file ...
+        else{
+            if (lookForHelp(args)){
+                printHelp();                       
+            }
+            else{
+                String configFile = getConfig(args);
+            
+                for(File dbfile : getDbFileList(args)){
+                    String dbName = dbfile.getPath().substring(0,dbfile.getPath().length()-7);
+                    System.out.println(dbfile.getPath().substring(0,dbfile.getPath().length()-7));
+                    
+                    DB2DB d2d = new DB2DB();
+                    LoaderSetting s = d2d.readProperties(configFile);
 
-        String arg1 = "jmx-loader/src/main/java/org/jmxdatamart/Loader/loaderconfig.ini";
+                    LoaderSetting.DBInfo fileInfo = s.getSource();
+                    
+                    fileInfo.setDatabaseName(dbName);
+                    fileInfo.setJdbcUrl("jdbc:hsqldb:file:" + dbName);
 
-        DB2DB d2d = new DB2DB();
-        LoaderSetting s =d2d.readProperties(arg1);
-        d2d.loadSetting(s);
-        d2d.copySchema();
-        d2d.importData();
-        d2d.disConnect();
-        System.out.println("done");
+                    s.setSource(fileInfo);
+
+                    d2d.loadSetting(s);
+                    d2d.copySchema();
+                    d2d.importData();
+                    d2d.disConnect();
+                } 
+            }
+        }
     }
-
-
+    public static void printHelp(){
+        System.out.println("Loader Syntax:");
+        System.out.println("Loader -h | h | ? | help , brings up this display");
+        System.out.println("Loader config.ini \\dbfiledirpath  ");
+        System.out.println("    Loader looks for hyperSQL files in dbfiledirpath");
+        System.out.println("Example: Loader loaderConfig.ini C:\\Extracted");
+    }
+    private static String getConfig(String[] argArray){
+      String extension;
+      for(int i = 0; i<argArray.length; i++){
+          extension = argArray[i].substring(argArray[i].length()-3);
+          if (extension.equals("ini")){
+              return argArray[i];
+          }
+      }
+      return "";
+    }
+    private static Boolean lookForHelp(String[] argArray){
+        for(int i = 0; i < argArray.length; i++){
+          if (argArray[i].equals("-h") | argArray[i].equals("h") | argArray[i].equals("?") | argArray[i].equals("help")){
+              return true;
+          }
+        }
+        return false;
+    }
+    private static ArrayList<File> getDbFileList(String[] argArray) {
+        ArrayList<File> dbList = new ArrayList<File>();
+        for (int i = 0; i < argArray.length; i++) {
+            //find db directory argument
+            File folder = new File(argArray[i]);
+            if (folder.isDirectory()) {
+                File[] listOfFiles = folder.listFiles();
+                for (int j = 0; j < listOfFiles.length; j++) {
+                    //find db files files in the directory
+                    if (listOfFiles[j].isFile() && listOfFiles[j].getName().endsWith(".script")) {
+                        if (!dbList.contains(listOfFiles[j])) {
+                            dbList.add(listOfFiles[j]);
+                        }
+                    }
+                }
+            }
+        }
+        return dbList;
+    }
 }
