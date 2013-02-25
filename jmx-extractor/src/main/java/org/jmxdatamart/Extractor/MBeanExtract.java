@@ -27,12 +27,8 @@
  */
 package org.jmxdatamart.Extractor;
 
-import org.jmxdatamart.Extractor.Setting.Attribute;
-import org.jmxdatamart.Extractor.Setting.MBeanData;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.management.MBeanServerConnection;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
@@ -40,31 +36,37 @@ import javax.management.openmbean.CompositeData;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
+ *
  * @author Binh Tran <mynameisbinh@gmail.com>
  */
-public class MBeanExtract {
+public class MBeanExtract implements Extractable{
 
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(MBeanExtract.class);
-    
-    
-    public static Map<Attribute, Object> extract(MBeanData mbd, MBeanServerConnection mbsc)
-            throws Exception{
-        ObjectName on;
+    BeanData mbd;
+    MBeanServerConnection mbsc;
+    private final org.slf4j.Logger logger = LoggerFactory.getLogger(MBeanExtract.class);
+    ObjectName on;
+
+    public MBeanExtract(BeanData mbd, MBeanServerConnection mbsc) throws MalformedObjectNameException {
+        this.mbd = mbd;
+        this.mbsc = mbsc;
         try {
             on = new ObjectName(mbd.getName());
         } catch (MalformedObjectNameException ex) {
-            logger.error("Error while trying to attach to " + mbd.getName());
+            logger.error("Error while creating ObjectName from MBeanData", ex);
             throw ex;
         }
-        
+    }
+    
+    
+    @Override
+    public Map<Attribute, Object> extract() throws Exception {
         Map<Attribute, Object> retVal = new HashMap<Attribute, Object>();
         
-        for (Attribute a : mbd.getAttributes()) {
+        for (Attribute a : this.mbd.getAttributes()) {
             try{
                 String aName = a.getName();
                 if (!aName.contains(".")) {
-                    retVal.put(a, mbsc.getAttribute(on, aName));
+                    retVal.put(a, this.mbsc.getAttribute(on, aName));
                 } else {
                     String[] mxAttribute = aName.split("\\.");
                     if (mxAttribute.length != 2) {
