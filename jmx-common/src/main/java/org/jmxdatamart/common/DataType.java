@@ -61,7 +61,7 @@ public enum DataType {
     {
         @Override
         public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
-            if (supportTypeOf(value)) {
+            if (checkTypeOf(value)) {
                 ps.setShort(index, ((Short)value).shortValue());
             }
         }
@@ -77,7 +77,7 @@ public enum DataType {
     {
         @Override
         public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
-            if (supportTypeOf(value)) {
+            if (checkTypeOf(value)) {
                 ps.setInt(index, ((Integer)value).intValue());
             }
         }
@@ -93,7 +93,7 @@ public enum DataType {
     {
         @Override
         public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
-            if (supportTypeOf(value)) {
+            if (checkTypeOf(value)) {
                 ps.setLong(index, ((Long)value).longValue());
             }
         }
@@ -109,7 +109,7 @@ public enum DataType {
     {
         @Override
         public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
-            if (supportTypeOf(value)) {
+            if (checkTypeOf(value)) {
                 ps.setFloat(index, ((Float)value).floatValue());
             }
         }
@@ -125,7 +125,7 @@ public enum DataType {
     {
         @Override
         public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
-            if (supportTypeOf(value)) {
+            if (checkTypeOf(value)) {
                 ps.setDouble(index, ((Double)value).doubleValue());
             }
         }
@@ -143,7 +143,7 @@ public enum DataType {
     {
         @Override
         public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
-            if (supportTypeOf(value)) {
+            if (checkTypeOf(value)) {
                 ps.setString(index, value.toString());
             }
         }
@@ -159,7 +159,7 @@ public enum DataType {
     {
         @Override
         public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
-            if (supportTypeOf(value)) {
+            if (checkTypeOf(value)) {
                 ps.setString(index, value.toString());
             }
         }

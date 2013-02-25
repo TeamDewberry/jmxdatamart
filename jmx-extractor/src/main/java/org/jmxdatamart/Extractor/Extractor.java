@@ -63,7 +63,6 @@ public class Extractor {
     @Inject
     public Extractor(Settings configData) throws IOException, SQLException {
         this.stop = false;
-        timer = null;
         this.configData = configData;
         if (configData.getUrl() == null || configData.getUrl().isEmpty()) {
             mbsc = ManagementFactory.getPlatformMBeanServer();
