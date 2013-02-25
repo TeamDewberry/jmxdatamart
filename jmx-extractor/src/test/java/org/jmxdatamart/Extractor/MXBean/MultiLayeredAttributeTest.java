@@ -5,17 +5,11 @@
 package org.jmxdatamart.Extractor.MXBean;
 
 import java.lang.management.ManagementFactory;
-import java.util.ArrayList;
 import java.util.Map;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import org.jmxdatamart.Extractor.Setting.Attribute;
 import org.jmxdatamart.JMXTestServer.CarBean;
-import org.jmxdatamart.common.DataType;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.*;
