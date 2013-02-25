@@ -56,6 +56,7 @@ public class MultiLayeredAttribute {
                             sb.append(temp.charAt(j));
                     }
                 }
+                layers.set(i, sb.toString());
             }
         }
         this.mbs = mbs;
@@ -103,7 +104,7 @@ public class MultiLayeredAttribute {
                 return;
             } else {
             soFar.put(
-                    new Attribute(null, currName, dt),
+                    new Attribute(null, name2alias(currName), dt),
                     curr);
             }
         } else {
@@ -143,7 +144,7 @@ public class MultiLayeredAttribute {
                 }
             } else {
                 logger.error("Doesn't support type " + curr.getClass() + 
-                             " amid the MXBeanChain " + " at " + currName.toString());
+                             " amid the MXBeanChain at " + currName.toString());
             }
         }
     }
