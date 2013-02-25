@@ -162,6 +162,9 @@ public class MultiLayeredAttribute {
                 sb.append('_');
             }
         }
+        if (sb.charAt(sb.length() - 1) == '_'){
+            sb.deleteCharAt(sb.length() - 1);
+        }
         return sb.toString();
     }
 }
