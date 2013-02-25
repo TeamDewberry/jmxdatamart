@@ -25,12 +25,35 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.jmxdatamart.common;
+package org.jmxdatamart.Extractor;
+
+import java.util.List;
 
 /**
- * Supported data types
+ *
  * @author Binh Tran <mynameisbinh@gmail.com>
  */
-public enum DataType {
-    INT, FLOAT, STRING  //MS SQLserve doesn't support Boolean type
+public interface BeanData {
+
+    /**
+     * @return the alias
+     */
+    String getAlias();
+    
+    void setAlias(String alias);
+
+    /**
+     * @return the name
+     */
+    String getName();
+    
+    void setName(String name);
+
+    /**
+     * @return the enable
+     */
+    boolean isEnable();
+    
+    List<Attribute> getAttributes();
+    
 }
