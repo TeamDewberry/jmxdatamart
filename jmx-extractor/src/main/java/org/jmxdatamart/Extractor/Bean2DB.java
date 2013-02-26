@@ -60,12 +60,12 @@ public class Bean2DB {
 
         //Init MBeanExtract
         MBeanExtract instance = null;
-		try {
-			instance = new MBeanExtract(mbd, mbs);
-		} catch (MalformedObjectNameException e) {
-			logger.error(e.getMessage(), e);
-			System.exit(0); //this is a fatal error and cannot be resolved later
-		}
+        try {
+        	instance = new MBeanExtract(mbd, mbs);
+        } catch (MalformedObjectNameException e) {
+        	logger.error(e.getMessage(), e);
+        	System.exit(0); //this is a fatal error and cannot be resolved later
+        }
         Map result = instance.extract();
 
         Settings s = new Settings();
