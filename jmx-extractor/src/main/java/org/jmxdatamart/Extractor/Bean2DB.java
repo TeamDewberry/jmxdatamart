@@ -35,10 +35,10 @@ public class Bean2DB {
         	mbeanName = new ObjectName(mbName);
         } catch (MalformedObjectNameException e) {
         	logger.error("Error creating MBean object name", e);
-        	System.exit(0); //this is a fatal error and cannot be resolved later
+        	System.exit(1); //this is a fatal error and cannot be resolved later
         } catch (NullPointerException e) {
         	logger.error("Error: no MBean object name provided", e);
-        	System.exit(0); //this is a fatal error and cannot be resolved later
+        	System.exit(1); //this is a fatal error and cannot be resolved later
         }
         
         try {
@@ -47,10 +47,10 @@ public class Bean2DB {
         	logger.error("Error: " + mbeanName + " already registered with MBeanServer", e);
         } catch (MBeanRegistrationException e) {
         	logger.error("Error registering " + mbeanName + " with MBeanServer", e);
-        	System.exit(0); //this is a fatal error and cannot be resolved later
+        	System.exit(1); //this is a fatal error and cannot be resolved later
         } catch (NotCompliantMBeanException e) {
         	logger.error("Error: " + mbeanName + " is not compliant with MBeanServer", e);
-        	System.exit(0); //this is a fatal error and cannot be resolved later
+        	System.exit(1); //this is a fatal error and cannot be resolved later
         }
 
         //Create test MBean's MBeanData
@@ -64,7 +64,7 @@ public class Bean2DB {
         	instance = new MBeanExtract(mbd, mbs);
         } catch (MalformedObjectNameException e) {
         	logger.error(e.getMessage(), e);
-        	System.exit(0); //this is a fatal error and cannot be resolved later
+        	System.exit(1); //this is a fatal error and cannot be resolved later
         }
         Map result = instance.extract();
 
@@ -85,7 +85,7 @@ public class Bean2DB {
         	conn = hsql.connectDatabase(dbname, props);
         } catch (SQLException e) {
         	logger.error("Error connecting to SQL database", e);
-        	System.exit(0); //this is a fatal error and cannot be resolved later
+        	System.exit(1); //this is a fatal error and cannot be resolved later
         }
 
         bd.export2DB(conn,mbd,result);
@@ -128,7 +128,7 @@ public class Bean2DB {
         		logger.error("Error: " + tableName + " does not exist");
         } catch (SQLException e) {
         	logger.error("Error accessing database handler", e);
-        	System.exit(0); //this is a fatal error and cannot be resolved later
+        	System.exit(1); //this is a fatal error and cannot be resolved later
         }
         
         String sql;
@@ -192,7 +192,7 @@ public class Bean2DB {
         	ps = conn.prepareStatement(sql);
         } catch (SQLException e1) {
         	logger.error("Error preparing statement for SQL database connection", e1);
-        	System.exit(0); //this is a fatal error and cannot be resolved later
+        	System.exit(1); //this is a fatal error and cannot be resolved later
         }
 
         //need to think about how to avoid retrieving the map twice

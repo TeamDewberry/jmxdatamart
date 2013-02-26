@@ -220,7 +220,7 @@ public class Settings {
 			s1 = Settings.fromXML(new FileInputStream("Settings.xml"));
 		} catch (FileNotFoundException e) {
 			logger.error("Error while getting data from Settings.xml", e);
-			System.exit(0); //this is a fatal error and cannot be resolved later
+			System.exit(1); //this is a fatal error and cannot be resolved later
 		}
         System.out.println(s1.toString());
         System.out.println("Read xml settings complete");
@@ -245,7 +245,7 @@ public class Settings {
 			out = new FileWriter("settings.xml");
 		} catch (IOException e) {
 			logger.error("Error while creating FileWriter for settings file", e);
-			System.exit(0); //this is a fatal error and cannot be resolved later
+			System.exit(1); //this is a fatal error and cannot be resolved later
 		}
         try {
 			out.write(sXML);
