@@ -1,4 +1,4 @@
-package org.jmxdatamart.Loader;/*
+/*
  * Copyright (c) 2013, Tripwire, Inc.
  * All rights reserved.
  *
@@ -25,9 +25,9 @@ package org.jmxdatamart.Loader;/*
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package org.jmxdatamart.Loader;
 
 import org.jmxdatamart.common.DBException;
-
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
@@ -35,6 +35,12 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class Main {
+    
+    /**
+     * Command line main method. Loads all hypersql files in the directory passed in args
+     * according to the configuration in the .ini file also passed in args.
+     * @param args command line arguments
+     */
     public static void main(String[] args) throws SQLException, DBException {
         if (args.length!=2){
             printHelp();
@@ -68,6 +74,10 @@ public class Main {
             }
         }
     }
+    
+    /**
+     * Prints to System.out the Loader syntax for the command line.
+     */
     public static void printHelp(){
         System.out.println("Loader Syntax:");
         System.out.println("Loader -h | h | ? | help , brings up this display");
@@ -75,6 +85,12 @@ public class Main {
         System.out.println("    Loader looks for hyperSQL files in dbfiledirpath");
         System.out.println("Example: Loader loaderConfig.ini C:\\Extracted");
     }
+    
+    /**
+     * Iterates through the command line arguments looking for .ini file name/path
+     * @param argArray command line arguments
+     * @return String file name
+     */
     private static String getConfig(String[] argArray){
       String extension;
       for(int i = 0; i<argArray.length; i++){
@@ -85,6 +101,12 @@ public class Main {
       }
       return "";
     }
+    
+    /**
+     * Iterates through the command line arguments looking for -h | h | ? | help
+     * @param argArray command line arguments
+     * @return Boolean True if found in argArray
+     */
     private static Boolean lookForHelp(String[] argArray){
         for(int i = 0; i < argArray.length; i++){
           if (argArray[i].equals("-h") | argArray[i].equals("h") | argArray[i].equals("?") | argArray[i].equals("help")){
@@ -93,6 +115,13 @@ public class Main {
         }
         return false;
     }
+    
+    /**
+     * Iterates through the command line arguments looking a directory
+     * The method then iterates through all files in that directory looking for .script files
+     * @param argArray command line arguments
+     * @return ArrayList<File> list of hypersql db files
+     */
     private static ArrayList<File> getDbFileList(String[] argArray) {
         ArrayList<File> dbList = new ArrayList<File>();
         for (int i = 0; i < argArray.length; i++) {

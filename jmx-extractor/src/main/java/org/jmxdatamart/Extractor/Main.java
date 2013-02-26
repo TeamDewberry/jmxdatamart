@@ -38,7 +38,14 @@ import java.util.Date;
 
 public class Main {   
  
-  public static void main(String[] args) throws Exception {
+    /**
+     * Command line main method. Sets up an Extractor based on the settings file
+     * passed in args, and waits while extraction occurs. Method sleeps based
+     * on an argument passed.
+     * @param args command line arguments
+     * @throws Exception 
+     */
+    public static void main(String[] args) throws Exception {
         if (args.length != 2) {
             printHelp();
         }
@@ -49,37 +56,48 @@ public class Main {
             else{
                 Long timeStart = new Long(System.currentTimeMillis());
                 Long durationMilli = new Long(getRuntime(args));
-                
+
                 Settings s = Settings.fromXML(new FileInputStream(getConfig(args)));
-        
+
                 Extractor etor = new Extractor(s);
-        
+
                 Long sleeptime = s.getPollingRate()*1000;
                 Long timeEnd = timeStart + durationMilli;
-        
+
                 while(timeEnd >= System.currentTimeMillis() )
                 {
                     Thread.sleep(sleeptime);
                 }
             }  
         }
-  }
-  public static void printHelp(){
+    }
+  
+    /**
+    * Prints to System.out the Loader syntax for the command line.
+    */
+    public static void printHelp(){
       System.out.println("Extractor Syntax:");
       System.out.println("Extractor -h | h | ? | help , brings up this display");
       System.out.println("Extractor config.xml ##t , runs the extractor for ## time");
       System.out.println("    t must be either h (hours), m (minutes), s (seconds)");
       System.out.println("   ## must be an integer value");
       System.out.println("Example: Extractor s1.xml 60s (runs the extractor for 60 seconds)");
-  }
-  private static Long getRuntime(String[] argArray){
+    }
+    
+    /**
+     * Iterates through the command line arguments looking for a number followed by
+     * a time unit (h | m | s) returns time in millisecs.
+     * @param argArray String[]
+     * @return Long
+     */
+    private static Long getRuntime(String[] argArray){
       //returns runTime in millisecs
       Long runTime = new Long(0);
       String timeUnit;
       for (int i = 0; i < argArray.length;i++)
       {
           timeUnit = argArray[i].substring(argArray[i].length()-1);
-          
+
           if (timeUnit.equals("s")){
               runTime = stringToLong(argArray[i])*1000;
           }
@@ -90,10 +108,17 @@ public class Main {
               runTime = stringToLong(argArray[i])*3600000;
           }
       }
-      
+
       return runTime;
-  }
-  private static Long stringToLong(String num){
+    }
+    
+    /**
+     * Removes the last character and attempts to cast the rest as a Long, if it
+     * fails, method returns 0
+     * @param num String
+     * @return Long
+     */
+    private static Long stringToLong(String num){
       // This method chops off the last char and tries to covert the rest to Long 
       //  returns 0 if error
       Long r = new Long(0);
@@ -104,8 +129,14 @@ public class Main {
           r = (long)0;
       }  
       return r;    
-  }
-  private static String getConfig(String[] argArray){
+    }
+    
+    /**
+     * Iterates through command line arguments looking for .xml file name/path
+     * @param argArray String[]
+     * @return String file name
+     */
+    private static String getConfig(String[] argArray){
       String extension;
       for(int i = 0; i<argArray.length; i++){
           extension = argArray[i].substring(argArray[i].length()-3);
@@ -114,15 +145,21 @@ public class Main {
           }
       }
       return "";
-  }
-  private static Boolean lookForHelp(String[] argArray){
+    }
+    
+    /**
+     * Iterates through the command line arguments looking for -h | h | ? | help
+     * @param argArray command line arguments
+     * @return Boolean True if found in argArray
+     */
+    private static Boolean lookForHelp(String[] argArray){
       for(int i = 0; i < argArray.length; i++){
           if (argArray[i].equals("-h") | argArray[i].equals("h") | argArray[i].equals("?") | argArray[i].equals("help")){
               return true;
           }
       }
       return false;
-  }
+    }
 }
 // Old code for reference
 /*
