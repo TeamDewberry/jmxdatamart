@@ -39,6 +39,8 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.hamcrest.Matchers.*;
 import org.hamcrest.core.*;
+import org.jmxdatamart.Extractor.Setting.Attribute;
+import org.jmxdatamart.Extractor.Setting.MBeanData;
 
 /**
  *

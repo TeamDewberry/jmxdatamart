@@ -26,7 +26,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.jmxdatamart.Extractor;
+package org.jmxdatamart.Extractor.Setting;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
@@ -48,7 +48,7 @@ public class Settings {
     private long pollingRate;
     private String folderLocation;
     private String url;
-    private List<BeanData> beans;
+    private List<MBeanData> beans;
 
     @Override
     public int hashCode() {
@@ -130,14 +130,14 @@ public class Settings {
     /**
      * @return the beans
      */
-    public List<BeanData> getBeans() {
+    public List<MBeanData> getBeans() {
         return beans;
     }
 
     /**
      * @param beans the beans to set
      */
-    public void setBeans(List<BeanData> beans) {
+    public void setBeans(List<MBeanData> beans) {
         this.beans = beans;
     }
     
@@ -151,7 +151,7 @@ public class Settings {
     }
     
     public void sanitize() {
-        for (BeanData bd : getBeans()) {
+        for (MBeanData bd : getBeans()) {
             if ("".equals(bd.getAlias())) {
                 bd.setAlias(bd.getName());
             }
@@ -222,7 +222,7 @@ public class Settings {
         s.setFolderLocation("\\project\\");
         s.setPollingRate(5);
         s.setUrl("service:jmx:rmi:///jndi/rmi://:9999/jmxrmi");
-        s.setBeans(new ArrayList<BeanData>());
+        s.setBeans(new ArrayList<MBeanData>());
         
         MBeanData bd = new MBeanData("com.example:type=Hello","", new ArrayList<Attribute>(), true);
         bd.getAttributes().add(new Attribute("Name", "", DataType.STRING));
