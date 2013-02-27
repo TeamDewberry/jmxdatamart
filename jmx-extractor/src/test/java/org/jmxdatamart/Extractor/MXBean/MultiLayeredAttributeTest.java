@@ -13,6 +13,8 @@ import org.jmxdatamart.JMXTestServer.CarBean;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.*;
+import org.jmxdatamart.JMXTestServer.TestBean;
+import org.jmxdatamart.common.DataType;
 
 /**
  *
@@ -27,8 +29,9 @@ public class MultiLayeredAttributeTest {
         ObjectName mS = new ObjectName("java.lang:name=CarBean");
         mbs.registerMBean(new CarBean(), mS);
         
-        MultiLayeredAttribute mla = new MultiLayeredAttribute("Car.*", mbs, mS);
-        Map<Attribute, Object> result = mla.getAll();
+        MultiLayeredAttribute mla = new MultiLayeredAttribute(mbs);
+        Attribute attr = new Attribute("Car.*", null, null);
+        Map<Attribute, Object> result = mla.getAll(mS, attr);
         
         assertTrue ( result.size() == 4);
         
@@ -47,9 +50,8 @@ public class MultiLayeredAttributeTest {
                 fail("Unknown attribute " + entry.getKey().toString());
             }
         }
-        
-        mla = new MultiLayeredAttribute("Map.*.*", mbs, mS);
-        result = mla.getAll();
+        attr = new Attribute("Map.*.*", null, null);
+        result = mla.getAll(mS, attr);
         
         assertEquals(4, result.size());
         for (Map.Entry<Attribute, Object> entry : result.entrySet()) {
@@ -67,5 +69,33 @@ public class MultiLayeredAttributeTest {
                 fail("Unknown attribute " + entry.getKey().toString());
             }
         }
+        mbs.unregisterMBean(mS);
+    }
+    
+    @Test
+    public void testSameLevelPattern() throws Exception{
+        TestBean tb = new TestBean();
+        tb.setA(new Integer(42));
+        tb.setB(new Integer(8));
+        MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+        String mbName = "org.jmxdatamart.JMXTestServer:type=TestBean";
+        ObjectName mbeanName = new ObjectName(mbName);
+        mbs.registerMBean(tb, mbeanName);
+        
+        MultiLayeredAttribute mla = new MultiLayeredAttribute(mbs);
+        Attribute attr = new Attribute(null, "*", null);
+        Map<Attribute, Object> result = mla.getAll(mbeanName, attr);
+        
+        assertEquals(2, result.size());
+        for (Map.Entry<Attribute, Object> entry : result.entrySet()) {
+            if (entry.getKey().getAlias().equals("A")) {
+                assertThat(entry.getValue().toString(), equalTo("42"));
+            } else if (entry.getKey().getAlias().equals("B")){
+                assertThat(entry.getValue().toString(), equalTo("8"));
+            } else {
+                fail("Unknown attribute " + entry.getKey());
+            }
+        }
+        mbs.unregisterMBean(mbeanName);
     }
 }
