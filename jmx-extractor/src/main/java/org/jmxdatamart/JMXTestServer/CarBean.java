@@ -6,7 +6,7 @@ package org.jmxdatamart.JMXTestServer;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.jmxdatamart.Extractor.Setting.Attribute;
+import org.jmxdatamart.Extractor.Attribute;
 
 /**
  *

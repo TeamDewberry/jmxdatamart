@@ -4,8 +4,6 @@
  */
 package org.jmxdatamart.Extractor;
 
-import org.jmxdatamart.Extractor.Setting.Attribute;
-import org.jmxdatamart.Extractor.Setting.MBeanData;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;

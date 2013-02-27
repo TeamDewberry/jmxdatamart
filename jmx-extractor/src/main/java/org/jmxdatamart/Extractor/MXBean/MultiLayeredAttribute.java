@@ -22,7 +22,7 @@ import javax.management.ObjectName;
 import javax.management.ReflectionException;
 import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.TabularData;
-import org.jmxdatamart.Extractor.Setting.Attribute;
+import org.jmxdatamart.Extractor.Attribute;
 import org.jmxdatamart.common.DataType;
 import org.slf4j.LoggerFactory;
 

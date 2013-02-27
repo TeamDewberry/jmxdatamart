@@ -6,9 +6,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-import org.jmxdatamart.Extractor.Setting.Attribute;
-import org.jmxdatamart.Extractor.Setting.MBeanData;
-import org.jmxdatamart.Extractor.Setting.Settings;
 import org.jmxdatamart.JMXTestServer.TestBean;
 import org.jmxdatamart.common.*;
 /**

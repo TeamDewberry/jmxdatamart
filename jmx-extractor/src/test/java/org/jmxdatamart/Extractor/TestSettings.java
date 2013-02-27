@@ -30,9 +30,6 @@ package org.jmxdatamart.Extractor;
 
 import java.util.Collections;
 import junit.framework.TestCase;
-import org.jmxdatamart.Extractor.Setting.Attribute;
-import org.jmxdatamart.Extractor.Setting.MBeanData;
-import org.jmxdatamart.Extractor.Setting.Settings;
 import org.jmxdatamart.common.DataType;
 
 public class TestSettings extends TestCase {

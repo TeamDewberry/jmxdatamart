@@ -25,7 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.jmxdatamart.Extractor.Setting;
+package org.jmxdatamart.Extractor;
 import org.jmxdatamart.common.DataType;
 /**
  * This class contains information related to any given attribute such as name,

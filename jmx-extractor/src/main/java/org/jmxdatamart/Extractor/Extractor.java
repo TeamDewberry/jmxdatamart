@@ -41,9 +41,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import javax.management.*;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
-import org.jmxdatamart.Extractor.Setting.Attribute;
-import org.jmxdatamart.Extractor.Setting.MBeanData;
-import org.jmxdatamart.Extractor.Setting.Settings;
 import org.jmxdatamart.common.HypersqlHandler;
 import org.slf4j.LoggerFactory;
 

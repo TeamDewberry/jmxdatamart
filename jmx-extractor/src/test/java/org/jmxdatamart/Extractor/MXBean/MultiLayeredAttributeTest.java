@@ -8,7 +8,7 @@ import java.lang.management.ManagementFactory;
 import java.util.Map;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-import org.jmxdatamart.Extractor.Setting.Attribute;
+import org.jmxdatamart.Extractor.Attribute;
 import org.jmxdatamart.JMXTestServer.CarBean;
 import org.junit.Test;
 import static org.junit.Assert.*;

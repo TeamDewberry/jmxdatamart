@@ -4,6 +4,7 @@
  */
 package org.jmxdatamart.Extractor.Setting;
 
+import org.jmxdatamart.Extractor.MBeanData;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
