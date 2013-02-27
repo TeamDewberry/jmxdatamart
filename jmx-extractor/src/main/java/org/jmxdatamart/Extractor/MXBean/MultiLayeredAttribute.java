@@ -53,7 +53,7 @@ public class MultiLayeredAttribute {
     } else {
       this.alias = null;
     }
-    this.layers = mxnp.parseName(this.attribute.getName());
+    parseName(this.attribute.getName());
     Map<Attribute, Object> resultSoFar = new HashMap<Attribute, Object>();
     try {
       for (MBeanAttributeInfo mbai : mbs.getMBeanInfo(this.baseMbean).getAttributes()) {
@@ -175,7 +175,7 @@ public class MultiLayeredAttribute {
   }
 
   private void parseName(String attrStr) throws IllegalArgumentException, RuntimeException {
-    layers = mxnp.parseName(attrStr);
+    layers = mxnp.parse(attrStr);
     if (layers == null || layers.isEmpty()) {
       throw new RuntimeException("Can not parse " + attrStr);
     }

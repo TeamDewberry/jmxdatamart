@@ -29,7 +29,7 @@ public final class MXNameParser {
       matches = null;
     } else {
       this.input = s;
-      parseName(this.input);
+      parse(this.input);
     }
   }
 
@@ -84,9 +84,10 @@ public final class MXNameParser {
     return this.input;
   }
 
-  public List<String> parseName(String s) throws IllegalArgumentException {
+  public List<String> parse(String s) throws IllegalArgumentException {
     this.input = s;
     this.curr = 0;
+    this.matches = new ArrayList<String>();
     checkValidPattern(s);
     Matcher matcher = nameRegex.matcher(s);
     ArrayList<String> temp = new ArrayList<String>();

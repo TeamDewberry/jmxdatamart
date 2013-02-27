@@ -83,7 +83,7 @@ public class MultiLayeredAttributeTest {
         mbs.registerMBean(tb, mbeanName);
         
         MultiLayeredAttribute mla = new MultiLayeredAttribute(mbs);
-        Attribute attr = new Attribute(null, "*", null);
+        Attribute attr = new Attribute("*", null, null);
         Map<Attribute, Object> result = mla.getAll(mbeanName, attr);
         
         assertEquals(2, result.size());
