@@ -49,7 +49,7 @@ public class Attribute {
     public DataType getDataType() {
         return dataType;
     }
-
+    
     /**
      * @param dataType the dataType to set
      */

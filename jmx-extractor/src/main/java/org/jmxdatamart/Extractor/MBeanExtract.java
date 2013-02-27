@@ -46,16 +46,15 @@ public class MBeanExtract {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(MBeanExtract.class);
     
     
-    public static Map<Attribute, Object> extract(MBeanData mbd, MBeanServerConnection mbsc)
-            throws Exception{
+    public static Map<Attribute, Object> extract(MBeanData mbd, MBeanServerConnection mbsc) {
         ObjectName on;
         try {
             on = new ObjectName(mbd.getName());
         } catch (MalformedObjectNameException ex) {
-            logger.error("Error while trying to attach to " + mbd.getName());
-            throw ex;
+            logger.error("Error while trying to attach to " + mbd.getName(), ex);
+            System.exit(1);
         }
-        
+    
         Map<Attribute, Object> retVal = new HashMap<Attribute, Object>();
         
         for (Attribute a : mbd.getAttributes()) {
@@ -66,17 +65,20 @@ public class MBeanExtract {
                 } else {
                     String[] mxAttribute = aName.split("\\.");
                     if (mxAttribute.length != 2) {
-                        throw new Exception("MXBean attribute malformed " + aName);
+                        logger.error("MXBean attribute malformed " + aName);
+			System.exit(1);
                     }
                     CompositeData cd = (CompositeData)mbsc.getAttribute(on, mxAttribute[0]);
                     Object value = cd.get(mxAttribute[1]);
-                    retVal.put(a, value);
+                    if (value.getClass().getCanonicalName().equals(a.getDataTypeClass()))
+                    	retVal.put(a, value);
+                    else
+                    	logger.error("Error while extracting " + a.getAlias() + " from " + on + ": Mismatched data type\n");
                 }
             } catch (Exception ex) {
                 logger.error("Error while extracting " 
                                 + a.getName() + " from " 
                                 + mbd.getName(), ex);
-                throw ex;
             }
         }
         

@@ -30,6 +30,7 @@ package org.jmxdatamart.Extractor;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
+import org.jmxdatamart.common.DataType;
 import java.io.*;
 import java.util.*;
 import javax.management.MalformedObjectNameException;
@@ -44,7 +45,7 @@ import org.slf4j.LoggerFactory;
  */
 
 public class Settings {
-
+    private final static org.slf4j.Logger logger = LoggerFactory.getLogger(Extractor.class);
     private long pollingRate;
     private String folderLocation;
     private String url;
@@ -223,31 +224,4 @@ public class Settings {
                 beans.toString();
         
     }
-    
-//    public static void main( String[] args ) throws IOException, MalformedObjectNameException
-//    {
-//        //Test reading file
-//        Settings s1 = Settings.fromXML(new FileInputStream("Settings.xml"));
-//        System.out.println(s1.toString());
-//        System.out.println("Read xml settings complete");
-//        
-//        Settings s = new Settings();
-//        s.setFolderLocation("\\project\\");
-//        s.setPollingRate(5);
-//        s.setUrl("service:jmx:rmi:///jndi/rmi://:9999/jmxrmi");
-//        s.setBeans(new ArrayList<MBeanData>());
-//        
-//        MBeanData bd = new MBeanData("com.example:type=Hello","", new ArrayList<Attribute>(), true);
-//        bd.getAttributes().add(new Attribute("Name", "", DataType.STRING));
-//        bd.getAttributes().add(new Attribute("CacheSize", "", DataType.INT));
-//        s.getBeans().add(bd);
-//        s.check();
-//        System.out.println(s.toString());
-//        
-//        String sXML = s.toXML();
-//        System.out.println(sXML);
-//        FileWriter out = new FileWriter("settings.xml");
-//        out.write(sXML);
-//        out.close();
-//    }
 }
