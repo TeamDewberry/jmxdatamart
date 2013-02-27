@@ -160,7 +160,7 @@ public class Bean2DB {
         }
     }
 
-    public void export2DB(Connection conn, BeanData mbd, Map<Attribute, Object> result) {
+    public void export2DB(Connection conn, MBeanData mbd, Map<Attribute, Object> result) {
 
         String tablename = convertIllegalTableName(mbd.getName());
         //deal with dynamic bean

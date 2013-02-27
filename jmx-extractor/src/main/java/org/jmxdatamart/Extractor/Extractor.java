@@ -116,7 +116,7 @@ public class Extractor {
         	System.exit(0); //this is a fatal error and cannot be resolved later
 	    }
 
-            for (BeanData bdata : this.configData.getBeans()) {
+            for (MBeanData bdata : this.configData.getBeans()) {
 		if(bdata.isEnable()) {
              	   Map<Attribute, Object> result = MBeanExtract.extract(bdata, mbsc);
              	   bd.export2DB(conn, bdata, result);
@@ -140,6 +140,8 @@ public class Extractor {
     public void stop() {
         if (timer != null) {
             timer.cancel();
+        }
+    }
 
     /**void extract(String beanAlias) {
         Properties props = new Properties();
@@ -185,7 +187,8 @@ public class Extractor {
         } finally {
             connLock.unlock();
         }
-    }*/
+    }
+*/
 
     private class Extract extends TimerTask {
 

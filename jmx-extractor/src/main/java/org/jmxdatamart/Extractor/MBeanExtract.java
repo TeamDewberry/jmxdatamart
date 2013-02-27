@@ -47,7 +47,7 @@ public class MBeanExtract {
     
     
     public static Map<Attribute, Object> extract(MBeanData mbd, MBeanServerConnection mbsc) {
-        ObjectName on;
+        ObjectName on = null;
         try {
             on = new ObjectName(mbd.getName());
         } catch (MalformedObjectNameException ex) {
@@ -70,7 +70,7 @@ public class MBeanExtract {
                     }
                     CompositeData cd = (CompositeData)mbsc.getAttribute(on, mxAttribute[0]);
                     Object value = cd.get(mxAttribute[1]);
-                    if (value.getClass().getCanonicalName().equals(a.getDataTypeClass()))
+                    if (value.getClass().getCanonicalName().equals(a.getDataType().getJavaType()))
                     	retVal.put(a, value);
                     else
                     	logger.error("Error while extracting " + a.getAlias() + " from " + on + ": Mismatched data type\n");
