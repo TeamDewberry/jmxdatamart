@@ -29,6 +29,8 @@ package org.jmxdatamart.Extractor;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.management.MBeanServerConnection;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
@@ -36,45 +38,39 @@ import javax.management.openmbean.CompositeData;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * 
  * @author Binh Tran <mynameisbinh@gmail.com>
  */
-public class MBeanExtract implements Extractable{
+public class MBeanExtract {
 
-    BeanData mbd;
-    MBeanServerConnection mbsc;
-    private final org.slf4j.Logger logger = LoggerFactory.getLogger(MBeanExtract.class);
-    ObjectName on;
-
-    public MBeanExtract(BeanData mbd, MBeanServerConnection mbsc) throws MalformedObjectNameException {
-        this.mbd = mbd;
-        this.mbsc = mbsc;
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(MBeanExtract.class);
+    
+    
+    public static Map<Attribute, Object> extract(MBeanData mbd, MBeanServerConnection mbsc) {
+        ObjectName on = null;
         try {
             on = new ObjectName(mbd.getName());
         } catch (MalformedObjectNameException ex) {
-            logger.error("Error while creating ObjectName from MBeanData", ex);
-            throw ex;
+            logger.error("Error while trying to attach to " + mbd.getName(), ex);
+            System.exit(1);
         }
-    }
     
-    
-    @Override
-    public Map<Attribute, Object> extract() {
         Map<Attribute, Object> retVal = new HashMap<Attribute, Object>();
         
-        for (Attribute a : this.mbd.getAttributes()) {
+        for (Attribute a : mbd.getAttributes()) {
             try{
                 String aName = a.getName();
                 if (!aName.contains(".")) {
-                    retVal.put(a, this.mbsc.getAttribute(on, aName));
+                    retVal.put(a, mbsc.getAttribute(on, aName));
                 } else {
                     String[] mxAttribute = aName.split("\\.");
                     if (mxAttribute.length != 2) {
-                        throw new Exception("MXBean attribute malformed " + aName);
+                        logger.error("MXBean attribute malformed " + aName);
+			System.exit(1);
                     }
                     CompositeData cd = (CompositeData)mbsc.getAttribute(on, mxAttribute[0]);
                     Object value = cd.get(mxAttribute[1]);
-                    if (value.getClass().getCanonicalName().equals(a.getDataTypeClass()))
+                    if (value.getClass().getCanonicalName().equals(a.getDataType().getJavaType()))
                     	retVal.put(a, value);
                     else
                     	logger.error("Error while extracting " + a.getAlias() + " from " + on + ": Mismatched data type\n");
