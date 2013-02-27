@@ -59,7 +59,7 @@ public class MBeanExtract implements Extractable{
     
     
     @Override
-    public Map<Attribute, Object> extract() throws Exception {
+    public Map<Attribute, Object> extract() {
         Map<Attribute, Object> retVal = new HashMap<Attribute, Object>();
         
         for (Attribute a : this.mbd.getAttributes()) {
@@ -74,13 +74,15 @@ public class MBeanExtract implements Extractable{
                     }
                     CompositeData cd = (CompositeData)mbsc.getAttribute(on, mxAttribute[0]);
                     Object value = cd.get(mxAttribute[1]);
-                    retVal.put(a, value);
+                    if (value.getClass().getCanonicalName().equals(a.getDataTypeClass()))
+                    	retVal.put(a, value);
+                    else
+                    	logger.error("Error while extracting " + a.getAlias() + " from " + on + ": Mismatched data type\n");
                 }
             } catch (Exception ex) {
                 logger.error("Error while extracting " 
                                 + a.getName() + " from " 
                                 + mbd.getName(), ex);
-                throw ex;
             }
         }
         

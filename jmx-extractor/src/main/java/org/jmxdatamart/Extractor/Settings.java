@@ -31,6 +31,7 @@ package org.jmxdatamart.Extractor;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import org.jmxdatamart.common.DataType;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.*;
@@ -44,7 +45,7 @@ import java.util.*;
  */
 
 public class Settings {
-
+    private final static org.slf4j.Logger logger = LoggerFactory.getLogger(Extractor.class);
     private long pollingRate;
     private String folderLocation;
     private String url;
@@ -211,10 +212,16 @@ public class Settings {
         
     }
     
-    public static void main( String[] args ) throws IOException
+    public static void main( String[] args )
     {
         //Test reading file
-        Settings s1 = Settings.fromXML(new FileInputStream("Settings.xml"));
+        Settings s1 = null;
+		try {
+			s1 = Settings.fromXML(new FileInputStream("Settings.xml"));
+		} catch (FileNotFoundException e) {
+			logger.error("Error while getting data from Settings.xml", e);
+			System.exit(1); //this is a fatal error and cannot be resolved later
+		}
         System.out.println(s1.toString());
         System.out.println("Read xml settings complete");
         
@@ -233,8 +240,22 @@ public class Settings {
         
         String sXML = s.toXML();
         System.out.println(sXML);
-        FileWriter out = new FileWriter("settings.xml");
-        out.write(sXML);
-        out.close();
+        FileWriter out = null;
+		try {
+			out = new FileWriter("settings.xml");
+		} catch (IOException e) {
+			logger.error("Error while creating FileWriter for settings file", e);
+			System.exit(1); //this is a fatal error and cannot be resolved later
+		}
+        try {
+			out.write(sXML);
+		} catch (IOException e) {
+			logger.error("Error while writing " + sXML + " to settings file", e);
+		}
+        try {
+			out.close();
+		} catch (IOException e) {
+			logger.error("Error while closing settings file", e);
+		}
     }
 }

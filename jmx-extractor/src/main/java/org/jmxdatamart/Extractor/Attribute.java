@@ -49,6 +49,17 @@ public class Attribute {
     public DataType getDataType() {
         return dataType;
     }
+    
+    public String getDataTypeClass() {
+    	if (dataType == DataType.INT)
+    		return "java.lang.Integer";
+    	else if (dataType == DataType.FLOAT)
+    		return "java.lang.Float";
+    	else if (dataType == DataType.STRING)
+    		return "java.lang.String";
+    	else
+    		return null;
+    }
 
     /**
      * @param dataType the dataType to set
