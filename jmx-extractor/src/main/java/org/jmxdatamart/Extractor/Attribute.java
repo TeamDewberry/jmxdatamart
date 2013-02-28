@@ -50,17 +50,6 @@ public class Attribute {
         return dataType;
     }
     
-    public String getDataTypeClass() {
-    	if (dataType == DataType.INT)
-    		return "java.lang.Integer";
-    	else if (dataType == DataType.FLOAT)
-    		return "java.lang.Float";
-    	else if (dataType == DataType.STRING)
-    		return "java.lang.String";
-    	else
-    		return null;
-    }
-
     /**
      * @param dataType the dataType to set
      */
@@ -94,6 +83,23 @@ public class Attribute {
      */
     public void setAlias(String alias) {
         this.alias = alias;
+    }
+    
+    /**
+     * Check if alias of an attribute is correctly formated
+     * @return true if alias contains only alphanumeric, false otherwise
+     */
+    // Task 3041
+    public boolean checkForValidAlias() {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+    
+    /**
+     * Check if attribute name is a pattern
+     * @return true if attribute is a pattern, false if it's a single attribute
+     */
+    public boolean isPattern() {
+        return name.contains("*") || name.contains("?");
     }
 
     public Attribute(String name, String alias, DataType dataType) {

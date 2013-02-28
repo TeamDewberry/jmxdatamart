@@ -1,19 +1,18 @@
 package org.jmxdatamart.Extractor;
 
-import org.jmxdatamart.JMXTestServer.TestBean;
-import org.jmxdatamart.common.*;
 import org.slf4j.LoggerFactory;
-
 import javax.management.InstanceAlreadyExistsException;
 import javax.management.MBeanRegistrationException;
-import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.NotCompliantMBeanException;
-import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import org.jmxdatamart.JMXTestServer.TestBean;
+import org.jmxdatamart.common.*;
 /**
  * Created with IntelliJ IDEA.
  * User: Xiao Han
@@ -59,17 +58,10 @@ public class Bean2DB {
         MBeanData mbd = new MBeanData(mbName, "testMBean", Collections.singletonList(a), true);
 
         //Init MBeanExtract
-        MBeanExtract instance = null;
-        try {
-        	instance = new MBeanExtract(mbd, mbs);
-        } catch (MalformedObjectNameException e) {
-        	logger.error(e.getMessage(), e);
-        	System.exit(1); //this is a fatal error and cannot be resolved later
-        }
-        Map result = instance.extract();
+        Map result = MBeanExtract.extract(mbd, mbs);
 
         Settings s = new Settings();
-        s.setBeans(Collections.singletonList((BeanData)mbd));
+        s.setBeans(Collections.singletonList(mbd));
         s.setFolderLocation("HyperSQL/");
         s.setPollingRate(2);
         s.setUrl("service:jmx:rmi:///jndi/rmi://:9999/jmxrmi");
@@ -168,7 +160,7 @@ public class Bean2DB {
         }
     }
 
-    public void export2DB(Connection conn, BeanData mbd, Map<Attribute, Object> result) {
+    public void export2DB(Connection conn, MBeanData mbd, Map<Attribute, Object> result) {
 
         String tablename = convertIllegalTableName(mbd.getName());
         //deal with dynamic bean
@@ -198,7 +190,7 @@ public class Bean2DB {
         //need to think about how to avoid retrieving the map twice
         int i=0;
         for (Map.Entry<Attribute, Object> m : result.entrySet()) {
-            switch (((Attribute)m.getKey()).getDataType())
+            /*switch (((Attribute)m.getKey()).getDataType())
             {
                 case INT:
                 	try {
@@ -221,7 +213,12 @@ public class Bean2DB {
                 		logger.error("Error setting statement for SQL prepared statement", e);
                 	}
                 	break;
-            }
+            }*/
+	    try {
+           	 m.getKey().getDataType().addToSqlPreparedStatement(ps, ++i, m.getValue());
+	    } catch (SQLException e) {
+		logger.error("Error setting statement forSQL prepared statement", e);
+	    }
         }
         try {
         	ps.setTimestamp(++i, new Timestamp((new java.util.Date()).getTime()));
@@ -275,7 +272,7 @@ public class Bean2DB {
             st = conn.createStatement();
             conn.setAutoCommit(false);
 
-            for (BeanData bean:s.getBeans()){
+            for (MBeanData bean:s.getBeans()){
                 sb = new StringBuilder();
                 tablename = convertIllegalTableName(bean.getName());
 
@@ -283,9 +280,12 @@ public class Bean2DB {
                 //2.the field name of "time"(or whatever) should be reserved,  can't be used as an attribute name
                 //3.the datatyype should be valid in embedded SQL (ie. HyperSQL)
                 //All above requirements must be set to a DTD for the setting xml file!!!
-                sb.append("create table " + tablename + "(");
+                sb.append("create table ").append(tablename).append("(");
                 for (Attribute ab: bean.getAttributes()){
-                    sb.append(ab.getName() + " " + ab.getDataType() + ",");
+                    sb.append(ab.getName())
+                            .append(" ")
+                            .append(ab.getDataType().getHsqlType())
+                            .append(",");
                 }
                 sb.append("time TIMESTAMP)");
                 st.executeUpdate(sb.toString());

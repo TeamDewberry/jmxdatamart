@@ -28,13 +28,15 @@
 package org.jmxdatamart.Extractor;
 
 import java.util.*;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
 
 /**
  * This class contains data related to any MBean such as name, alias and its
  * attributes
  * @author Binh Tran <mynameisbinh@gmail.com>
  */
-public class MBeanData implements BeanData {
+public class MBeanData {
     private String name;
     private String alias;
     private List<Attribute> attributes;
@@ -43,7 +45,6 @@ public class MBeanData implements BeanData {
     /**
      * @return the name
      */
-    @Override
     public String getName() {
         return name;
     }
@@ -58,7 +59,6 @@ public class MBeanData implements BeanData {
     /**
      * @return the alias
      */
-    @Override
     public String getAlias() {
         return alias;
     }
@@ -107,7 +107,6 @@ public class MBeanData implements BeanData {
     /**
      * @return the enable
      */
-    @Override
     public boolean isEnable() {
         return enable;
     }
@@ -117,6 +116,31 @@ public class MBeanData implements BeanData {
      */
     public void setEnable(boolean enable) {
         this.enable = enable;
+    }
+    
+    /**
+     * Check if the MBeanData object's alias is correctly formated
+     * @return true if correctly formated, false if not
+     */
+    // Task 3041
+    public boolean checkForValidAlias() {
+        for (Attribute a : this.attributes) {
+            if (!a.checkForValidAlias()) {
+                return false;
+            }
+        }
+        
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+    
+    /**
+     * Check if the MBeanData represent a pattern or a single MBean
+     * @return true if MBeanData's name is a valid JMX pattern, false if not
+     * @throws MalformedObjectNameException if MBeanData's name is not a valid
+     * ObjectName's name
+     */
+    public boolean isPattern() throws MalformedObjectNameException {
+        return (new ObjectName(this.name)).isPattern();
     }
 
     @Override
