@@ -58,7 +58,6 @@ public final class Extractor {
   private final Lock connLock = new ReentrantLock();
   private Timer timer;
   private final Properties props = new Properties();
-  private final MultiLayeredAttribute mla;
 
   @Inject
   public Extractor(Settings configData) {
