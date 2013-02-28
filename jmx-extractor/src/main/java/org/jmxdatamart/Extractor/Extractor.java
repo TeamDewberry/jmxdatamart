@@ -42,10 +42,11 @@ import java.util.concurrent.locks.ReentrantLock;
 import javax.management.*;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
+import org.jmxdatamart.Extractor.MXBean.MultiLayeredAttribute;
 import org.jmxdatamart.common.HypersqlHandler;
 import org.slf4j.LoggerFactory;
 
-public class Extractor {
+public final class Extractor {
 
   private final Settings configData;
   private MBeanServerConnection mbsc;
@@ -55,13 +56,12 @@ public class Extractor {
   private final HypersqlHandler hsql;
   private Connection conn;
   private final Lock connLock = new ReentrantLock();
-  private boolean stop;
   private Timer timer;
   private final Properties props = new Properties();
+  private final MultiLayeredAttribute mla;
 
   @Inject
   public Extractor(Settings configData) {
-    this.stop = false;
     timer = null;
     this.configData = configData;
     props.put("username", "sa");
@@ -88,9 +88,11 @@ public class Extractor {
 
     hsql = new HypersqlHandler();
     dbname = bd.generateMBeanDB(configData);
-
+    
     if (shouldPeriodicallyExtract()) {
       periodicallyExtract();
+    } else {
+      extract();
     }
   }
 
