@@ -31,7 +31,7 @@ public class MultiLayeredAttribute {
   private String alias;
   private final org.slf4j.Logger logger = LoggerFactory.getLogger(MultiLayeredAttribute.class);
 
-  public MultiLayeredAttribute(MBeanServer mbs) {
+  public MultiLayeredAttribute(MBeanServerConnection mbs) {
     mxnp = new MXNameParser();
     this.mbsc = mbs;
   }
