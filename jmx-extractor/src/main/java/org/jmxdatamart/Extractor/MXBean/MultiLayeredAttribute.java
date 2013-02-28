@@ -7,19 +7,10 @@ package org.jmxdatamart.Extractor.MXBean;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import javax.management.AttributeNotFoundException;
-import javax.management.InstanceNotFoundException;
-import javax.management.IntrospectionException;
 import javax.management.MBeanAttributeInfo;
-import javax.management.MBeanException;
 import javax.management.MBeanServer;
+import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
-import javax.management.ReflectionException;
 import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.TabularData;
 import org.jmxdatamart.Extractor.Attribute;
@@ -34,7 +25,7 @@ public class MultiLayeredAttribute {
 
   private List<String> layers;
   private MXNameParser mxnp;
-  private MBeanServer mbs;
+  private MBeanServerConnection mbsc;
   private ObjectName baseMbean;
   private Attribute attribute;
   private String alias;
@@ -42,7 +33,7 @@ public class MultiLayeredAttribute {
 
   public MultiLayeredAttribute(MBeanServer mbs) {
     mxnp = new MXNameParser();
-    this.mbs = mbs;
+    this.mbsc = mbs;
   }
 
   public Map<Attribute, Object> getAll(ObjectName baseMbean, Attribute attr) {
@@ -56,13 +47,13 @@ public class MultiLayeredAttribute {
     parseName(this.attribute.getName());
     Map<Attribute, Object> resultSoFar = new HashMap<Attribute, Object>();
     try {
-      for (MBeanAttributeInfo mbai : mbs.getMBeanInfo(this.baseMbean).getAttributes()) {
+      for (MBeanAttributeInfo mbai : mbsc.getMBeanInfo(this.baseMbean).getAttributes()) {
         if (mbai.getName().matches(layers.get(0))) {
           try {
             getAllHelper(
                     1,
                     layers.size(),
-                    mbs.getAttribute(this.baseMbean, mbai.getName()),
+                    mbsc.getAttribute(this.baseMbean, mbai.getName()),
                     mbai.getName() + ".",
                     resultSoFar);
           } catch (Exception ex) {
