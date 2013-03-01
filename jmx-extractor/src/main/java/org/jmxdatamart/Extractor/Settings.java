@@ -225,7 +225,7 @@ public class Settings {
                 beans.toString();
         
     }
-}
+
 
 /* Author: Aya Yakura
      * Settings.check(), Settings.checkAlphanumeric()
@@ -352,7 +352,7 @@ public class Settings {
             }
         }
     }
-    
+
     /*
      * Code by Aya Yakura ends here
      */
@@ -369,7 +369,7 @@ public class Settings {
         s.setFolderLocation("\\project\\");
         s.setPollingRate(5);
         s.setUrl("service:jmx:rmi:///jndi/rmi://:9999/jmxrmi");
-        s.setBeans(new ArrayList<BeanData>());
+        s.setBeans(new ArrayList<MBeanData>());
         
         MBeanData bd = new MBeanData("com.example:type=Hello","Hello", new ArrayList<Attribute>(), true);
         bd.getAttributes().add(new Attribute("Name", "nameA", DataType.STRING));

@@ -49,7 +49,7 @@ public class MBeanData {
     /**
      * @return the name
      */
-	@Override
+
     public String getName() {
         return name;
     }
@@ -64,7 +64,7 @@ public class MBeanData {
     /**
      * @return the alias
      */
-	@Override
+
     public String getAlias() {
         return alias;
     }
@@ -113,7 +113,7 @@ public class MBeanData {
     /**
      * @return the enable
      */
-	@Override
+    
     public boolean isEnable() {
         return enable;
     }
