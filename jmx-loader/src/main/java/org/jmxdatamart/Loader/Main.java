@@ -41,7 +41,7 @@ public class Main {
 * @param args command line arguments
 */
     public static void main(String[] args) throws SQLException, DBException {
-        if (args.length!=2){
+        if (args.length!=3){
             printHelp();
         }
         else{
@@ -49,26 +49,48 @@ public class Main {
                 printHelp();
             }
             else{
-                String configFile = getConfig(args);
-            
-                for(File dbfile : getDbFileList(args)){
-                    String dbName = dbfile.getPath().substring(0,dbfile.getPath().length()-7);
-                    System.out.println(dbfile.getPath().substring(0,dbfile.getPath().length()-7));
-                    
-                    DB2DB d2d = new DB2DB();
-                    LoaderSetting s = d2d.readProperties(configFile);
+                Integer dFormat = lookForDataFormat(args);
+                if (dFormat == -1){
+                    printHelp();                
+                }
+                else{
+                    String configFile = getConfig(args);
+                    ArrayList<File> dbFiles = new ArrayList<File>();
+                    if (dFormat == 0){
+                        //db files are csv directories
+                        dbFiles = getCSVDirList(args);
+                        
+                        for(File dbfile : dbFiles){
+                        
+                            System.out.println(dbfile.getPath());
+                            
+                            
+                        }
+                    }
+                    if (dFormat == 1){
+                        // db files are HyperSQL files
+                        dbFiles = getDbFileList(args);
+                        
+                        for(File dbfile : dbFiles){
+                            String dbName = dbfile.getPath().substring(0,dbfile.getPath().length()-7);
+                            System.out.println(dbfile.getPath().substring(0,dbfile.getPath().length()-7));
 
-                    LoaderSetting.DBInfo fileInfo = s.getSource();
-                    
-                    fileInfo.setDatabaseName(dbName);
-                    fileInfo.setJdbcUrl("jdbc:hsqldb:file:" + dbName);
+                            DB2DB d2d = new DB2DB();
+                            LoaderSetting s = d2d.readProperties(configFile);
 
-                    s.setSource(fileInfo);
+                            LoaderSetting.DBInfo fileInfo = s.getSource();
 
-                    d2d.loadSetting(s);
-                    d2d.copySchema();
-                    d2d.importData();
-                    d2d.disConnect();
+                            fileInfo.setDatabaseName(dbName);
+                            fileInfo.setJdbcUrl("jdbc:hsqldb:file:" + dbName);
+
+                            s.setSource(fileInfo);                     
+
+                            d2d.loadSetting(s);
+                            d2d.copySchema();
+                            d2d.importData();
+                            d2d.disConnect();
+                        }
+                    } 
                 }
             }
         }
@@ -80,8 +102,9 @@ public class Main {
     public static void printHelp(){
         System.out.println("Loader Syntax:");
         System.out.println("Loader -h | h | ? | help , brings up this display");
-        System.out.println("Loader config.ini \\dbfiledirpath ");
-        System.out.println(" Loader looks for hyperSQL files in dbfiledirpath");
+        System.out.println("Loader config.ini \\dbfiledirpath dataformat");
+        System.out.println(" Loader looks for files/dirs in dbfiledirpath");
+        System.out.println(" dataformat - (csv | CSV | hsql | HSQL)");
         System.out.println("Example: Loader loaderConfig.ini C:\\Extracted");
     }
     
@@ -116,7 +139,27 @@ public class Main {
     }
     
     /**
-* Iterates through the command line arguments looking a directory
+     * 
+     * @param argArray
+     * @return Integer 0 if data format is HyperSQL, 1 if CSV directories
+     */
+    private static Integer lookForDataFormat(String[] argArray){
+        // dataFormat should be replaced in the future with an enum of supported
+        // datatypes, searching through args could also be cleaned up.
+        Integer dataFormat = -1;
+        for(int i = 0; i < argArray.length; i++){
+          if (argArray[i].equals("csv") | argArray[i].equals("CSV")){
+              dataFormat = 0;
+          }
+          if (argArray[i].equals("hsql") | argArray[i].equals("HQSL")){
+              dataFormat = 1;
+          }
+        }
+        return dataFormat;
+    }
+    
+    /**
+* Iterates through the command line arguments looking for a directory
 * The method then iterates through all files in that directory looking for .script files
 * @param argArray command line arguments
 * @return ArrayList<File> list of hypersql db files
@@ -131,6 +174,33 @@ public class Main {
                 for (int j = 0; j < listOfFiles.length; j++) {
                     //find db files files in the directory
                     if (listOfFiles[j].isFile() && listOfFiles[j].getName().endsWith(".script")) {
+                        if (!dbList.contains(listOfFiles[j])) {
+                            dbList.add(listOfFiles[j]);
+                        }
+                    }
+                }
+            }
+        }
+        return dbList;
+    }
+    
+    /**
+     * Iterates through the command line arguments looking for directory
+     * The method then iterates through all files/directories in that directory looking 
+     * for directories that start with "Extractor"
+     * @param argArray
+     * @return ArrayList<File> list of CSV directories
+     */
+    private static ArrayList<File> getCSVDirList(String[] argArray) {
+        ArrayList<File> dbList = new ArrayList<File>();
+        for (int i = 0; i < argArray.length; i++) {
+            //find db directory argument
+            File folder = new File(argArray[i]);
+            if (folder.isDirectory()) {
+                File[] listOfFiles = folder.listFiles();
+                for (int j = 0; j < listOfFiles.length; j++) {
+                    //find db files files in the directory
+                    if (listOfFiles[j].isDirectory() && listOfFiles[j].getName().startsWith("Extractor")) {
                         if (!dbList.contains(listOfFiles[j])) {
                             dbList.add(listOfFiles[j]);
                         }
