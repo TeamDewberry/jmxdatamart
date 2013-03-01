@@ -80,7 +80,7 @@ public class CSVWriter {
    *
    * @return
    */
-  static StringBuilder getEpocTime() {
+  static StringBuilder getTime() {
     Long l = new Long(System.currentTimeMillis());
     return (new StringBuilder(enclose(l.toString())).append(CSVCommon.DELIMITER));
   }
@@ -172,7 +172,7 @@ public class CSVWriter {
       }
 
       bw.write(
-              getEpocTime().append(lineUpResult(result, seen)).toString());
+              getTime().append(lineUpResult(result, seen)).toString());
       bw.newLine();
       bw.close();
 
