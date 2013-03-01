@@ -39,6 +39,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.management.*;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
@@ -124,7 +126,25 @@ public final class Extractor {
           if (!bdata.isPattern()) {
             result = MBeanExtract.extract(bdata, mbsc);
           } else {
-            
+            String originalName = bdata.getName();
+            ObjectName on;
+            try {
+              on = new ObjectName(bdata.getName());
+            } catch (MalformedObjectNameException ex) {
+              logger.error("Non standard name for Objectname " + bdata.getName(), ex);
+              continue;
+            }
+            try {
+              for (ObjectInstance oi : mbsc.queryMBeans(on, null)) {
+                String actual = oi.getObjectName().getCanonicalName();
+                bdata.setName(actual);
+                bdata.setAlias(MultiLayeredAttribute.name2alias(actual));
+                result = MBeanExtract.extract(bdata, mbsc);
+              }
+            } catch (IOException ex) {
+              logger.error("Error while trying to access MBean Server", ex);
+            }
+            bdata.setName(originalName);
           }
           bd.export2DB(conn, bdata, result);
         }
@@ -141,7 +161,7 @@ public final class Extractor {
     } finally {
       connLock.unlock();
     }
-    System.out.println("Extracted");
+    logger.info("Extracted");
   }
 
   public void stop() {

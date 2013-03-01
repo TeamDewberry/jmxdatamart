@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.management.MBeanAttributeInfo;
-import javax.management.MBeanServer;
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 import javax.management.openmbean.CompositeData;
@@ -150,7 +149,7 @@ public class MultiLayeredAttribute {
     return name.contains("?") || name.contains("*");
   }
 
-  private String name2alias(CharSequence name) {
+  public static String name2alias(CharSequence name) {
     StringBuilder sb = new StringBuilder(name.length());
     for (int i = 0; i < name.length(); ++i) {
       if (Character.isLetterOrDigit(name.charAt(i))) {

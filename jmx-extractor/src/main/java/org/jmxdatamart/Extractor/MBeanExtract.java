@@ -32,12 +32,11 @@ import java.util.Map;
 import javax.management.MBeanServerConnection;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
-import javax.management.openmbean.CompositeData;
 import org.jmxdatamart.Extractor.MXBean.MultiLayeredAttribute;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
+ * This class is used to get values out of a single, non-patterned MBean
  * @author Binh Tran <mynameisbinh@gmail.com>
  */
 public class MBeanExtract {
