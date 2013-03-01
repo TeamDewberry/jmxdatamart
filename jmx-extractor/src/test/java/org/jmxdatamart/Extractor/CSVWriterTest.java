@@ -23,7 +23,7 @@ public class CSVWriterTest {
      @Test
      public void testEnclose() {
          String s = "Hello, World";
-         assertEquals(  CSVCommon.GENERAL_ENCLOSE + "Hello, World" + CSVCommon.GENERAL_ENCLOSE,
+         assertEquals(  CSVCommon.STRING_ENCLOSE + "Hello, World" + CSVCommon.STRING_ENCLOSE,
                         CSVWriter.enclose(s).toString());
      }
      
@@ -31,7 +31,7 @@ public class CSVWriterTest {
      public void testDifferentFiles() {
          Map<Attribute, Object> result;
          final String alias = "MBEAN";
-         CSVWriter csvw = new CSVWriter(System.getProperty("user.dir"));
+         CSVWriter csvw = new CSVWriter(System.getProperty("user.dir") + File.separator);
          
          result = new HashMap<Attribute, Object>();
          result.put(new Attribute("A", "Alpha", DataType.INT), new Integer(7));
@@ -58,7 +58,7 @@ public class CSVWriterTest {
      public void testSameFile() {
          Map<Attribute, Object> result;
          final String alias = "MBEAN";
-         CSVWriter csvw = new CSVWriter(System.getProperty("user.dir"));
+         CSVWriter csvw = new CSVWriter(System.getProperty("user.dir") + File.separator);
          
          result = new HashMap<Attribute, Object>();
          result.put(new Attribute("A", "Alpha", DataType.INT), new Integer(7));

@@ -69,9 +69,9 @@ public class CSVWriter {
    */
   static StringBuilder enclose(CharSequence cs) {
     return (new StringBuilder()).
-            append(CSVCommon.GENERAL_ENCLOSE).
+            append(CSVCommon.STRING_ENCLOSE).
             append(cs).
-            append(CSVCommon.GENERAL_ENCLOSE);
+            append(CSVCommon.STRING_ENCLOSE);
   }
 
   /**
@@ -94,7 +94,7 @@ public class CSVWriter {
    * @param value actual value of the attribute
    * @return a character sequence represent all 3 in CSV format.
    */
-  static StringBuilder lineUp(String alias, String dataType, String value) {
+  static StringBuilder lineUp(CharSequence alias, CharSequence dataType, CharSequence value) {
     StringBuilder sb = new StringBuilder();
 
     sb.append(enclose(alias))
@@ -124,12 +124,14 @@ public class CSVWriter {
         seen.put(pair.getKey().getAlias(), pair.getKey().getDataType());
         dataType = pair.getKey().getDataType().toString();
       } else {
-        dataType = "";
+        dataType = "~";
       }
+      CharSequence value = pair.getValue().toString();
       line.append(
-              lineUp(pair.getKey().getAlias(),
-              dataType,
-              pair.getValue().toString()))
+              lineUp(
+                pair.getKey().getAlias(),
+                dataType,
+                value))
               .append(CSVCommon.DELIMITER);
     }
     return line.deleteCharAt(line.length() - 1); // remove the last DELIMINATOR
