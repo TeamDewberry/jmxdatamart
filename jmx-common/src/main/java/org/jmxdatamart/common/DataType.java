@@ -27,8 +27,9 @@
  */
 package org.jmxdatamart.common;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Supported data types
@@ -36,173 +37,196 @@ import java.sql.SQLException;
  */
 public enum DataType {
     BYTE    // 8 bit integer
-        (
-            java.lang.Byte.class,
-            "MS SQL type",
-            "Derby type",
-            "HSQL type"
-        )
-    {
-        @Override
-        public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
-            if (supportTypeOf(value)) {
-                ps.setByte(index, ((Byte)value).byteValue());
-            }
-        }
-    },      
-    
+            (
+                    java.lang.Byte.class,
+                    Types.SMALLINT,
+                    "SMALLINT", // 8bit data type in T-SQL is only 0-255
+                    "SMALLINT", // Derby doesnt support 1Byte
+                    "TINYINT" // -127 to 128 like Java
+            )
+            {
+                @Override
+                public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
+                    if (supportTypeOf(value)) {
+                        ps.setByte(index, ((Byte)value).byteValue());
+                    }
+                }
+            },
+
     SHORT   // 16 bit integer
-         (
-            java.lang.Short.class,
-            "MS SQL type",
-            "Derby type",
-            "HSQL type"
-         )
-    {
-        @Override
-        public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
-            if (supportTypeOf(value)) {
-                ps.setShort(index, ((Short)value).shortValue());
-            }
-        }
-    },     
-    
+            (
+                    java.lang.Short.class,
+                    Types.SMALLINT,
+                    "SMALLINT",
+                    "SMALLINT",
+                    "SMALLINT"
+            )
+            {
+                @Override
+                public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
+                    if (supportTypeOf(value)) {
+                        ps.setShort(index, ((Short)value).shortValue());
+                    }
+                }
+            },
+
     INT     // 32 bit integer
-       (
-            java.lang.Integer.class,
-            "MS SQL type",
-            "Derby type",
-            "HSQL type"
-       )
-    {
-        @Override
-        public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
-            if (supportTypeOf(value)) {
-                ps.setInt(index, ((Integer)value).intValue());
-            }
-        }
-    },       
-    
+            (
+                    java.lang.Integer.class,
+                    Types.INTEGER,
+                    "INT",
+                    "INT",
+                    "INTEGER"
+            )
+            {
+                @Override
+                public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
+                    if (supportTypeOf(value)) {
+                        ps.setInt(index, ((Integer)value).intValue());
+                    }
+                }
+            },
+
     LONG    // 64 bit integer
-        (
-            java.lang.Long.class,
-            "MS SQL type",
-            "Derby type",
-            "HSQL type"
-        )
-    {
-        @Override
-        public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
-            if (supportTypeOf(value)) {
-                ps.setLong(index, ((Long)value).longValue());
-            }
-        }
-    },      
-    
+            (
+                    java.lang.Long.class,
+                    Types.BIGINT,
+                    "BIGINT",
+                    "BIGINT",
+                    "BIGINT"
+            )
+            {
+                @Override
+                public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
+                    if (supportTypeOf(value)) {
+                        ps.setLong(index, ((Long)value).longValue());
+                    }
+                }
+            },
+
     FLOAT   // 32 bit single precision
-         (
-            java.lang.Float.class,
-            "MS SQL type",
-            "Derby type",
-            "HSQL type"
-         )
-    {
-        @Override
-        public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
-            if (supportTypeOf(value)) {
-                ps.setFloat(index, ((Float)value).floatValue());
-            }
-        }
-    },     
-    
+            (
+                    java.lang.Float.class,
+                    Types.FLOAT,
+                    "REAL", //T-SQL does not conform to standards but this is close 4Bytes
+                    "REAL", //Derby has different limits than Java 4Bytes
+                    "DOUBLE" //"REAL, FLOAT and DOUBLE values are all stored in the database as java.lang.Double objects"
+            )
+            {
+                @Override
+                public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
+                    if (supportTypeOf(value)) {
+                        ps.setFloat(index, ((Float)value).floatValue());
+                    }
+                }
+            },
+
     DOUBLE  // 64 bit double precision
-          (
-            java.lang.Double.class,
-            "MS SQL type",
-            "Derby type",
-            "HSQL type"
-          )
-    {
-        @Override
-        public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
-            if (supportTypeOf(value)) {
-                ps.setDouble(index, ((Double)value).doubleValue());
-            }
-        }
-    },    
-    
+            (
+                    java.lang.Double.class,
+                    Types.DOUBLE,
+                    "FLOAT(53)", //T-SQL does not conform to standards but this is close 8Bytes
+                    "DOUBLE",  //Derby limits are different than Java 8Bytes
+                    "DOUBLE"
+            )
+            {
+                @Override
+                public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
+                    if (supportTypeOf(value)) {
+                        ps.setDouble(index, ((Double)value).doubleValue());
+                    }
+                }
+            },
+
     //BOOLEAN,   ms sql doesn't support boolean
-    
+
     CHAR    // 16 bit UFT-8 character
-        (
-            java.lang.Character.class,
-            "MS SQL type",
-            "Derby type",
-            "HSQL type"
-        )
-    {
-        @Override
-        public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
-            if (supportTypeOf(value)) {
-                ps.setString(index, value.toString());
-            }
-        }
-    },  
-    
+            (
+                    java.lang.Character.class,
+                    Types.CHAR,
+                    "NCHAR(1)",
+                    "CHAR(1)",
+                    "CHAR(1)"
+            )
+            {
+                @Override
+                public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
+                    if (supportTypeOf(value)) {
+                        ps.setString(index, value.toString());
+                    }
+                }
+            },
+
     STRING  // unlimited-length character sequence type
-          (
-            java.lang.String.class,
-            "MS SQL type",
-            "Derby type",
-            "HSQL type"
-          )
-    {
-        @Override
-        public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
-            if (supportTypeOf(value)) {
-                ps.setString(index, value.toString());
-            }
-        }
-    },    
-    
+            (
+                    java.lang.String.class,
+                    Types.VARCHAR,
+                    "NVARCHAR(MAX)",
+                    "VARCHAR (32672)", // Derby max is Integer.Max_Value, not padded
+                    "LONGVARCHAR"
+            )
+            {
+                @Override
+                public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
+                    if (supportTypeOf(value)) {
+                        ps.setString(index, value.toString());
+                    }
+                }
+            },
+    DATETIME(
+                java.util.Date.class,
+                Types.TIMESTAMP,
+                "datetime",
+                "timestamp",
+                "timestamp"
+            )
+            {
+                @Override
+                public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
+                    if (supportTypeOf(value)) {
+                        ps.setTimestamp(index,new Timestamp(((java.util.Date)value).getTime()));
+
+                    }
+                }
+
+            },
     UNKNOWN(
             null,
+            -9999,
             null,
             null,
             null
-           )
-    {
-        @Override
-        public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) {
-            throw new UnsupportedOperationException("Type UNKNOWN doesn't support this operation");
-        }
-        @Override
-        public boolean supportTypeOf(Object obj) {
-            return false;
-        } 
-        @Override
-        public String toString(Object obj) {
-            return toString();
-        }
-    }    // internal error type.
+    )
+            {
+                @Override
+                public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) {
+                    throw new UnsupportedOperationException("Type UNKNOWN doesn't support this operation");
+                }
+                @Override
+                public boolean supportTypeOf(Object obj) {
+                    return false;
+                }
+                @Override
+                public String toString(Object obj) {
+                    return toString();
+                }
+            }    // internal error type.
     ;
-    
-    private final Class javaType;
-    private final String mssqlType;
-    private final String derbyType;
-    private final String hsqlType;
 
-    private DataType(Class javaType, String mssqlType, String derbyType, String hsqlType) {
+    private  Class javaType;
+    private  int jdbcTypeID;
+    private  String mssqlType;
+    private  String derbyType;
+    private  String hsqlType;
+
+    private DataType(Class javaType, int jdbcTypeID, String mssqlType, String derbyType, String hsqlType) {
         this.javaType = javaType;
+        this.jdbcTypeID = jdbcTypeID;
         this.mssqlType = mssqlType;
         this.derbyType = derbyType;
         this.hsqlType = hsqlType;
     }
-    
-    public String getMsSqlType() {
-        return mssqlType;
-    }
-    
+
     public String getDerbyType() {
         return derbyType;
     }
@@ -210,11 +234,57 @@ public enum DataType {
     public String getHsqlType() {
         return hsqlType;
     }
-    
+
+    public String getMssqlType() {
+        return mssqlType;
+    }
+
+    public int getJdbcTypeID() {
+
+        return jdbcTypeID;
+    }
+
     public Class getJavaType() {
         return javaType;
     }
-    
+
+    public Object getType(String type){
+        if (type.equalsIgnoreCase("sqlserver")){
+            return getMssqlType();
+        }
+        else if (type.equalsIgnoreCase("hsqldb")){
+            return getHsqlType();
+        }
+        else if (type.equalsIgnoreCase("derbydb")){
+            return getDerbyType();
+        }
+        else if (type.equalsIgnoreCase("id")){
+            return getJdbcTypeID();
+        }
+        else{
+            return getJavaType();
+        }
+    }
+ /*
+    public static DataType findCorrespondDataTypeByName(String currentTypeName,String sourceDatabaseType ) {
+        for (DataType type:DataType.values()) {
+            if (((String)type.getType(sourceDatabaseType)).equalsIgnoreCase(currentTypeName)){
+                return type;
+            }
+        }
+        return null;
+    }
+*/
+
+    public static DataType findCorrespondDataTypeByID(int currentTypeID ) {
+        for (DataType type:DataType.values()) {
+            if ((type.getType("id")).equals(Integer.valueOf(currentTypeID))){
+                return type;
+            }
+        }
+        return null;
+    }
+
     /**
      * This function return the value of supported argument type as string, and
      * throws IllegalArgumentException if doesn't supported that type. 
