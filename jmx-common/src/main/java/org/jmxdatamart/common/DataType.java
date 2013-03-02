@@ -308,6 +308,15 @@ public enum DataType {
         return javaType.isAssignableFrom(obj.getClass());
     }
     
+    public static DataType getDataTypeFor(Object obj) {
+      for (DataType d : values()) {
+        if (d.supportTypeOf(obj)) {
+          return d;
+        }
+      }
+      return UNKNOWN;
+    }
+    
     public abstract void addToSqlPreparedStatement(
             PreparedStatement ps,
             int index,

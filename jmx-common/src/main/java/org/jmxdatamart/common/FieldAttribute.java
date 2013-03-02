@@ -27,39 +27,32 @@ package org.jmxdatamart.common;/*
  */
 
 public class FieldAttribute {
-    public FieldAttribute(DataType fieldtype, String typename, int fieldsize) {
-        this.fieldtype = fieldtype;
-        this.typename = typename;
-        this.fieldsize = fieldsize;
+    private String fieldName;
+    private DataType fieldType;
+    private boolean isPK;
+
+    public boolean isPK() {
+        return isPK;
     }
 
-    private DataType fieldtype;
-    private String typename;
-    private int fieldsize = 0;
-
-    public String getTypename() {
-        return typename;
+    public void setPK(boolean PK) {
+        isPK = PK;
     }
 
-    public void setTypename(String typename) {
-        this.typename = typename;
+    public FieldAttribute(String fieldName, DataType fieldType, boolean PK) {
+        this.fieldName = fieldName;
+        this.fieldType = fieldType;
+        isPK = PK;
+    }
+
+    public String getFieldName() {
+
+        return fieldName;
     }
 
 
-    public DataType getFieldtype() {
-        return fieldtype;
-    }
-
-    public void setFieldtype(DataType fieldtype) {
-        this.fieldtype = fieldtype;
-    }
-
-    public int getFieldsize() {
-        return fieldsize;
-    }
-
-    public void setFieldsize(int fieldsize) {
-        this.fieldsize = fieldsize;
+    public DataType getFieldType() {
+        return fieldType;
     }
 
 
