@@ -28,8 +28,11 @@
 package org.jmxdatamart.Extractor;
 
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class contains data related to any MBean such as name, alias and its
@@ -41,6 +44,7 @@ public class MBeanData {
     private String alias;
     private List<Attribute> attributes;
     private boolean enable;
+    private final org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * @return the name
@@ -139,8 +143,13 @@ public class MBeanData {
      * @throws MalformedObjectNameException if MBeanData's name is not a valid
      * ObjectName's name
      */
-    public boolean isPattern() throws MalformedObjectNameException {
+    public boolean isPattern() {
+      try {
         return (new ObjectName(this.name)).isPattern();
+      } catch (MalformedObjectNameException ex) {
+        logger.error("MBean name malformed in " + this.name, ex);
+        return false;
+      }
     }
 
     @Override

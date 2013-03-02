@@ -25,146 +25,153 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.jmxdatamart.Extractor;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.sql.SQLException;
-
-import javax.management.InstanceAlreadyExistsException;
-import javax.management.MBeanRegistrationException;
-import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
-import javax.management.NotCompliantMBeanException;
-import javax.management.ObjectName;
-import org.jmxdatamart.JMXTestServer.TestBean;
-import org.slf4j.LoggerFactory;
 
 public class Main {
-    
-    private static final int GET_A = 0x01;
-    private static final int GET_B = 0x02;
-    private static final int GET_BOTH = GET_A | GET_B;
-    private final static org.slf4j.Logger logger = LoggerFactory.getLogger(MBeanExtract.class);
-    
-    private static void getA(TestBean tb) {
-        Settings s = null;
-		try {
-			s = Settings.fromXML(
-			        new FileInputStream("C:\\Extracted\\s1.xml"));
-		} catch (FileNotFoundException e) {
-			logger.error("Error while reading from settings file", e);
-			System.exit(0); //this is a fatal error and cannot be resolved later
-		}
-        
-        Extractor etor = new Extractor(s);
-        
-        for (int i = 0; i < 10; ++i){
-            tb.setA(new Integer(i));
-            try {
-				Thread.sleep(2000);
-			} catch (InterruptedException e) {
-				logger.error(e.getMessage(), e);
-			}
-        }
-    }
-    
-    private static void getB(TestBean tb) {
-        Settings s = null;
-		try {
-			s = Settings.fromXML(
-			        new FileInputStream("C:\\Extracted\\s2.xml"));
-		} catch (FileNotFoundException e) {
-			logger.error("Error while reading from settings file", e);
-			System.exit(0); //this is a fatal error and cannot be resolved later
-		}
-        
-        Extractor etor = new Extractor(s);
-        
-        for (int i = 100; i > 80; --i){
-            tb.setB(new Integer(i));
-            try {
-				Thread.sleep(2000);
-			} catch (InterruptedException e) {
-				logger.error(e.getMessage(), e);
-			}
-        }
-    }
-    
-    private static void getBoth(TestBean tb) {
-        Settings s = null;
-		try {
-			s = Settings.fromXML(
-			        new FileInputStream("C:\\Extracted\\s3.xml"));
-		} catch (FileNotFoundException e) {
-			logger.error("Error while reading from settings file", e);
-			System.exit(0); //this is a fatal error and cannot be resolved later
-		}
-        
-		Extractor etor = new Extractor(s);
-        
-        for (int i = 0; i < 15; ++i){
-            tb.setA(i*i);
-            tb.setB(100-2*i);
-            try {
-				Thread.sleep(2000);
-			} catch (InterruptedException e) {
-				logger.error(e.getMessage(), e);
-			}
-        }
+
+  public static void main(String[] args) throws Exception {
+    System.out.println("extract");
+
+    Long timeStart = new Long(System.currentTimeMillis());
+    Long durationMilli = new Long(Long.parseLong(args[0]) * 1000 * 60); //convert minutes to millisecs
+
+    //System.out.println(durationMilli.toString());
+
+    Settings s = Settings.fromXML(
+            new FileInputStream("C:\\Extracted\\s1.xml"));
+
+    Extractor etor = new Extractor(s);
+
+    Long sleeptime = s.getPollingRate() * 1000;
+    Long timeEnd = timeStart + durationMilli;
+
+    while (timeEnd > System.currentTimeMillis()) {
+      Thread.sleep(sleeptime);
     }
 
-  public static void main(String[] args) {
-        System.out.println("extract");
-        
-        // values
-        int expected = 42;
-        
-        //Create new test MBean
-        TestBean tb = new TestBean();
-        tb.setA(new Integer(expected));
-        tb.setB(new Integer(expected));
-        MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
-        String mbName = "org.jmxdatamart.JMXTestServer:type=TestBean";
-        ObjectName mbeanName = null;
-		try {
-			mbeanName = new ObjectName(mbName);
-		} catch (MalformedObjectNameException e) {
-			logger.error(e.getMessage(), e);
-			System.exit(0); //this is a fatal error and cannot be resolved later
-		} catch (NullPointerException e) {
-			logger.error("Error creating MBean: no object name given", e);
-			System.exit(0); //this is a fatal error and cannot be resolved later
-		}
-        try {
-			mbs.registerMBean(tb, mbeanName);
-		} catch (InstanceAlreadyExistsException e) {
-			logger.error("Error: " + mbeanName + " already registered with MBeanServer", e);
-		} catch (MBeanRegistrationException e) {
-			logger.error("Error registering " + mbeanName + " with MBeanServer", e);
-			System.exit(0); //this is a fatal error and cannot be resolved later
-		} catch (NotCompliantMBeanException e) {
-			logger.error("Error: " + mbeanName + " is not compliant with MBeanServer", e);
-			System.exit(0); //this is a fatal error and cannot be resolved later
-		}
-        
-        // Main extract
-        
-        int toBeExtracted = GET_BOTH;
-        
-        switch (toBeExtracted){
-            case GET_A:
-                getA(tb);
-                break;
-            case GET_B:
-                getB(tb);
-                break;
-            case GET_BOTH:
-                getBoth(tb);
-            default:
-        }
   }
+//    private static final int GET_A = 0x01;
+//    private static final int GET_B = 0x02;
+//    private static final int GET_BOTH = GET_A | GET_B;
+//    private final static org.slf4j.Logger logger = LoggerFactory.getLogger(MBeanExtract.class);
+//    
+//    private static void getA(TestBean tb) {
+//        Settings s = null;
+//		try {
+//			s = Settings.fromXML(
+//			        new FileInputStream("C:\\Extracted\\s1.xml"));
+//		} catch (FileNotFoundException e) {
+//			logger.error("Error while reading from settings file", e);
+//			System.exit(0); //this is a fatal error and cannot be resolved later
+//		}
+//        
+//        Extractor etor = new Extractor(s);
+//        
+//        for (int i = 0; i < 10; ++i){
+//            tb.setA(new Integer(i));
+//            try {
+//				Thread.sleep(2000);
+//			} catch (InterruptedException e) {
+//				logger.error(e.getMessage(), e);
+//			}
+//        }
+//    }
+//    
+//    private static void getB(TestBean tb) {
+//        Settings s = null;
+//		try {
+//			s = Settings.fromXML(
+//			        new FileInputStream("C:\\Extracted\\s2.xml"));
+//		} catch (FileNotFoundException e) {
+//			logger.error("Error while reading from settings file", e);
+//			System.exit(0); //this is a fatal error and cannot be resolved later
+//		}
+//        
+//        Extractor etor = new Extractor(s);
+//        
+//        for (int i = 100; i > 80; --i){
+//            tb.setB(new Integer(i));
+//            try {
+//				Thread.sleep(2000);
+//			} catch (InterruptedException e) {
+//				logger.error(e.getMessage(), e);
+//			}
+//        }
+//    }
+//    
+//    private static void getBoth(TestBean tb) {
+//        Settings s = null;
+//		try {
+//			s = Settings.fromXML(
+//			        new FileInputStream("C:\\Extracted\\s3.xml"));
+//		} catch (FileNotFoundException e) {
+//			logger.error("Error while reading from settings file", e);
+//			System.exit(0); //this is a fatal error and cannot be resolved later
+//		}
+//        
+//		Extractor etor = new Extractor(s);
+//        
+//        for (int i = 0; i < 15; ++i){
+//            tb.setA(i*i);
+//            tb.setB(100-2*i);
+//            try {
+//				Thread.sleep(2000);
+//			} catch (InterruptedException e) {
+//				logger.error(e.getMessage(), e);
+//			}
+//        }
+//    }
+//
+//  public static void main(String[] args) {
+//        System.out.println("extract");
+//        
+//        // values
+//        int expected = 42;
+//        
+//        //Create new test MBean
+//        TestBean tb = new TestBean();
+//        tb.setA(new Integer(expected));
+//        tb.setB(new Integer(expected));
+//        MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+//        String mbName = "org.jmxdatamart.JMXTestServer:type=TestBean";
+//        ObjectName mbeanName = null;
+//		try {
+//			mbeanName = new ObjectName(mbName);
+//		} catch (MalformedObjectNameException e) {
+//			logger.error(e.getMessage(), e);
+//			System.exit(0); //this is a fatal error and cannot be resolved later
+//		} catch (NullPointerException e) {
+//			logger.error("Error creating MBean: no object name given", e);
+//			System.exit(0); //this is a fatal error and cannot be resolved later
+//		}
+//        try {
+//			mbs.registerMBean(tb, mbeanName);
+//		} catch (InstanceAlreadyExistsException e) {
+//			logger.error("Error: " + mbeanName + " already registered with MBeanServer", e);
+//		} catch (MBeanRegistrationException e) {
+//			logger.error("Error registering " + mbeanName + " with MBeanServer", e);
+//			System.exit(0); //this is a fatal error and cannot be resolved later
+//		} catch (NotCompliantMBeanException e) {
+//			logger.error("Error: " + mbeanName + " is not compliant with MBeanServer", e);
+//			System.exit(0); //this is a fatal error and cannot be resolved later
+//		}
+//        
+//        // Main extract
+//        
+//        int toBeExtracted = GET_BOTH;
+//        
+//        switch (toBeExtracted){
+//            case GET_A:
+//                getA(tb);
+//                break;
+//            case GET_B:
+//                getB(tb);
+//                break;
+//            case GET_BOTH:
+//                getBoth(tb);
+//            default:
+//        }
+//  }
 }

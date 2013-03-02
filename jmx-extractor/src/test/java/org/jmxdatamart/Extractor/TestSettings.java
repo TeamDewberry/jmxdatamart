@@ -37,9 +37,8 @@ public class TestSettings extends TestCase {
   public void testJUnit() {
     int i = 42;
   }
-}
   
-//  Commtented out because function is not yet implemented - that's what she said
+//  commented out because function is not implemented
 //  public void testWriteSettingsAsXml() {
 //    Settings settings = new Settings();
 //    settings.setPollingRate(10);
@@ -59,5 +58,5 @@ public class TestSettings extends TestCase {
 //    Settings newSettings = Settings.fromXML(s);
 //    assertEquals(settings, newSettings);
 //  }
-//  
-//}
+  
+}
