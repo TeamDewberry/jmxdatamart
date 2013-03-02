@@ -27,51 +27,43 @@ package org.jmxdatamart.Loader;/*
  */
 
 import org.jmxdatamart.common.*;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
+
 import java.io.File;
-import java.sql.SQLException;
+import java.util.*;
 
+public class SourceDB {
+    private Set<String> databaseFiles;
+    private DBHandler sourceDatabase;
+    private Setting.DBInfo dbInfo;
 
-public class Main {
+    public DBHandler getSourceDatabase() {
+        return sourceDatabase;
+    }
+    public Setting.DBInfo getDbInfo() {
+        return dbInfo;
+    }
 
-    public static void main(String[] args){
-        Logger logger = LoggerFactory.getLogger(Main.class);
-        if (args.length!=2){
-            System.err.println("Must have two arguments.\nUsage: loader settingFile folderLocation");
-            //System.exit(1);
-        }
+    public Set<String> getDatabaseFiles() {
+        return databaseFiles;
+    }
 
-        String arg0 = "jmx-loader/src/main/java/org/jmxdatamart/Loader/loaderconfig.ini";
-        String arg1 = "HyperSql/";
+    public SourceDB(Setting.DBInfo dbInfo, File folderLocation) {
+        this.dbInfo = dbInfo;
+        if (dbInfo.getDatabaseType().equalsIgnoreCase("hsqldb"))
+            sourceDatabase = new HypersqlHandler();
+        else if (dbInfo.getDatabaseType().equalsIgnoreCase("derbydb"))
+            sourceDatabase = new DerbyHandler();
 
-        File prop = new File(arg0);
-        if (!prop.isFile()){
-            System.err.println("Invalid file.");
-            System.exit(1);
-        }
-        File folder = new File(arg1) ;
-        if (!folder.isDirectory()){
-            System.err.println("Invalid folder.");
-            System.exit(1);
-        }
-
-        Setting s = new Setting(arg0);
-        DB2DB d2d = new DB2DB(s,folder);
-        try{
-            logger.info("\nLoadding data from " + arg1 + ".\n");
-            d2d.importData();
-            logger.info("\nData are successfully imported to DataMart from " + arg1);
-        }
-        catch (SQLException se){
-            logger.error("\nFail to import data from " + arg1 + ": \n" +se.getMessage());
-        }
-        catch (DBException de){
-            logger.error("\nFail to import data from " + arg1);
+        databaseFiles = new TreeSet<String>();
+        String fileName, databaseName;
+        for (final File fileEntry : folderLocation.listFiles()) {
+            if (fileEntry.isFile()) {
+                fileName= fileEntry.getName();
+                databaseName = fileName.split("\\.")[0];
+                if (databaseName.trim().length()>0)
+                    databaseFiles.add(folderLocation.getAbsolutePath()+"/"+databaseName);
+            }
         }
     }
 
-
 }
-
-

@@ -28,322 +28,303 @@
 package org.jmxdatamart.Loader;
 
 import org.jmxdatamart.common.*;
+import org.slf4j.LoggerFactory;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.sql.*;
-import java.util.Enumeration;
-import java.util.Map;
-import java.util.Properties;
-import java.util.UUID;
+import java.util.*;
 
 
 public class DB2DB {
-    private final String mainTableName = "mainTable";
-    private final String idName = "testID";
-    private final String idNameType = "varchar(40)";
-    private final String importTime = "importTime";
-    private final String dbfile = "dbfile"; //use to check if the embedded database has been imported, avoid duplicated import.
-    private final String dbfileType = "varchar(100)";
+    private final org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
+    private DataMartDB dataMart;
+    private SourceDB sources;
 
-    private DBHandler sourceDatabase, targerDatabase;
-    private Connection sourceConn,targetConn;
-    private Properties required, optional;
-    private String importfile;
-    private Map<String,Map> sourceSchema;
+    /**
+     * Initial the Data mart setting and the source database setting from the seting file
+     * @param s
+     * @param folder
+     */
+    public DB2DB(Setting s, File folder){
+        dataMart = new DataMartDB(s.getTarget(),s.getRequired(),s.getOptional());
+        sources = new SourceDB(s.getSource(), folder);
+    }
 
-    public LoaderSetting readProperties(String filePath) {
-        LoaderSetting s = new LoaderSetting();
-        LoaderSetting.DBInfo source = s.new DBInfo() , target = s.new DBInfo();
-        Properties re =new Properties(), op = new Properties(), sp =new Properties(), tp = new Properties();
-        Properties props = new Properties();
-        try {
-            InputStream in = new BufferedInputStream(new FileInputStream(filePath));
-            props.load(in);
+    /**
+     * Import data from the datafiles to data mart
+     * @throws DBException
+     * @throws SQLException
+     */
+    public void importData() throws DBException,SQLException{
 
-            Enumeration en = props.propertyNames();
-            while (en.hasMoreElements()) {
-                String key = (String) en.nextElement();
-                String Property = props.getProperty(key);
-                String section = key.split("\\.")[0];
-                String keyname = key.split("\\.")[1];
-                if (section.equalsIgnoreCase("required"))
-                    re.put(keyname, Property);
-                else if(section.equalsIgnoreCase("optional"))
-                    op.put(keyname, Property);
-                else{
-                    if (key.equalsIgnoreCase("source.type"))
-                        source.setDatabaseType(Property);
-                    else if(key.equalsIgnoreCase("source.JDBCurl"))
-                        source.setJdbcUrl(Property);
-                    else if(key.equalsIgnoreCase("source.databasename"))
-                        source.setDatabaseName(Property);
-                    else if(key.equalsIgnoreCase("source.user"))
-                        sp.put("user", Property);
-                    else if(key.equalsIgnoreCase("source.password"))
-                        sp.put("password", Property);
-                    else if (key.equalsIgnoreCase("target.type"))
-                        target.setDatabaseType(Property);
-                    else if(key.equalsIgnoreCase("target.JDBCurl"))
-                        target.setJdbcUrl(Property);
-                    else if(key.equalsIgnoreCase("target.databasename"))
-                        target.setDatabaseName(Property);
-                    else if(key.equalsIgnoreCase("target.user"))
-                        tp.put("user",Property);
-                    else if(key.equalsIgnoreCase("target.password"))
-                        tp.put("password", Property);
-                }
+        Connection dataMartConnection = connectToDataMartDatabase();
+        Connection sourceConnection = null;
+        int testId;
+        Map<String,Map> sourceDatabaseTables;
+        String sourceTableSchem = sources.getSourceDatabase().getTableSchem();
+        String sourceDatabaseType = sources.getDbInfo().getDatabaseType();
+        String mainTableName = dataMart.getMainTableName();
+        String testIDFieldName = dataMart.getTestID().getFieldName();
+        boolean bl = dataMartConnection.getAutoCommit();
+        dataMartConnection.setAutoCommit(false);
+
+        for(String sourceDatabaseFile : sources.getDatabaseFiles()){
+            testId = DBHandler.getMaxTestID(dataMartConnection, mainTableName, testIDFieldName);
+
+            if ((sourceConnection = connectToSourceDatabase(sourceDatabaseFile))==null){
+                logger.error("\n" +sourceDatabaseFile + " fail to import to DataMart: it might be an invalid database file.\n");
+                continue;
             }
-            source.setUserInfo(sp);
-            target.setUserInfo(tp);
-            s.setSource(source);
-            s.setTarget(target);
-            s.setRequired(re);
-            s.setOptional(op);
-            in.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return s;
-    }
-
-    public void disConnect() throws SQLException{
-        DBHandler.disconnectDatabase(null,null,null,sourceConn);
-        DBHandler.disconnectDatabase(null,null,null,targetConn);
-    }
-    public void loadSetting(LoaderSetting s) throws SQLException,DBException {
-
-
-        if (!s.getSource().getJdbcUrl().toLowerCase().contains(s.getSource().getDatabaseType().toLowerCase()))
-            throw new DBException("The source section in setting file must be wrong!");
-        if (!s.getTarget().getJdbcUrl().toLowerCase().contains(s.getTarget().getDatabaseType().toLowerCase()))
-            throw new DBException("The target section in setting file must be wrong!");
-
-        if (s.getSource().getDatabaseType().equalsIgnoreCase("hsqldb"))
-            sourceDatabase = new HypersqlHandler();
-        else if(s.getSource().getDatabaseType().equalsIgnoreCase("sqlserver")){
-            sourceDatabase = new MssqlHandler();
-            ((MssqlHandler)sourceDatabase).setJdbcurl(s.getSource().getJdbcUrl());        }
-        else
-            throw new DBException("Only support HyperSQL and MSSQL so for!");
-
-        if (s.getTarget().getDatabaseType().equalsIgnoreCase("hsqldb")){
-        	targerDatabase = new HypersqlHandler();
-        }
-        else if(s.getTarget().getDatabaseType().equalsIgnoreCase("sqlserver")){
-        	targerDatabase = new MssqlHandler();
-        	((MssqlHandler)targerDatabase).setJdbcurl(s.getTarget().getJdbcUrl());
-        }
-        else
-            throw new DBException("Only support HyperSQL and MSSQL so for!");
-
-        //source database must exist
-        if (sourceDatabase.connectServer(s.getSource().getUserInfo()))
-            if (sourceDatabase.databaseExists(s.getSource().getDatabaseName(),s.getSource().getUserInfo()) )
-                sourceConn = sourceDatabase.connectDatabase(s.getSource().getDatabaseName(),s.getSource().getUserInfo());
-            else
-                throw new DBException("Can't connect to source database!");
-        else
-            throw new DBException("Can't connect to the source server, please check database driver, network, username, password and etc...");
-
-        //if target database doesn't exist, then create one. But prerequisite is be able to connect the server.
-        if (targerDatabase.connectServer(s.getTarget().getUserInfo()))
-            targetConn = targerDatabase.connectDatabase(s.getTarget().getDatabaseName(),s.getTarget().getUserInfo());
-        else
-            throw new DBException("Can't connect to the target server, please check database driver, network, username, password and etc...");
-
-        sourceSchema = sourceDatabase.getDatabaseSchema(sourceConn);
-
-        required = s.getRequired();
-        optional = s.getOptional();
-        importfile = s.getSource().getDatabaseName();
-        
-        System.out.println("Loading data from [" +s.getSource().getDatabaseType()+"]"+ importfile + " to [" + s.getTarget().getDatabaseType()+"]"+ s.getTarget().getDatabaseName() + "..." );
-    }
-
-
-    public void copySchema() throws SQLException,DBException {
-    	if (sourceSchema==null)
-    		throw new DBException("Can't obtain the schema from the souce database!");
-        StringBuilder sql ;
-        
-        Boolean bl = targetConn.getAutoCommit();
-        targetConn.setAutoCommit(false);
-        for (Map.Entry<String, Map> tables : sourceSchema.entrySet()) {
-            String tab = tables.getKey();
-            if (tab.equalsIgnoreCase(this.mainTableName)) continue; //in case the source database has the "maintable"
-            if (!DBHandler.tableExists(tab,targetConn)){
-                sql = new StringBuilder();
-                sql.append("create table ").append(tab).append("(").append(idName).append(" ").append(idNameType).append(")");
-                //System.out.println(sql.toString());
-                targetConn.createStatement().execute(sql.toString());
+            else{
+                logger.info("\nStart loading database file: " + sourceDatabaseFile + ".");
             }
 
-            Map<String,FieldAttribute>  fieldinfo = (Map<String, FieldAttribute>)tables.getValue();
+            sourceDatabaseTables = DBHandler.getDatabaseSchema(sourceConnection,sourceTableSchem, sourceDatabaseType);
+            copyOthersScheme(dataMartConnection,sourceDatabaseTables);
+            loadAllTablesDataExceptMain(sourceConnection, dataMartConnection, testId, sourceDatabaseTables);
+            addMainTableScheme(dataMartConnection);
+            addMainTableData(dataMartConnection, testId, sourceDatabaseFile);
 
-            for (Map.Entry<String, FieldAttribute> field : fieldinfo.entrySet()) {
-                String col = field.getKey();
-                if (col.equalsIgnoreCase(this.idName)) continue; //in case the tables in source database has the field named "testid"
-                FieldAttribute attributes =field.getValue();
-                if (!DBHandler.columnExists(col,tab,targetConn)){
-                    sql = new StringBuilder();
-                    sql.append("Alter table ").append(tab).append(" add ").append(col).append(" ").append(attributes.getTypename());
-                    if (attributes.getFieldtype().equals(DataType.STRING))
-                        sql.append("(").append(attributes.getFieldsize()).append(")") ;
-                    //System.out.println(sql.toString());
-                    targetConn.createStatement().execute(sql.toString());
-                }
+            dataMartConnection.commit();
+            logger.info( sourceDatabaseFile + " is imported to DataMart .\n");
+            ((HypersqlHandler)sources.getSourceDatabase()).shutdownDatabase(sourceConnection); //need to improve
 
-            }
-            
         }
 
-        targetConn.commit();
-
-        targetConn.setAutoCommit(bl);
-
-
-        createMainTable();
+        dataMartConnection.setAutoCommit(bl);
+        dataMartConnection.close();
+        sourceConnection.close();
     }
 
-    public void createMainTable() throws SQLException{
-        StringBuilder sql;
-        boolean bl = targetConn.getAutoCommit();
+    /**
+     * Try to connect to the datamart
+     * @return null if it can't connect to datamart, otherwise return the database connection
+     * @throws DBException
+     */
+    private Connection connectToDataMartDatabase() throws DBException{
+        Properties userInfo = dataMart.getDbInfo().getUserInfo();
+        String databaseName = dataMart.getDbInfo().getDatabaseName();
+        DBHandler dataMartDatabase = dataMart.getTargetDatabase();
+        Connection conn = null;
 
-        targetConn.setAutoCommit(false);
-        if (!DBHandler.tableExists(mainTableName,targetConn)){
-            sql = new StringBuilder();
-            sql.append("create table ").append(mainTableName).append("(").append(idName).append(" ").append(idNameType).append(",");
-            sql.append(dbfile).append(" ").append(dbfileType).append(",");
-            sql.append(importTime).append(" ").append(targerDatabase.getTimeType()).append(" not null, primary key(").append(idName).append("))");
-            //System.out.println(sql.toString());
-            targetConn.createStatement().executeUpdate(sql.toString());
-        }
-
-        Properties merged = new Properties();
-        merged.putAll(required);
-        merged.putAll(optional);
-        Enumeration keys = merged.keys();
-        while (keys.hasMoreElements()) {
-            String col = (String) keys.nextElement();
-            if (!DBHandler.columnExists(col,mainTableName,targetConn)){
-                sql = new StringBuilder();
-                sql.append("Alter table ").append(mainTableName).append(" add ").append(col).append(" varchar(100)") ;
-                //System.out.println(sql.toString());
-                targetConn.createStatement().execute(sql.toString());
-            }
-        }
-
-        targetConn.commit();
-        targetConn.setAutoCommit(bl);
-    }
-
-    public boolean alreadyImport() throws SQLException{
-        if (!DBHandler.tableExists(mainTableName,targetConn)){
-            return false;
+        if (!dataMartDatabase.connectServer(userInfo)){
+            throw new DBException("Can't connect to DataMart server.");
         }
         else{
-            PreparedStatement ps = targetConn.prepareStatement("select count(" + dbfile + ") from " + mainTableName + " where " + dbfile + " = ?");
-            ps.setString(1,this.importfile);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next() && rs.getInt(1)==0) {
-                rs.close();
-                ps.close();
-                return false;
-            }
+            if ((conn = dataMartDatabase.connectDatabase(databaseName,userInfo)) == null)
+                throw new DBException("Can't create the DataMart database");
+            return conn;
         }
-        return true;
+
     }
 
-    public void importData() throws SQLException{
-        String testid= UUID.randomUUID().toString();
-        StringBuilder fieldList, questionMarkList ;
-        PreparedStatement ps ;
-        ResultSet rs = null;
-        String query,insert;
-        int fieldCount = 0, tableCount =0, recordCount=0;
-        String fields[];
-        Boolean bl = targetConn.getAutoCommit();
-        targetConn.setAutoCommit(false);
-        for (Map.Entry<String, Map> tables : sourceSchema.entrySet()) {
-            String tab = tables.getKey();
-            //System.out.println(tab);
-            if (tab.equalsIgnoreCase(this.mainTableName)) continue; //in case the source database has the "maintable"
-            tableCount ++;
-            Map<String,FieldAttribute>  fieldinfo = (Map<String, FieldAttribute>)tables.getValue();
-            fieldList = new StringBuilder();
-            questionMarkList = new StringBuilder();
-            for (Map.Entry<String, FieldAttribute> field : fieldinfo.entrySet()) {
-                String col = field.getKey();
-                if (col.equalsIgnoreCase(this.idName)) continue; //in case the tables in source database has the fields named "testid"
-                fieldList.append(col).append(",");
-                questionMarkList.append("?,");
-            }
-            insert = "insert into " + tab + "(" + fieldList.toString()  + idName + ") values(" + questionMarkList + "?)";
-            query =  "select " + fieldList.toString() + "1 from " + tab;
-            //System.out.println(insert);
-            //System.out.println(query);
-            rs = sourceConn.createStatement().executeQuery(query);
-            ps = targetConn.prepareStatement(insert);
-            fields = fieldList.toString().split(",");
-            while (rs.next()){
-                recordCount ++;
-                for (fieldCount =0; fieldCount<fields.length; fieldCount++){
-                    String col = fields[fieldCount];
-                    FieldAttribute attributes =fieldinfo.get(col);
-                    switch (attributes.getFieldtype()){
-                        case INT:
-                            ps.setInt(fieldCount+1,rs.getInt(col));
-                            break;
-                        case STRING:
-                            ps.setString(fieldCount+1,rs.getString(col));
-                            break;
-                        case FLOAT:
-                            ps.setFloat(fieldCount+1,rs.getFloat(col));
-                            break;
-                    }
-                }
-                ps.setString(++fieldCount, testid);
-                ps.executeUpdate();
-            }
-        }
-        if (rs!=null) rs.close();
+    /**
+     * Try to connect to the source database
+     * @param sourceDatabaseFileName
+     * @return null if the source database doesn't exist, otherwise return the database connection
+     */
+    private Connection connectToSourceDatabase(String sourceDatabaseFileName){
+        DBHandler sourceDatabase = sources.getSourceDatabase();
+        Properties userInfo = sources.getDbInfo().getUserInfo();
 
-        //update the maintable
-        fieldList=new StringBuilder();
-        fieldList.append(idName).append(",").append(dbfile).append(",").append(importTime);
-        questionMarkList = new StringBuilder("?,?,?");
+        if (sourceDatabase.databaseExists(sourceDatabaseFileName, userInfo))
+            return sourceDatabase.connectDatabase(sourceDatabaseFileName, userInfo);
+        else
+            return null;
+    }
+
+    /**
+     * Add main table schema to data mart
+     * @param dataMartConnection
+     */
+    private void addMainTableScheme(Connection dataMartConnection){
+        String mainTableName = dataMart.getMainTableName();
+        String databaseType = dataMart.getDbInfo().getDatabaseType();
+        if (!DBHandler.tableExists(mainTableName,dataMartConnection)){
+            DBHandler.addTable (dataMartConnection, mainTableName, dataMart.getTestID(), databaseType );
+            DBHandler.addColumn(dataMartConnection, mainTableName, dataMart.getImportTime(), databaseType);
+            DBHandler.addColumn(dataMartConnection, mainTableName, dataMart.getImportedFile(), databaseType);
+        }
+
         Properties merged = new Properties();
-        merged.putAll(required);
-        merged.putAll(optional);
+        merged.putAll(dataMart.getRequired());
+        merged.putAll(dataMart.getOptional());
         Enumeration keys = merged.keys();
+        FieldAttribute field;
         while (keys.hasMoreElements()) {
             String col = (String) keys.nextElement();
-            fieldList.append(",").append(col);
+            if (!DBHandler.columnExists(col,mainTableName,dataMartConnection)){
+                field = new FieldAttribute(col,DataType.STRING,false);
+                DBHandler.addColumn(dataMartConnection, mainTableName, field, databaseType);
+            }
+        }
+    }
+
+    /**
+     * Add main table infomation
+     * @param dataMartConnection
+     * @param testId
+     * @param sourceDatabaseFile
+     */
+    private void addMainTableData(Connection dataMartConnection, int testId, String sourceDatabaseFile){
+        StringBuilder fieldList=new StringBuilder();
+        fieldList.append(dataMart.getTestID().getFieldName())
+                 .append(",")
+                 .append(dataMart.getImportedFile().getFieldName())
+                 .append(",")
+                 .append(dataMart.getImportTime().getFieldName());
+        StringBuilder questionMarkList = new StringBuilder("?,?,?");
+
+        Properties merged = new Properties();
+        merged.putAll(dataMart.getRequired());
+        merged.putAll(dataMart.getOptional());
+        Enumeration keys = merged.keys();
+        String column;
+        while (keys.hasMoreElements()) {
+            column = (String) keys.nextElement();
+            fieldList.append(",").append(column);
             questionMarkList.append(",?");
         }
-        insert = "insert into " + mainTableName + "(" + fieldList.toString() + ") values(" + questionMarkList +")";
-        //System.out.println(insert);
-        ps = targetConn.prepareStatement(insert);
-        ps.setString(1,testid);
-        ps.setString(2,this.importfile);
-        ps.setTimestamp(3,new Timestamp((new java.util.Date()).getTime()));
+        String sql = "insert into " + dataMart.getMainTableName() +
+                     "(" + fieldList.toString() + ") values(" + questionMarkList +")";
+        PreparedStatement ps = null;
+        try{
+            ps = dataMartConnection.prepareStatement(sql);
+            ps.setInt(1, testId);
+            ps.setString(2,sourceDatabaseFile);
+            ps.setTimestamp(3,new Timestamp((new java.util.Date()).getTime()));
 
-        fields =fieldList.toString().split(",");
-        for (fieldCount=3;fieldCount< fields.length  ; fieldCount++){
-            ps.setString(fieldCount+1,merged.getProperty(fields[fieldCount]));
+            String fields[] =fieldList.toString().split(",");
+            for (int i=3;i < fields.length  ; i++){
+                ps.setString(i+1,merged.getProperty(fields[i]));
+            }
+            ps.executeUpdate();
         }
-        ps.executeUpdate();
-
-        targetConn.commit();
-        targetConn.setAutoCommit(bl);
-
-        if (ps!=null) ps.close();
-
-        System.out.println("Data was loaded successfully!\nTestid:" + testid );
-        System.out.println( ++tableCount + " tables and " + ++recordCount + " records were loaded.");
-
-
+        catch (SQLException se){
+            logger.error(se.getMessage());
+        }
+        finally {
+            DBHandler.releaseDatabaseResource(null,null,ps,null);
+        }
     }
+
+
+    /**
+     * Copy the schema from source database to data mart
+     * @param dataMartConnection
+     * @param sourceDatabaseTables
+     */
+    private void copyOthersScheme(Connection dataMartConnection, Map<String,Map> sourceDatabaseTables){
+        String mainTableName = dataMart.getMainTableName();
+        FieldAttribute testIDField = dataMart.getTestID();
+        testIDField.setPK(false);
+        String testIDFieldName = dataMart.getTestID().getFieldName();
+        String sourceDatabaseType = sources.getDbInfo().getDatabaseType();
+        String dataMartDatabaseType = dataMart.getDbInfo().getDatabaseType();
+        String tableName,columnName;
+        Map<String,FieldAttribute>  fields;
+        FieldAttribute attributes;
+        for (Map.Entry<String, Map> table : sourceDatabaseTables.entrySet() ) {
+            tableName = table.getKey();
+            if (tableName.equalsIgnoreCase(mainTableName)) continue; //in case the source database has the "maintable"
+
+            if (!DBHandler.tableExists(tableName,dataMartConnection)){
+                DBHandler.addTable(dataMartConnection,tableName, testIDField, sourceDatabaseType);
+            }
+
+            fields = (Map<String, FieldAttribute>)table.getValue();
+            for (Map.Entry<String, FieldAttribute> field : fields.entrySet()) {
+                columnName = field.getKey();
+                if (columnName.equalsIgnoreCase(testIDFieldName)) continue; //in case the tables in source database has the field named "testid"
+
+                attributes =field.getValue();
+                if (!DBHandler.columnExists(columnName,tableName,dataMartConnection)){
+                    DBHandler.addColumn(dataMartConnection,tableName,attributes,dataMartDatabaseType);
+                }
+            }
+        }
+    }
+
+    /**
+     * Load all the data from source database to data mart
+     * @param sourceConnection
+     * @param dataMartConnection
+     * @param testID
+     * @param sourceDatabaseTables
+     * @throws SQLException
+     */
+    private void loadAllTablesDataExceptMain(Connection sourceConnection, Connection dataMartConnection, int testID, Map<String,Map> sourceDatabaseTables) throws SQLException{
+
+        int  tableCount =0, recordCount = 0;
+        Map<String,FieldAttribute>  fieldInfo;
+        String tableName;
+        for (Map.Entry<String, Map> table : sourceDatabaseTables.entrySet()) {
+            tableName = table.getKey();
+            if (tableName.equalsIgnoreCase(dataMart.getMainTableName())) continue; //in case the source database has the "maintable"
+            fieldInfo= (Map<String, FieldAttribute>)table.getValue();
+            recordCount += loadOneTableData(fieldInfo, tableName, sourceConnection, dataMartConnection, testID);
+            tableCount ++;
+        }
+
+        logger.info("Data was loaded successfully!Testid:" + testID );
+        logger.info( ++tableCount + " tables and " + ++recordCount + " records were loaded.");
+    }
+
+    /**
+     * Load the specific table data from source database from data mart
+     * @param fieldInfo
+     * @param tableName
+     * @param sourceConnection
+     * @param dataMartConnection
+     * @param testID
+     * @return the loaded records
+     * @throws SQLException
+     */
+    private int loadOneTableData(Map<String,FieldAttribute>  fieldInfo, String tableName,
+                                 Connection sourceConnection, Connection dataMartConnection ,int testID) throws SQLException{
+        PreparedStatement ps1 = null ,ps = null ;
+        int fieldCount = 0, recordCount=0;
+        ResultSet rs = null;
+        String testIDName = dataMart.getTestID().getFieldName();
+        StringBuilder fieldList = new StringBuilder();
+        StringBuilder questionMarkList = new StringBuilder();
+        String query,insert,fields[],col;
+        FieldAttribute attributes;
+
+        for (Map.Entry<String, FieldAttribute> field : fieldInfo.entrySet()) {
+            col = field.getKey();
+            if (col.equalsIgnoreCase(testIDName)) continue; //in case the tables in source database has the fields named "testid"
+            fieldList.append(col).append(",");
+            questionMarkList.append("?,");
+        }
+
+        query =  "select " + fieldList.toString() + "1 from " + tableName;
+        ps1 = sourceConnection.prepareStatement(query);
+        rs = ps1.executeQuery();
+
+        insert = "insert into " + tableName + "(" + fieldList.toString()  + testIDName + ") values(" + questionMarkList + "?)";
+        ps = dataMartConnection.prepareStatement(insert);
+        fields = fieldList.toString().split(",");
+
+        while (rs.next()){
+            for (fieldCount =0; fieldCount<fields.length; fieldCount++){
+                col = fields[fieldCount];
+                attributes =fieldInfo.get(col);
+                if (rs.getObject(col)!=null)
+                    attributes.getFieldType().addToSqlPreparedStatement(ps,fieldCount+1,rs.getObject(col));
+                else
+                    ps.setObject(fieldCount+1,null);
+            }
+            ps.setInt(++fieldCount, testID);
+            ps.executeUpdate();
+            recordCount ++;
+        }
+        DBHandler.releaseDatabaseResource(rs,null,ps,null);
+        DBHandler.releaseDatabaseResource(null,null,ps1,null);
+        return recordCount;
+    }
+
+
+
+
 }
