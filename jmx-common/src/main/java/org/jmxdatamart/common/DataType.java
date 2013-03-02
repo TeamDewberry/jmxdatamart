@@ -118,7 +118,9 @@ public enum DataType {
                 @Override
                 public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
                     Timestamp ts;
-                    if (java.lang.Long.class.isAssignableFrom(value.getClass())){
+                    if (Timestamp.class.equals(value.getClass())) {
+                      ts = (Timestamp) value;
+                    } else if (java.lang.Long.class.isAssignableFrom(value.getClass())){
                       ts = new Timestamp((Long)value);
                     } else if (java.util.Date.class.isAssignableFrom(value.getClass())) {
                       ts = new Timestamp(((Date)value).getTime());
