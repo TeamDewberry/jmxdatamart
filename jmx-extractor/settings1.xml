@@ -1,0 +1,36 @@
+<Settings>
+  <pollingRate>-1</pollingRate>
+  <folderLocation>extracted\\</folderLocation>
+  <BeanList>
+    <Bean>
+      <name>com.personal.JMXTestServer:name=TestBean1</name>
+      <alias>TestBean1</alias>
+      <AttributeList>
+        <Attribute>
+          <name>A</name>
+          <alias>Alpha</alias>
+        </Attribute>
+        <Attribute>
+          <name>B</name>
+          <alias>Beta</alias>
+        </Attribute>
+      </AttributeList>
+      <enable>true</enable>
+    </Bean>
+    <Bean>
+      <name>com.personal.JMXTestServer:name=TestBean2</name>
+      <alias>TestBean2</alias>
+      <AttributeList>
+        <Attribute>
+          <name>A</name>
+          <alias>Alpha</alias>
+        </Attribute>
+        <Attribute>
+          <name>B</name>
+          <alias>Beta</alias>
+        </Attribute>
+      </AttributeList>
+      <enable>true</enable>
+    </Bean>
+  </BeanList>
+</Settings>

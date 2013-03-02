@@ -128,6 +128,9 @@ public final class Extractor {
       }
       ArrayList<Attribute> attrToBeRemoved = new ArrayList<Attribute>();
       for (Attribute a : bd.getAttributes()) {
+        if (a.isPattern()) {
+          continue;
+        }
         Object obj;
         try {
           obj = mbsc.getAttribute(on, a.getName());
@@ -200,7 +203,7 @@ public final class Extractor {
                 bdata.setName(actual);
                 bdata.setAlias(MultiLayeredAttribute.name2alias(actual));
                 result = MBeanExtract.extract(bdata, mbsc);
-                
+                bd.export2DB(conn, bdata, result);
               }
             } catch (IOException ex) {
               logger.error("Error while trying to access MBean Server", ex);

@@ -1,17 +1,15 @@
 package org.jmxdatamart.Extractor;
 
-import org.jmxdatamart.JMXTestServer.TestBean;
 import org.jmxdatamart.common.*;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-import java.lang.management.ManagementFactory;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * Created with IntelliJ IDEA. User: Xiao Han To change this template use File |
- * Settings | File Templates.
+ * @author Xiao Han - original code
+ * @author Binh Tran <mynameisbinh@gmail.com>
+ *            * GenerateMBeanDB skips disable & pattern beans, as well as pattern attributes
+ *            * dealWIthDynamicBean creates missing table instead of throwing exception
  */
 public class Bean2DB {
 
@@ -69,14 +67,18 @@ public class Bean2DB {
 
   private void dealWithDynamicBean(Connection conn, String tableName, Map<Attribute, Object> result) throws SQLException, DBException {
     if (!DBHandler.tableExists(tableName, conn)) {
-      throw new DBException("Something wrong in the Dynamic Bean: bean table doesn't exists!");
+      HypersqlHandler.addTable(
+              conn,
+              tableName,
+              new FieldAttribute("time", DataType.DATETIME, false),
+              "hsqldb");
     }
     String sql;
     boolean bl = conn.getAutoCommit();
     conn.setAutoCommit(false);
     for (Map.Entry<Attribute, Object> m : result.entrySet()) {
       if (!DBHandler.columnExists(m.getKey().getAlias(), tableName, conn)) {
-        sql = "Alter table " + tableName + " add " + m.getKey().getAlias() + " " + m.getKey().getDataType();
+        sql = "Alter table " + tableName + " add " + m.getKey().getAlias() + " " + m.getKey().getDataType().getHsqlType();  // BUG: not a portable solution
         conn.createStatement().executeUpdate(sql);
       }
     }
@@ -84,6 +86,16 @@ public class Bean2DB {
     conn.setAutoCommit(bl);
   }
 
+  /**
+   * Insert data from result to the MBean table using a SQL connection
+   *
+   * @param conn the SQL connection
+   * @param mbd the MBeanData object that specify what table to insert
+   * @param result data to be inserted
+   * @throws SQLException
+   * @throws DBException
+   *
+   */
   public void export2DB(Connection conn, MBeanData mbd, Map<Attribute, Object> result) throws SQLException, DBException {
 
     String tablename = convertIllegalTableName(mbd.getAlias());
@@ -139,6 +151,14 @@ public class Bean2DB {
 
   }
 
+  /**
+   * Generate MBean tables from a settings
+   *
+   * @param s settings
+   * @return name of the database
+   * @throws SQLException when something wrong(?) happens
+   *
+   */
   public String generateMBeanDB(Settings s) throws SQLException {
     Connection conn = null;
     Statement st = null;
@@ -169,9 +189,11 @@ public class Bean2DB {
         //2.the field name of "time"(or whatever) should be reserved,  can't be used as an attribute name
         //3.the datatyype should be valid in embedded SQL (ie. HyperSQL)
         //All above requirements must be set to a DTD for the setting xml file!!!
-        sb.append("create table " + tablename + "(");
+        sb.append("create table ").append(tablename).append("(");
         for (Attribute ab : bean.getAttributes()) {
-          sb.append(ab.getAlias() + " " + ab.getDataType() + ",");
+          if (!ab.isPattern()) {
+            sb.append(ab.getAlias()).append(" ").append(ab.getDataType()).append(",");
+          }
         }
         sb.append("time TIMESTAMP)");
         st.executeUpdate(sb.toString());

@@ -43,7 +43,7 @@ import org.jmxdatamart.JMXTestServer.TestBean;
 
 public class Main {
 
-  private static boolean demo = false;
+  private static boolean demo = true;
 
   public static void main(String[] args) throws Exception {
     if (demo) {
@@ -55,7 +55,6 @@ public class Main {
       System.out.println("Program need only 1 argument to the setting file");
       return;
     }
-    demo();
 
     Settings s = Settings.fromXML(
             new FileInputStream(args[0]));
@@ -85,7 +84,7 @@ public class Main {
 
   }
 
-  private static void demo() throws MalformedObjectNameException, NotCompliantMBeanException, InstanceAlreadyExistsException, MBeanRegistrationException {
+  private static void demo() throws MalformedObjectNameException, NotCompliantMBeanException, InstanceAlreadyExistsException, MBeanRegistrationException, InstanceNotFoundException {
     TestBean tb1 = new TestBean();
     tb1.setA(new Integer(42));
     tb1.setB(new Integer(-1));
@@ -103,5 +102,6 @@ public class Main {
     mbs.registerMBean(tb1, tbName1);
     mbs.registerMBean(cb, cbName);
     mbs.registerMBean(tb2, tbName2);
+    System.out.println("Registered tb1, cb, and tb2");
   }
 }
