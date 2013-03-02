@@ -88,7 +88,14 @@ public enum DataType {
                     "DOUBLE"
             ),
 
-    //BOOLEAN,   ms sql doesn't support boolean
+    BOOLEAN   // boolean variable
+            (
+                    java.lang.Boolean.class,
+                    Types.BOOLEAN,
+                    "BIT",
+                    "BOOLEAN",
+                    "BOOLEAN"
+            ),   
 
     CHAR    // 16 bit UFT-8 character
             (
