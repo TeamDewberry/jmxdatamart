@@ -10,6 +10,7 @@ import java.util.*;
  * @author Binh Tran <mynameisbinh@gmail.com>
  *            * GenerateMBeanDB skips disable & pattern beans, as well as pattern attributes
  *            * dealWIthDynamicBean creates missing table instead of throwing exception
+ *            * export2DB now uses DataType's PrepareStatement mechanism
  */
 public class Bean2DB {
 
