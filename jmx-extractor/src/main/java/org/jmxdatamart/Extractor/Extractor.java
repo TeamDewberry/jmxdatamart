@@ -33,18 +33,19 @@ import java.lang.management.ManagementFactory;
 import java.net.MalformedURLException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.management.*;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 import org.jmxdatamart.Extractor.MXBean.MultiLayeredAttribute;
+import org.jmxdatamart.common.DBException;
+import org.jmxdatamart.common.DataType;
 import org.jmxdatamart.common.HypersqlHandler;
 import org.slf4j.LoggerFactory;
 
@@ -86,14 +87,72 @@ public final class Extractor {
         System.exit(0); //this is a fatal error and cannot be resolved later
       }
     }
+    
+    getDataType(configData);
 
     hsql = new HypersqlHandler();
-    dbname = bd.generateMBeanDB(configData);
+    try {
+      dbname = bd.generateMBeanDB(configData);
+    } catch (SQLException ex) {
+      logger.error("Error while creating Bean DB", ex);
+      throw new RuntimeException(ex);
+    }
+    // print out all accessible beans, for debug
+//    try {
+//      for (ObjectInstance oi : mbsc.queryMBeans(null, null)) {
+//        System.out.println(oi.getObjectName().getCanonicalName());
+//      }
+//    } catch (IOException ex) {
+//    }
 
     if (shouldPeriodicallyExtract()) {
       periodicallyExtract();
     } else {
       extract();
+    }
+  }
+  
+  private void getDataType(Settings configData) {
+    ObjectName on;
+    ArrayList<MBeanData> bdToBeRemoved = new ArrayList<MBeanData>();
+    for (MBeanData bd : configData.getBeans()) {
+      if (bd.isPattern()) {
+        continue;
+      }
+      try {
+        on = new ObjectName(bd.getName());
+      } catch (MalformedObjectNameException ex) {
+        logger.error(bd.getName() + " is malformed and will be excluded from future extracts");
+        bdToBeRemoved.add(bd);
+        continue;
+      }
+      ArrayList<Attribute> attrToBeRemoved = new ArrayList<Attribute>();
+      for (Attribute a : bd.getAttributes()) {
+        Object obj;
+        try {
+          obj = mbsc.getAttribute(on, a.getName());
+        } catch (Exception ex) {
+          logger.error(a.getName() + " in " + bd.getName() + 
+                  " is inaccessible and will be excluded from future extracts", ex);
+          attrToBeRemoved.add(a);
+          continue;
+        }
+        DataType dt = DataType.getDataTypeFor(obj);
+        if (dt == DataType.UNKNOWN) {
+          logger.error(a.getName() + " in " + bd.getName() + 
+                  " is of unsupported type " + obj.getClass() + 
+                  " and will be excluded from future extracts");
+          attrToBeRemoved.add(a);
+          continue;
+        }
+        a.setDataType(dt);
+      }
+      for (Attribute a : attrToBeRemoved) {
+        bd.getAttributes().remove(a);
+      }
+    }
+    for (MBeanData mbd : bdToBeRemoved) {
+      configData.getBeans().remove(mbd);
     }
   }
 
@@ -113,12 +172,12 @@ public final class Extractor {
 
     connLock.lock();
     try {
-      try {
+//      try {
         conn = hsql.connectDatabase(dbname, props);
-      } catch (SQLException e) {
-        logger.error("Error connecting to " + dbname + " database", e);
-        System.exit(0); //this is a fatal error and cannot be resolved later
-      }
+//      } catch (SQLException e) {
+//        logger.error("Error connecting to " + dbname + " database", e);
+//        System.exit(0); //this is a fatal error and cannot be resolved later
+//      }
 
       for (MBeanData bdata : this.configData.getBeans()) {
         Map<Attribute, Object> result = null;
@@ -151,14 +210,20 @@ public final class Extractor {
         }
       }
 
-      try {
+//      try {
         hsql.shutdownDatabase(conn);
-      } catch (SQLException e) {
-        logger.error(e.getMessage(), e);
-      }
+//      } catch (SQLException e) {
+//        logger.error(e.getMessage(), e);
+//      }
 
       HypersqlHandler.disconnectDatabase(null, null, null, conn);
       conn = null;
+    } catch (SQLException ex) {
+      logger.error("Error while importing to HSQL", ex);
+      throw new RuntimeException(ex);
+    } catch (DBException ex) {
+      logger.error("Error while importing to HSQL", ex);
+      throw new RuntimeException(ex);
     } finally {
       connLock.unlock();
     }
@@ -167,6 +232,18 @@ public final class Extractor {
 
   public void stop() {
     if (timer != null) {
+      try {
+        connLock.lock();
+        if (conn != null && !conn.isClosed()) {
+              hsql.shutdownDatabase(conn);
+              HypersqlHandler.disconnectDatabase(null, null, null, conn);
+            }
+      } catch (SQLException ex) {
+        LoggerFactory.getLogger(Extractor.class)
+                    .error("Error while closing conn durring JVM shutdown", ex);
+      } finally {
+        connLock.unlock();
+      }
       timer.cancel();
     }
   }
