@@ -89,7 +89,7 @@ public final class Extractor {
 
     hsql = new HypersqlHandler();
     dbname = bd.generateMBeanDB(configData);
-    
+
     if (shouldPeriodicallyExtract()) {
       periodicallyExtract();
     } else {
@@ -125,6 +125,7 @@ public final class Extractor {
         if (bdata.isEnable()) {
           if (!bdata.isPattern()) {
             result = MBeanExtract.extract(bdata, mbsc);
+            bd.export2DB(conn, bdata, result);
           } else {
             String originalName = bdata.getName();
             ObjectName on;
@@ -140,13 +141,13 @@ public final class Extractor {
                 bdata.setName(actual);
                 bdata.setAlias(MultiLayeredAttribute.name2alias(actual));
                 result = MBeanExtract.extract(bdata, mbsc);
+                
               }
             } catch (IOException ex) {
               logger.error("Error while trying to access MBean Server", ex);
             }
             bdata.setName(originalName);
           }
-          bd.export2DB(conn, bdata, result);
         }
       }
 
