@@ -49,6 +49,7 @@ public class MBeanData {
     /**
      * @return the name
      */
+
     public String getName() {
         return name;
     }
@@ -63,6 +64,7 @@ public class MBeanData {
     /**
      * @return the alias
      */
+
     public String getAlias() {
         return alias;
     }
@@ -111,6 +113,7 @@ public class MBeanData {
     /**
      * @return the enable
      */
+    
     public boolean isEnable() {
         return enable;
     }
