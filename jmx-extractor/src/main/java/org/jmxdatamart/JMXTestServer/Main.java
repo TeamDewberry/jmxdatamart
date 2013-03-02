@@ -61,8 +61,12 @@ public class Main {
         mbs.registerMBean(cb, cbName);
         mbs.registerMBean(tb2, tbName2);
         
-        System.out.println("Press Enter to terminate...");
-        System.in.read();
+        if (args.length == 0) {
+          System.out.println("Press Enter to terminate...");
+          System.in.read();
+        } else {  // a random argument will cause it to pause for 10s only
+          Thread.sleep(10000);
+        }
         
         mbs.unregisterMBean(tbName1);
         mbs.unregisterMBean(tbName2);
