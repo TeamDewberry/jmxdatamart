@@ -105,7 +105,7 @@ public final class Extractor {
     timer.scheduleAtFixedRate(new Extract(), delay, rate);
   }
 
-  private boolean shouldPeriodicallyExtract() {
+  public boolean shouldPeriodicallyExtract() {
     return this.configData.getPollingRate() > 0;
   }
 
