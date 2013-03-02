@@ -190,7 +190,7 @@ public class Settings {
         Settings settings = (Settings)xstream.fromXML(s);
         try {
             settings.check();
-        } catch (MalformedObjectNameException ex) {
+        } catch (IllegalArgumentException ex) {
             LoggerFactory.getLogger(Settings.class).error("Setting is malformated", ex);
             throw new RuntimeException(ex);
         }
@@ -209,7 +209,7 @@ public class Settings {
         Settings settings = (Settings)xstream.fromXML(s);
         try {
             settings.check();
-        } catch (MalformedObjectNameException ex) {
+        } catch (IllegalArgumentException ex) {
             LoggerFactory.getLogger(Settings.class).error("Setting is malformated", ex);
             throw new RuntimeException(ex);
         }
@@ -235,7 +235,7 @@ public class Settings {
      * 3. Alias must be alphanumeric only and start with a letter
      * (4. Log message and throw runtime exception if they doesn't meet the requirements)
      */
-    public void check() throws MalformedObjectNameException{
+    public void check() {
         //create linked lists and variables that holds values we need to check
         LinkedList beanAlias = new LinkedList();
         LinkedList attriAlias = new LinkedList();
@@ -289,7 +289,7 @@ public class Settings {
                 */
                 if (attriAlias.contains(compString)){//check duplicates in the list
                     //System.out.println("duplicate attribute found within bean: " + bDataAlias + ": " + compString); //just for debugging
-                    throw new MalformedObjectNameException("duplicate attribute found within bean: " + bDataAlias + ": " + compString);//***throw exception
+                    throw new IllegalArgumentException("duplicate attribute found within bean: " + bDataAlias + ": " + compString);//***throw exception
                 }
                 
                 //check if this alias is alphanumeric only and starts with a letter
@@ -323,7 +323,7 @@ public class Settings {
                       
             if(beanAlias.contains(compString)){
                 //System.out.println("duplicate attribute found within this setting: " + compString); //just for debugging
-                throw new MalformedObjectNameException("duplicate attribute found within this setting: " + compString);//***throw exception
+                throw new IllegalArgumentException("duplicate attribute found within this setting: " + compString);//***throw exception
             }
             
             //check if this alias is alphanumeric only and starts with a letter
@@ -335,19 +335,19 @@ public class Settings {
         checkAlphanumeric(compString);
     }
     
-    public static void checkAlphanumeric(String compString) throws MalformedObjectNameException{
+    public static void checkAlphanumeric(String compString) {
         char[] compCharArray = compString.toCharArray(); //convert to char array
                 
         //checks the first letter
         if(!Character.isLetter(compCharArray[0])){
             //System.out.println("Attribute " + compString + " does not start with a letter."); //just for debugging
-            throw new MalformedObjectNameException("Attribute " + compString + " does not start with a letter.");//***throw exception
+            throw new IllegalArgumentException("Attribute " + compString + " does not start with a letter.");//***throw exception
         }
         //check if all characters are alphanumeric
         for(char c : compCharArray){ 
             if (!Character.isLetterOrDigit(c)){
                 //System.out.println("Attribute " + compString + " contains non-alphanumeric character."); 
-                throw new MalformedObjectNameException("Attribute " + compString + " contains non-alphanumeric character."); //***throw exception
+                throw new IllegalArgumentException("Attribute " + compString + " contains non-alphanumeric character."); //***throw exception
                 //break; //*comment this out if throwing exception* if there was one non-alphanumeric character, no need to check the rest of the string    
             }
         }
@@ -399,7 +399,7 @@ public class Settings {
         
         try{
             s.check();
-        } catch (MalformedObjectNameException e){
+        } catch (IllegalArgumentException e){
             System.out.println(e.getMessage());
             System.exit(1); //exit code?
         }
