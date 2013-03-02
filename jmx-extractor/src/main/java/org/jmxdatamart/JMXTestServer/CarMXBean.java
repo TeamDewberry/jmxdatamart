@@ -14,4 +14,8 @@ public interface CarMXBean {
     public Car getCar();
     
     public Map<String, Car> getMap();
+    
+    public int[] getIntList();
+    
+    public String[] getStrList();
 }

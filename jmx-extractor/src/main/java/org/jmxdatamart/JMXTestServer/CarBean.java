@@ -21,9 +21,15 @@ public class CarBean implements CarMXBean{
     public static final int POWER = 450;
     public static final Map<String, Car> map = new HashMap<String, Car>();
     
+    public static final int[] intArr = {1,2,3,5,8,13,21};
+    public static final String[] strArr = new String[intArr.length];
+    
     public CarBean() {
         dream = new Car(NAME , YEAR, ENGINE, POWER);
         map.put("Car", dream);
+        for (int i = 0; i < intArr.length; ++i) {
+          strArr[i] = "#" + intArr[i];
+        }
     }
 
     @Override
@@ -35,4 +41,14 @@ public class CarBean implements CarMXBean{
     public Map<String, Car> getMap() {
         return map;
     }
+
+  @Override
+  public int[] getIntList() {
+    return intArr;
+  }
+
+  @Override
+  public String[] getStrList() {
+    return strArr;
+  }
 }
