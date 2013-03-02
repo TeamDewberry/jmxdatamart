@@ -122,17 +122,7 @@ public class Bean2DB {
     //need to think about how to avoid retrieving the map twice
     int i = 0;
     for (Map.Entry<Attribute, Object> m : result.entrySet()) {
-      switch (((Attribute) m.getKey()).getDataType()) {
-        case INT:
-          ps.setInt(++i, (Integer) m.getValue());
-          break;
-        case STRING:
-          ps.setString(++i, m.getValue().toString());
-          break;
-        case FLOAT:
-          ps.setFloat(++i, (Float) m.getValue());
-          break;
-      }
+      m.getKey().getDataType().addToSqlPreparedStatement(ps, ++i, m.getValue());
     }
     ps.setTimestamp(++i, new Timestamp((new java.util.Date()).getTime()));
 

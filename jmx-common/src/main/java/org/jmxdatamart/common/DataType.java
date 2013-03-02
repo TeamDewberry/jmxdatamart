@@ -28,8 +28,6 @@
 package org.jmxdatamart.common;
 
 import java.sql.*;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Supported data types
@@ -43,15 +41,7 @@ public enum DataType {
                     "SMALLINT", // 8bit data type in T-SQL is only 0-255
                     "SMALLINT", // Derby doesnt support 1Byte
                     "TINYINT" // -127 to 128 like Java
-            )
-            {
-                @Override
-                public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
-                    if (supportTypeOf(value)) {
-                        ps.setByte(index, ((Byte)value).byteValue());
-                    }
-                }
-            },
+            ),
 
     SHORT   // 16 bit integer
             (
@@ -60,15 +50,7 @@ public enum DataType {
                     "SMALLINT",
                     "SMALLINT",
                     "SMALLINT"
-            )
-            {
-                @Override
-                public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
-                    if (supportTypeOf(value)) {
-                        ps.setShort(index, ((Short)value).shortValue());
-                    }
-                }
-            },
+            ),
 
     INT     // 32 bit integer
             (
@@ -77,15 +59,7 @@ public enum DataType {
                     "INT",
                     "INT",
                     "INTEGER"
-            )
-            {
-                @Override
-                public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
-                    if (supportTypeOf(value)) {
-                        ps.setInt(index, ((Integer)value).intValue());
-                    }
-                }
-            },
+            ),
 
     LONG    // 64 bit integer
             (
@@ -94,15 +68,7 @@ public enum DataType {
                     "BIGINT",
                     "BIGINT",
                     "BIGINT"
-            )
-            {
-                @Override
-                public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
-                    if (supportTypeOf(value)) {
-                        ps.setLong(index, ((Long)value).longValue());
-                    }
-                }
-            },
+            ),
 
     FLOAT   // 32 bit single precision
             (
@@ -111,15 +77,7 @@ public enum DataType {
                     "REAL", //T-SQL does not conform to standards but this is close 4Bytes
                     "REAL", //Derby has different limits than Java 4Bytes
                     "DOUBLE" //"REAL, FLOAT and DOUBLE values are all stored in the database as java.lang.Double objects"
-            )
-            {
-                @Override
-                public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
-                    if (supportTypeOf(value)) {
-                        ps.setFloat(index, ((Float)value).floatValue());
-                    }
-                }
-            },
+            ),
 
     DOUBLE  // 64 bit double precision
             (
@@ -128,15 +86,7 @@ public enum DataType {
                     "FLOAT(53)", //T-SQL does not conform to standards but this is close 8Bytes
                     "DOUBLE",  //Derby limits are different than Java 8Bytes
                     "DOUBLE"
-            )
-            {
-                @Override
-                public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
-                    if (supportTypeOf(value)) {
-                        ps.setDouble(index, ((Double)value).doubleValue());
-                    }
-                }
-            },
+            ),
 
     //BOOLEAN,   ms sql doesn't support boolean
 
@@ -147,15 +97,7 @@ public enum DataType {
                     "NCHAR(1)",
                     "CHAR(1)",
                     "CHAR(1)"
-            )
-            {
-                @Override
-                public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
-                    if (supportTypeOf(value)) {
-                        ps.setString(index, value.toString());
-                    }
-                }
-            },
+            ),
 
     STRING  // unlimited-length character sequence type
             (
@@ -164,15 +106,7 @@ public enum DataType {
                     "NVARCHAR(MAX)",
                     "VARCHAR (32672)", // Derby max is Integer.Max_Value, not padded
                     "LONGVARCHAR"
-            )
-            {
-                @Override
-                public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
-                    if (supportTypeOf(value)) {
-                        ps.setString(index, value.toString());
-                    }
-                }
-            },
+            ),
     DATETIME(
                 java.util.Date.class,
                 Types.TIMESTAMP,
@@ -183,12 +117,16 @@ public enum DataType {
             {
                 @Override
                 public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
-                    if (supportTypeOf(value)) {
-                        ps.setTimestamp(index,new Timestamp(((java.util.Date)value).getTime()));
-
+                    Timestamp ts;
+                    if (java.lang.Long.class.isAssignableFrom(value.getClass())){
+                      ts = new Timestamp((Long)value);
+                    } else if (java.util.Date.class.isAssignableFrom(value.getClass())) {
+                      ts = new Timestamp(((Date)value).getTime());
+                    } else {
+                      throw new SQLException("Timestamp doesn't support " + value);
                     }
+                    ps.setTimestamp(index, ts);
                 }
-
             },
     UNKNOWN(
             null,
@@ -317,8 +255,11 @@ public enum DataType {
       return UNKNOWN;
     }
     
-    public abstract void addToSqlPreparedStatement(
+    public void addToSqlPreparedStatement(
             PreparedStatement ps,
             int index,
-            Object value) throws SQLException;
+            Object value) throws SQLException
+    {
+      ps.setObject(index, value, jdbcTypeID);
+    }
 }

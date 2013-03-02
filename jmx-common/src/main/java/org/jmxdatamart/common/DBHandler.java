@@ -25,7 +25,6 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.jmxdatamart.common;
 
 import java.sql.*;
@@ -34,432 +33,439 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.slf4j.LoggerFactory;
+
 /**
- * Created with IntelliJ IDEA.
- * User: Xiao Han
- * To change this template use File | Settings | File Templates.
+ * Created with IntelliJ IDEA. User: Xiao Han To change this template use File |
+ * Settings | File Templates.
  */
 public abstract class DBHandler {
 
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(DBHandler.class);
-    public abstract boolean databaseExists(String databaseName,java.util.Properties p);
-    public abstract Connection connectDatabase(String databaseName,java.util.Properties p);
-    public abstract String getTableSchem();
-    protected String jdbcurl;
-    /**
-     * Used default filed to build a table
-     * @param conn
-     * @param tableName
-     * @param databaseType
-     */
-    public static void addTable(Connection conn, String tableName, String databaseType){
-        FieldAttribute autoID = new FieldAttribute("AutoID",DataType.LONG,false);
-        addTable(conn,tableName, autoID,databaseType);
+  private static final org.slf4j.Logger logger = LoggerFactory.getLogger(DBHandler.class);
+
+  public abstract boolean databaseExists(String databaseName, java.util.Properties p);
+
+  public abstract Connection connectDatabase(String databaseName, java.util.Properties p);
+
+  public abstract String getTableSchem();
+  protected String jdbcurl;
+
+  /**
+   * Used default filed to build a table
+   *
+   * @param conn
+   * @param tableName
+   * @param databaseType
+   */
+  public static void addTable(Connection conn, String tableName, String databaseType) {
+    FieldAttribute autoID = new FieldAttribute("AutoID", DataType.LONG, false);
+    addTable(conn, tableName, autoID, databaseType);
+  }
+
+  /**
+   * Create a table with a given table name in a given database connection
+   *
+   * @param conn
+   * @param tableName
+   * @param column: Must have at least one column when creating a new table In
+   * this project, if column is null, we create a AutoID column otherwise,
+   * create a testID column
+   * @param databaseType use to determine which dataType should be used to
+   * create the column
+   */
+  public static void addTable(Connection conn, String tableName, FieldAttribute column, String databaseType) {
+    PreparedStatement ps = null;
+    try {
+      checkConnection(conn);
+      StringBuilder sql = new StringBuilder();
+      String addPK = " ,primary key(" + column.getFieldName() + "))";
+      sql.append("create table ");
+      sql.append(tableName);
+      sql.append(" (");
+      sql.append(column.getFieldName());
+      sql.append(" ");
+      sql.append(column.getFieldType().getType(databaseType).toString());
+      sql.append(column.isPK() ? addPK : ")");
+      ps = conn.prepareStatement(sql.toString());
+      ps.executeUpdate();
+    } catch (DBException de) {
+      logger.error("Can't connect to database.");
+    } catch (SQLException se) {
+      logger.error("Can't create table:" + se.getMessage());
+    } finally {
+      releaseDatabaseResource(null, null, ps, null);
     }
-    /**
-     * Create a table with a given table name in a given database connection
-     * @param conn
-     * @param tableName
-     * @param column: Must have at least one column when creating a new table
-     *                In this project, if column is null, we create a AutoID column
-     *                otherwise, create a testID column
-     * @param databaseType use to determine which dataType should be used to create the column
-     */
-    public static void addTable(Connection conn, String tableName, FieldAttribute column, String databaseType){
-        PreparedStatement ps=null;
-        try{
-            checkConnection(conn);
-            StringBuilder sql = new StringBuilder();
-            String addPK = " ,primary key(" + column.getFieldName() + "))";
-            sql.append("create table ")
-               .append(tableName)
-               .append(" (")
-               .append(column.getFieldName())
-               .append(" ")
-               .append((String)column.getFieldType().getType(databaseType))
-               .append(column.isPK()?addPK:")");
-            ps = conn.prepareStatement(sql.toString());
-            ps.executeUpdate();
-        }
-        catch (DBException de){
-            logger.error("Can't connect to database.");
-        }
-        catch (SQLException se){
-            logger.error("Can't create table:" + se.getMessage());
-        }
-        finally {
-            releaseDatabaseResource(null,null,ps,null);
-        }
-    }
+  }
 
-    /**
-     * add specific column into a given table with a given database connection
-     * @param conn
-     * @param tableName
-     * @param column
-     * @param databaseType use to determine which dataType should be used to create the column
-     */
-    public static void addColumn(Connection conn, String tableName, FieldAttribute column, String databaseType){
-        PreparedStatement ps= null;
-        try{
-            if (!tableExists(tableName,conn)){
-                logger.info("Can't find the table.");
-                throw new SQLException("Can't find the table.");
-            }
-            StringBuilder sql = new StringBuilder();
-            sql.append("Alter table ").
-                append(tableName).
-                append(" add ").
-                append(column.getFieldName()).
-                append(" ").
-                append((String)column.getFieldType().getType(databaseType));
+  /**
+   * add specific column into a given table with a given database connection
+   *
+   * @param conn
+   * @param tableName
+   * @param column
+   * @param databaseType use to determine which dataType should be used to
+   * create the column
+   */
+  public static void addColumn(Connection conn, String tableName, FieldAttribute column, String databaseType) {
+    PreparedStatement ps = null;
+    try {
+      if (!tableExists(tableName, conn)) {
+        logger.info("Can't find the table.");
+        throw new SQLException("Can't find the table.");
+      }
+      StringBuilder sql = new StringBuilder();
+      sql.append("Alter table ").
+              append(tableName).
+              append(" add ").
+              append(column.getFieldName()).
+              append(" ").
+              append((String) column.getFieldType().getType(databaseType));
 
-            ps = conn.prepareStatement(sql.toString());
-            ps.executeUpdate();
-        }
-        catch (SQLException se){
-            logger.error("Can't create column:" + se.getMessage());
-        }
-        finally {
-            releaseDatabaseResource(null,null,ps,null);
-        }
-
-    }
-
-    /**
-     * For embedded database, it doesn't need to connect the server.
-     * For SQL server, we need to connect to the server before further operations. Will override in MssqlHandler.java
-     * @param p is the property that holds the username and password
-     * @return true if successfully connect to server, otherwise false
-     * @throws SQLException
-     */
-    public boolean connectServer(Properties p){
-        return true;
+      ps = conn.prepareStatement(sql.toString());
+      ps.executeUpdate();
+    } catch (SQLException se) {
+      logger.error("Can't create column:" + se.getMessage());
+    } finally {
+      releaseDatabaseResource(null, null, ps, null);
     }
 
-    /**
-     * JDBC Types Mapped to Java Types
-     * See http://docs.oracle.com/javase/1.5.0/docs/guide/jdbc/getstart/mapping.html, section 8.9.1
-     * @param  JDBCType JDBC supported type
-     * @return Extractor defined DataType
-     */
-    /*
-    private DataType getFieldAttribute(int JDBCType){
-        DataType myType ;
-        switch (JDBCType){
-            case Types.TINYINT:
-                myType = DataType.BYTE;
-                break;
-            case Types.SMALLINT:
-                myType = DataType.SHORT;
-                break;
-            case Types.INTEGER:
-                myType = DataType.INT;
-                break;
-            case Types.BIGINT:
-                myType = DataType.LONG;
-                break;
-            case Types.REAL:
-                myType = DataType.FLOAT;
-                break;
-            case Types.FLOAT:
-            case Types.DOUBLE:
-                myType = DataType.DOUBLE;
-                break;
-            case Types.CHAR:
-            case Types.VARCHAR:
-            case Types.LONGNVARCHAR:
-                myType = DataType.STRING;
-                break;
-            case Types.TIMESTAMP:
-                myType = DataType.DATETIME;
-                break;
-            default:
-                myType = DataType.STRING;
-                break;
-        }
-        return myType;
+  }
+
+  /**
+   * For embedded database, it doesn't need to connect the server. For SQL
+   * server, we need to connect to the server before further operations. Will
+   * override in MssqlHandler.java
+   *
+   * @param p is the property that holds the username and password
+   * @return true if successfully connect to server, otherwise false
+   * @throws SQLException
+   */
+  public boolean connectServer(Properties p) {
+    return true;
+  }
+
+  /**
+   * JDBC Types Mapped to Java Types See
+   * http://docs.oracle.com/javase/1.5.0/docs/guide/jdbc/getstart/mapping.html,
+   * section 8.9.1
+   *
+   * @param JDBCType JDBC supported type
+   * @return Extractor defined DataType
+   */
+  /*
+   private DataType getFieldAttribute(int JDBCType){
+   DataType myType ;
+   switch (JDBCType){
+   case Types.TINYINT:
+   myType = DataType.BYTE;
+   break;
+   case Types.SMALLINT:
+   myType = DataType.SHORT;
+   break;
+   case Types.INTEGER:
+   myType = DataType.INT;
+   break;
+   case Types.BIGINT:
+   myType = DataType.LONG;
+   break;
+   case Types.REAL:
+   myType = DataType.FLOAT;
+   break;
+   case Types.FLOAT:
+   case Types.DOUBLE:
+   myType = DataType.DOUBLE;
+   break;
+   case Types.CHAR:
+   case Types.VARCHAR:
+   case Types.LONGNVARCHAR:
+   myType = DataType.STRING;
+   break;
+   case Types.TIMESTAMP:
+   myType = DataType.DATETIME;
+   break;
+   default:
+   myType = DataType.STRING;
+   break;
+   }
+   return myType;
+   }
+   */
+  /**
+   * Check if the given connection is valid
+   *
+   * @param conn
+   * @throws SQLException if the given connection isn't valid
+   */
+  public static void checkConnection(Connection conn) throws DBException, SQLException {
+    if (conn == null || conn.isClosed() || conn.isReadOnly()) {
+      throw new DBException("Can't connect to database.");
     }
-    */
+  }
 
-    /**
-     * Check if the given connection is valid
-     * @param conn
-     * @throws SQLException if the given connection isn't valid
-     */
-    public static void checkConnection(Connection conn) throws DBException
-    {
-            if (conn==null ) {
-                throw new DBException("Can't connect to database.");
-            }
+  /**
+   * Get all fields attributes in a given table
+   *
+   * @param conn is the given connection of a database
+   * @param tableName is the given table name
+   * @return a Map which the key is the field name, and the value is a
+   * FieldAttribute object for that field
+   * @throws SQLException
+   */
+  private static Map<String, FieldAttribute> getTableFields(Connection conn, String tableName, String databaseType) {
+    ResultSet columns = null;
+    try {
+      checkConnection(conn);
+      String colName;
+      DataType typeName;
+      int typeId;
+      columns = conn.getMetaData().getColumns(null, null, tableName.toUpperCase(), null);
+      Map<String, FieldAttribute> fields = new HashMap<String, FieldAttribute>();
+      while (columns.next()) {
+
+        colName = columns.getString("COLUMN_NAME");
+        typeId = columns.getInt("DATA_TYPE");
+        typeName = DataType.findCorrespondDataTypeByID(typeId);
+
+        FieldAttribute fieldinfo = new FieldAttribute(colName, typeName, false);
+        fields.put(colName.toUpperCase(), fieldinfo);
+      }
+      return fields;
+    } catch (DBException de) {
+      logger.error("Can't connect to database.");
+      return null;
+    } catch (SQLException se) {
+      return null;
+    } finally {
+      releaseDatabaseResource(columns, null, null, null);
     }
+  }
 
-    /**
-     * Get all fields attributes in a given table
-     * @param conn  is the given connection of a database
-     * @param tableName  is the given table name
-     * @return a Map which the key is the field name, and the value is a FieldAttribute object for that field
-     * @throws SQLException
-     */
-    private static Map<String, FieldAttribute> getTableFields(Connection conn, String tableName, String databaseType){
-        ResultSet columns=null;
-        try{
-            checkConnection(conn);
-            String colName;
-            DataType typeName;
-            int typeId;
-            columns = conn.getMetaData().getColumns(null, null, tableName.toUpperCase(), null);
-            Map<String, FieldAttribute> fields = new HashMap<String, FieldAttribute>();
-            while (columns.next()){
-
-                colName = columns.getString("COLUMN_NAME");
-                typeId = columns.getInt("DATA_TYPE");
-                typeName = DataType.findCorrespondDataTypeByID(typeId);
-
-                FieldAttribute fieldinfo = new FieldAttribute(colName,typeName,false);
-                fields.put(colName.toUpperCase(),fieldinfo);
-            }
-            return fields;
-        }
-        catch (DBException de){
-            logger.error("Can't connect to database.");
-            return null;
-        }
-        catch (SQLException se){
-           return null;
-        }
-        finally {
-            releaseDatabaseResource(columns,null,null,null);
-        }
+  /**
+   * Get the next testID(maxID plus one) from a given database connection
+   *
+   * @param conn
+   * @param tableName
+   * @param columnName
+   * @return
+   */
+  public static int getMaxTestID(Connection conn, String tableName, String columnName) {
+    ResultSet rs = null;
+    PreparedStatement ps = null;
+    try {
+      if (!columnExists(columnName, tableName, conn)) {
+        return 1;
+      }
+      ps = conn.prepareStatement("select max(" + columnName + ") from " + tableName);
+      rs = ps.executeQuery();
+      if (rs.next()) {
+        return rs.getInt(1) + 1;
+      } else {
+        return 1;
+      }
+    } catch (SQLException se) {
+      logger.error(se.getMessage());
+      return 0;
+    } finally {
+      releaseDatabaseResource(rs, null, ps, null);
     }
+  }
 
-    /**
-     * Get the next testID(maxID plus one) from a given database connection
-     * @param conn
-     * @param tableName
-     * @param columnName
-     * @return
-     */
-    public static int getMaxTestID(Connection conn, String tableName, String columnName){
-        ResultSet rs=null;
-        PreparedStatement ps = null;
-        try{
-            if (!columnExists(columnName,tableName,conn))
-                return 1;
-            ps = conn.prepareStatement("select max(" + columnName +  ") from " +tableName);
-            rs = ps.executeQuery();
-            if (rs.next())
-                return rs.getInt(1)+1;
-            else
-                return 1;
+  /**
+   * Get the schema of a given database
+   *
+   * @param conn
+   * @param tableSchem
+   * @return a map object, which key is the table name, and the value is another
+   * map that holds the schema of that table
+   * @throws SQLException
+   */
+  public static Map<String, Map> getDatabaseSchema(Connection conn, String tableSchem, String databaseType) {
+    ResultSet tables = null;
+    try {
+      checkConnection(conn);
+      Map<String, Map> databaseSchema = new HashMap<String, Map>();
+
+      String[] names = {"TABLE"};
+      tables = conn.getMetaData().getTables(null, null, null, names);
+
+      while (tables.next()) {
+        String tableName = tables.getString("TABLE_NAME");
+        String schem = tables.getString("table_schem");
+        if (!schem.equalsIgnoreCase(tableSchem)) {
+          continue;
         }
-        catch (SQLException se){
-            logger.error(se.getMessage());
-            return 0;
-        }
-        finally {
-            releaseDatabaseResource(rs,null,ps,null);
-        }
+        databaseSchema.put(tableName.toUpperCase(), getTableFields(conn, tableName, databaseType));
+      }
+      return databaseSchema;
+    } catch (DBException de) {
+      logger.error("Can't connect to database.");
+      return null;
+    } catch (SQLException se) {
+      return null;
+    } finally {
+      releaseDatabaseResource(tables, null, null, null);
     }
-    /**
-     * Get the schema of a given database
-     * @param conn
-     * @param tableSchem
-     * @return  a map object, which key is the table name,
-     *           and the value is another map that holds the schema of that table
-     * @throws SQLException
-     */
-    public static Map<String, Map> getDatabaseSchema(Connection conn, String tableSchem, String databaseType){
-        ResultSet tables=null;
-        try
-        {
-            checkConnection(conn);
-            Map<String, Map> databaseSchema =  new HashMap<String,Map>();
+  }
 
-            String[] names = { "TABLE"};
-            tables = conn.getMetaData().getTables(null, null, null, names);
+  /**
+   * Check if a given table exits in a given database
+   *
+   * @param tableName is the table looking for
+   * @param conn is the given database connection
+   * @return true if the table exists, otherwise false
+   * @throws SQLException
+   */
+  public static boolean tableExists(String tableName, Connection conn) {
+    ResultSet tableNames = null;
+    try {
+      checkConnection(conn);
 
-            while( tables.next())
-            {
-                String tableName = tables.getString( "TABLE_NAME");
-                String schem = tables.getString("table_schem");
-                if (!schem.equalsIgnoreCase(tableSchem)) continue;
-                databaseSchema.put(tableName.toUpperCase(),getTableFields(conn, tableName,databaseType));
-            }
-            return databaseSchema;
+      String[] names = {"TABLE"};
+      tableNames = conn.getMetaData().getTables(null, null, null, names);
+
+      while (tableNames.next()) {
+        String tab = tableNames.getString("TABLE_NAME");
+        if (tab.equalsIgnoreCase(tableName)) {
+          tableNames.close();
+          return true;
         }
-        catch (DBException de){
-            logger.error("Can't connect to database.");
-            return null;
-        }
-        catch (SQLException se){
-            return null;
-        }
-        finally {
-            releaseDatabaseResource(tables,null,null,null);
-        }
+      }
+      tableNames.close();
+      return false;
+    } catch (DBException de) {
+      logger.error("Can't connect to database.");
+      return false;
+    } catch (SQLException se) {
+      return false;
+    } finally {
+      releaseDatabaseResource(tableNames, null, null, null);
     }
+  }
 
-
-    /**
-     * Check if a given table exits in a given database
-     * @param tableName is the table looking for
-     * @param conn is the given database connection
-     * @return true if the table exists, otherwise false
-     * @throws SQLException
-     */
-    public static boolean tableExists(String tableName, Connection conn){
-        ResultSet tableNames=null;
-        try{
-            checkConnection(conn);
-
-            String[] names = { "TABLE"};
-            tableNames = conn.getMetaData().getTables(null, null, null, names);
-
-            while( tableNames.next())
-            {
-                String tab = tableNames.getString( "TABLE_NAME");
-                if (tab.equalsIgnoreCase(tableName)){
-                    tableNames.close();
-                    return true;
-                }
-            }
-            tableNames.close();
-            return false;
-        }
-        catch (DBException de){
-            logger.error("Can't connect to database.");
-            return false;
-        }
-        catch (SQLException se){
-            return false;
-        }
-        finally {
-            releaseDatabaseResource(tableNames,null,null,null);
-        }
-    }
-
-    /**
-     * Check if a given column exists in a given table
-     * @param columnName is the column looking for
-     * @param tableName  is the given table name
-     * @param conn is the given database connection
-     * @return true if the column exist, otherwise false
-     * @throws SQLException
-     */
-    public static boolean columnExists(String columnName, String tableName, Connection conn){
-        if (!tableExists(tableName,conn)) return false;
-
-        ResultSet columnNames=null;
-        try{
-            columnNames = conn.getMetaData().getColumns(null, null, tableName.toUpperCase(), columnName.toUpperCase());
-            while (columnNames.next()){
-                String col = columnNames.getString("COLUMN_NAME");
-                if (col.equalsIgnoreCase(columnName)){
-                    columnNames.close();
-                    return true;
-                }
-            }
-            columnNames.close();
-            return false;
-        }
-        catch (SQLException se){
-            return false;
-        }
-        finally {
-            releaseDatabaseResource(columnNames,null,null,null);
-        }
-    }
-    public static void releaseDatabaseResource(ResultSet rs, Statement st, PreparedStatement ps, Connection conn){
-        disconnectDatabase(rs,st,ps,conn);
-    }
-    /**
-     * Release all resources related to database operation
-     * @param rs
-     * @param st
-     * @param ps
-     * @param conn
-     */
-    public static void disconnectDatabase(ResultSet rs, Statement st, PreparedStatement ps, Connection conn){
-
-        // PrepareStatement
-        try {
-            if (ps != null) {
-                ps.close();
-                ps = null;
-            }
-        } catch (SQLException sqle) {
-            logSQLException(sqle);
-        }
-
-        // ResultSet
-        try {
-            if (rs != null) {
-                rs.close();
-                rs = null;
-            }
-        } catch (SQLException sqle) {
-            logSQLException(sqle);
-        }
-
-        //Statement
-        try {
-            if (st != null) {
-                st.close();
-                st = null;
-            }
-        } catch (SQLException sqle) {
-            logSQLException(sqle);
-        }
-
-        //Connection
-        try {
-            if (conn != null) {
-                conn.close();
-                conn = null;
-            }
-        } catch (SQLException sqle) {
-            logSQLException(sqle);
-        }
-
+  /**
+   * Check if a given column exists in a given table
+   *
+   * @param columnName is the column looking for
+   * @param tableName is the given table name
+   * @param conn is the given database connection
+   * @return true if the column exist, otherwise false
+   * @throws SQLException
+   */
+  public static boolean columnExists(String columnName, String tableName, Connection conn) {
+    if (!tableExists(tableName, conn)) {
+      return false;
     }
 
-    /**
-     * Log sql related errors
-     * @param e
-     */
-    protected static void logSQLException(SQLException e)
-    {
-        while (e != null)
-        {
-            logger.error("SQLException-- State:" + e.getSQLState()+
-                        "\tMessage:" + e.getMessage() ,e);
-            e = e.getNextException();
+    ResultSet columnNames = null;
+    try {
+      columnNames = conn.getMetaData().getColumns(null, null, tableName.toUpperCase(), columnName.toUpperCase());
+      while (columnNames.next()) {
+        String col = columnNames.getString("COLUMN_NAME");
+        if (col.equalsIgnoreCase(columnName)) {
+          columnNames.close();
+          return true;
         }
+      }
+      columnNames.close();
+      return false;
+    } catch (SQLException se) {
+      return false;
+    } finally {
+      releaseDatabaseResource(columnNames, null, null, null);
+    }
+  }
+
+  public static void releaseDatabaseResource(ResultSet rs, Statement st, PreparedStatement ps, Connection conn) {
+    disconnectDatabase(rs, st, ps, conn);
+  }
+
+  /**
+   * Release all resources related to database operation
+   *
+   * @param rs
+   * @param st
+   * @param ps
+   * @param conn
+   */
+  public static void disconnectDatabase(ResultSet rs, Statement st, PreparedStatement ps, Connection conn) {
+
+    // PrepareStatement
+    try {
+      if (ps != null) {
+        ps.close();
+        ps = null;
+      }
+    } catch (SQLException sqle) {
+      logSQLException(sqle);
     }
 
-    /**
-     * Load jdbc driver
-     * @param driver  is the given driver string
-     */
-    public void loadDriver(String driver) {
-        try {
-            Class.forName(driver).newInstance();
-        } catch (ClassNotFoundException cnfe) {
-            logger.error("\nUnable to load the JDBC driver " + driver);
-            logger.error("Please check your CLASSPATH.");
-            cnfe.printStackTrace(System.err);
-            System.exit(1);
-        } catch (InstantiationException ie) {
-            logger.error(
-                    "\nUnable to instantiate the JDBC driver " + driver);
-            ie.printStackTrace(System.err);
-            System.exit(1);
-        } catch (IllegalAccessException iae) {
-            logger.error(
-                    "\nNot allowed to access the JDBC driver " + driver);
-            iae.printStackTrace(System.err);
-            System.exit(1);
-        }
+    // ResultSet
+    try {
+      if (rs != null) {
+        rs.close();
+        rs = null;
+      }
+    } catch (SQLException sqle) {
+      logSQLException(sqle);
     }
+
+    //Statement
+    try {
+      if (st != null) {
+        st.close();
+        st = null;
+      }
+    } catch (SQLException sqle) {
+      logSQLException(sqle);
+    }
+
+    //Connection
+    try {
+      if (conn != null) {
+        conn.close();
+        conn = null;
+      }
+    } catch (SQLException sqle) {
+      logSQLException(sqle);
+    }
+
+  }
+
+  /**
+   * Log sql related errors
+   *
+   * @param e
+   */
+  protected static void logSQLException(SQLException e) {
+    while (e != null) {
+      logger.error("SQLException-- State:" + e.getSQLState()
+              + "\tMessage:" + e.getMessage(), e);
+      e = e.getNextException();
+    }
+  }
+
+  /**
+   * Load jdbc driver
+   *
+   * @param driver is the given driver string
+   */
+  public void loadDriver(String driver) {
+    try {
+      Class.forName(driver).newInstance();
+    } catch (ClassNotFoundException cnfe) {
+      logger.error("\nUnable to load the JDBC driver " + driver);
+      logger.error("Please check your CLASSPATH.");
+      cnfe.printStackTrace(System.err);
+      System.exit(1);
+    } catch (InstantiationException ie) {
+      logger.error(
+              "\nUnable to instantiate the JDBC driver " + driver);
+      ie.printStackTrace(System.err);
+      System.exit(1);
+    } catch (IllegalAccessException iae) {
+      logger.error(
+              "\nNot allowed to access the JDBC driver " + driver);
+      iae.printStackTrace(System.err);
+      System.exit(1);
+    }
+  }
 }
