@@ -28,24 +28,41 @@
 package org.jmxdatamart.Extractor;
 
 import java.io.FileInputStream;
+import java.lang.management.ManagementFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.management.InstanceAlreadyExistsException;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanRegistrationException;
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.NotCompliantMBeanException;
+import javax.management.ObjectName;
+import org.jmxdatamart.JMXTestServer.CarBean;
+import org.jmxdatamart.JMXTestServer.TestBean;
 
 public class Main {
 
+  private static boolean demo = false;
+
   public static void main(String[] args) throws Exception {
+    if (demo) {
+      demo();
+    }
     System.out.println("extract");
 
     if (args.length != 1) {
       System.out.println("Program need only 1 argument to the setting file");
       return;
     }
-    
+    demo();
+
     Settings s = Settings.fromXML(
             new FileInputStream(args[0]));
 
     final Extractor etor = new Extractor(s);
-    
-    Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
 
+    Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
       @Override
       public void run() {
         if (etor.shouldPeriodicallyExtract()) {
@@ -53,11 +70,38 @@ public class Main {
         }
       }
     }));
-    
+
+    if (!etor.shouldPeriodicallyExtract()) {
+      System.out.println("Extractor is set to run once only!");
+      return;
+    }
+
     System.out.println("Ctrl-C to cancel the extracting process...");
-    
+
     while (true) {
       Thread.sleep(10000);
     }
+
+
+  }
+
+  private static void demo() throws MalformedObjectNameException, NotCompliantMBeanException, InstanceAlreadyExistsException, MBeanRegistrationException {
+    TestBean tb1 = new TestBean();
+    tb1.setA(new Integer(42));
+    tb1.setB(new Integer(-1));
+    final ObjectName tbName1 = new ObjectName("com.personal.JMXTestServer:name=TestBean1");
+
+    TestBean tb2 = new TestBean();
+    tb2.setA(new Integer(55));
+    tb2.setB(new Integer(-99));
+    final ObjectName tbName2 = new ObjectName("com.personal.JMXTestServer:name=TestBean2");
+
+    CarBean cb = new CarBean();
+    final ObjectName cbName = new ObjectName("org.jmxdatamart:name=CarBean");
+
+    final MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+    mbs.registerMBean(tb1, tbName1);
+    mbs.registerMBean(cb, cbName);
+    mbs.registerMBean(tb2, tbName2);
   }
 }
