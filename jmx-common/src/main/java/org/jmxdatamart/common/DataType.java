@@ -150,7 +150,7 @@ public enum DataType {
                     throw new UnsupportedOperationException("Type UNKNOWN doesn't support this operation");
                 }
                 @Override
-                public boolean supportTypeOf(Object obj) {
+                public boolean supportsTypeOf(Object obj) {
                     return false;
                 }
                 @Override
@@ -272,13 +272,13 @@ public enum DataType {
      * @param obj obj whose type is to be checked
      * @return true if obj has compatible type, otherwise false
      */
-    public boolean supportTypeOf(Object obj) {
+    public boolean supportsTypeOf(Object obj) {
         return javaType.isAssignableFrom(obj.getClass());
     }
     
     public static DataType getDataTypeFor(Object obj) {
       for (DataType d : values()) {
-        if (d.supportTypeOf(obj)) {
+        if (d.supportsTypeOf(obj)) {
           return d;
         }
       }
