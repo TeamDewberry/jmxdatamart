@@ -34,7 +34,6 @@ import java.net.MalformedURLException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Timer;
@@ -46,7 +45,6 @@ import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 import org.jmxdatamart.Extractor.MXBean.MultiLayeredAttribute;
 import org.jmxdatamart.common.DBException;
-import org.jmxdatamart.common.DataType;
 import org.jmxdatamart.common.HypersqlHandler;
 import org.slf4j.LoggerFactory;
 
@@ -88,26 +86,11 @@ public final class Extractor {
         throw new RuntimeException(e);
       }
     }
-    
-//    getDataType(configData);
 
     hsql = new HypersqlHandler();
     dbName = configData.getFolderLocation() + "Extrator" + new SimpleDateFormat("yyyyMMddHHmmss").format(new java.util.Date());
-//    try {
-//      dbName = bd.generateMBeanDB(configData);
-//    } catch (SQLException ex) {
-//      logger.error("Error while creating Bean DB", ex);
-//      throw new RuntimeException(ex);
-//    }
-    // print out all accessible beans, for debug
-//    try {
-//      for (ObjectInstance oi : mbsc.queryMBeans(null, null)) {
-//        System.out.println(oi.getObjectName().getCanonicalName());
-//      }
-//    } catch (IOException ex) {
-//    }
 
-    if (shouldPeriodicallyExtract()) {
+    if (isPeriodicallyExtract()) {
       periodicallyExtract();
     } else {
       extract();
@@ -122,7 +105,7 @@ public final class Extractor {
     timer.scheduleAtFixedRate(new Extract(), delay, rate);
   }
 
-  public boolean shouldPeriodicallyExtract() {
+  public boolean isPeriodicallyExtract() {
     return this.configData.getPollingRate() > 0;
   }
 

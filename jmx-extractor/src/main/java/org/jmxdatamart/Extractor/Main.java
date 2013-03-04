@@ -64,13 +64,13 @@ public class Main {
     Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
       @Override
       public void run() {
-        if (etor.shouldPeriodicallyExtract()) {
+        if (etor.isPeriodicallyExtract()) {
           etor.stop();
         }
       }
     }));
 
-    if (!etor.shouldPeriodicallyExtract()) {
+    if (!etor.isPeriodicallyExtract()) {
       System.out.println("Extractor is set to run once only!");
       return;
     }
