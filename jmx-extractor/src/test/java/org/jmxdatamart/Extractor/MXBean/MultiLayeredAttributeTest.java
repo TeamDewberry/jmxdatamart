@@ -76,7 +76,7 @@ public class MultiLayeredAttributeTest {
     public void testSameLevelPattern() throws Exception{
         TestBean tb = new TestBean();
         tb.setA(new Integer(42));
-        tb.setB(new Integer(8));
+        tb.setB(new Long(8));
         MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
         String mbName = "org.jmxdatamart.JMXTestServer:type=TestBean";
         ObjectName mbeanName = new ObjectName(mbName);
