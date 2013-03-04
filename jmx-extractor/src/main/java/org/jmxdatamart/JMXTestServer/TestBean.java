@@ -37,7 +37,7 @@ import java.util.Random;
 public class TestBean implements TestBeanMBean{
 
     Integer a;
-    Integer b;
+    Long b;
     Random prng;
 
     public TestBean() {
@@ -73,8 +73,8 @@ public class TestBean implements TestBeanMBean{
 
     @Override
     public void setB(Object obj) {
-        if (obj instanceof Integer) {
-            b = (Integer) obj;
+        if (obj instanceof Long) {
+            b = (Long) obj;
         }
     }
 
