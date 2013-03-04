@@ -142,53 +142,6 @@ public abstract class DBHandler {
   public boolean connectServer(Properties p) {
     return true;
   }
-
-  /**
-   * JDBC Types Mapped to Java Types See
-   * http://docs.oracle.com/javase/1.5.0/docs/guide/jdbc/getstart/mapping.html,
-   * section 8.9.1
-   *
-   * @param JDBCType JDBC supported type
-   * @return Extractor defined DataType
-   */
-  /*
-   private DataType getFieldAttribute(int JDBCType){
-   DataType myType ;
-   switch (JDBCType){
-   case Types.TINYINT:
-   myType = DataType.BYTE;
-   break;
-   case Types.SMALLINT:
-   myType = DataType.SHORT;
-   break;
-   case Types.INTEGER:
-   myType = DataType.INT;
-   break;
-   case Types.BIGINT:
-   myType = DataType.LONG;
-   break;
-   case Types.REAL:
-   myType = DataType.FLOAT;
-   break;
-   case Types.FLOAT:
-   case Types.DOUBLE:
-   myType = DataType.DOUBLE;
-   break;
-   case Types.CHAR:
-   case Types.VARCHAR:
-   case Types.LONGNVARCHAR:
-   myType = DataType.STRING;
-   break;
-   case Types.TIMESTAMP:
-   myType = DataType.DATETIME;
-   break;
-   default:
-   myType = DataType.STRING;
-   break;
-   }
-   return myType;
-   }
-   */
   /**
    * Check if the given connection is valid
    *
