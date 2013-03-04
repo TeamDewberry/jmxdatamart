@@ -194,6 +194,27 @@ public enum DataType {
     public Class getJavaType() {
         return javaType;
     }
+    
+    public enum SupportedType {
+      MSSQL, HSQL, DERBY, JDBCID, JAVACLASS
+    }
+    
+    public Object getType(SupportedType type) {
+      switch(type) {
+        case MSSQL:
+          return getMssqlType();
+        case HSQL:
+          return getHsqlType();
+        case DERBY:
+          return getDerbyType();
+        case JDBCID:
+          return getJdbcTypeID();
+        case JAVACLASS:
+          return getJavaType();
+        default:
+          return null;
+      }
+    }
 
     public Object getType(String type){
         if (type.equalsIgnoreCase("sqlserver")){
