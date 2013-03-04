@@ -401,7 +401,7 @@ public class Settings {
             s.check();
         } catch (IllegalArgumentException e){
             System.out.println(e.getMessage());
-            System.exit(1); //exit code?
+            throw new RuntimeException(e);
         }
         
     }

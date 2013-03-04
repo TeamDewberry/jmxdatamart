@@ -50,7 +50,7 @@ public class MBeanExtract {
             on = new ObjectName(mbd.getName());
         } catch (MalformedObjectNameException ex) {
             logger.error("Error while trying to attach to " + mbd.getName(), ex);
-            System.exit(1);
+            throw new RuntimeException(ex);
         }
         
         MultiLayeredAttribute mla = new MultiLayeredAttribute(mbsc);

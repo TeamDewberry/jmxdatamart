@@ -77,14 +77,14 @@ public final class Extractor {
         url = new JMXServiceURL(configData.getUrl());
       } catch (MalformedURLException e) {
         logger.error("Error creating JMX service URL object", e);
-        System.exit(0); //this is a fatal error and cannot be resolved later
+        throw new RuntimeException(e);
       }
 
       try {
         mbsc = JMXConnectorFactory.connect(url).getMBeanServerConnection();
       } catch (IOException e) {
         logger.error(e.getMessage(), e);
-        System.exit(0); //this is a fatal error and cannot be resolved later
+        throw new RuntimeException(e);
       }
     }
     
@@ -175,12 +175,7 @@ public final class Extractor {
 
     connLock.lock();
     try {
-//      try {
         conn = hsql.connectDatabase(dbname, props);
-//      } catch (SQLException e) {
-//        logger.error("Error connecting to " + dbname + " database", e);
-//        System.exit(0); //this is a fatal error and cannot be resolved later
-//      }
 
       for (MBeanData bdata : this.configData.getBeans()) {
         Map<Attribute, Object> result = null;
@@ -251,31 +246,6 @@ public final class Extractor {
     }
   }
 
-  /**
-   * void extract(String beanAlias) { Properties props = new Properties();
-   * boolean beanFound = false; props.put("username", "sa");
-   * props.put("password", "whatever");
-   *
-   * connLock.lock(); try{ try { conn = hsql.connectDatabase(dbname,props); }
-   * catch (SQLException e) { logger.error("Error connecting to " + dbname + "
-   * database", e); System.exit(0); //this is a fatal error and cannot be
-   * resolved later }
-   *
-   * for (BeanData bdata : this.configData.getBeans()) {
-   * if(bdata.getAlias().equals(beanAlias)) { beanFound = true; MBeanExtract mbe
-   * = null; try { mbe = new MBeanExtract(bdata, mbsc); } catch
-   * (MalformedObjectNameException e) { logger.error(e.getMessage(), e);
-   * System.exit(0); //this is a fatal error and cannot be resolved later }
-   * Map<Attribute, Object> result = mbe.extract(); bd.export2DB(conn, bdata,
-   * result); System.out.println("Extracted"); } } if(!beanFound)
-   * logger.info("Extraction failed: " + beanAlias + " MBean not found");
-   *
-   * try { hsql.shutdownDatabase(conn); } catch (SQLException e) {
-   * logger.error(e.getMessage(), e); }
-   *
-   * hsql.disconnectDatabase(null,null,null,conn); conn = null; } finally {
-   * connLock.unlock(); } }
-   */
   private class Extract extends TimerTask {
 
     public Extract() {

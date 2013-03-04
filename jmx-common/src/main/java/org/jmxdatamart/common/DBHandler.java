@@ -458,20 +458,16 @@ public abstract class DBHandler {
     try {
       Class.forName(driver).newInstance();
     } catch (ClassNotFoundException cnfe) {
-      logger.error("\nUnable to load the JDBC driver " + driver);
-      logger.error("Please check your CLASSPATH.");
-      cnfe.printStackTrace(System.err);
-      System.exit(1);
+      logger.error("Unable to load the JDBC driver " + driver, cnfe);
+      throw new RuntimeException(cnfe);
     } catch (InstantiationException ie) {
       logger.error(
-              "\nUnable to instantiate the JDBC driver " + driver);
-      ie.printStackTrace(System.err);
-      System.exit(1);
+              "Unable to instantiate the JDBC driver " + driver, ie);
+      throw new RuntimeException(ie);
     } catch (IllegalAccessException iae) {
       logger.error(
-              "\nNot allowed to access the JDBC driver " + driver);
-      iae.printStackTrace(System.err);
-      System.exit(1);
+              "Not allowed to access the JDBC driver " + driver, iae);
+      throw new RuntimeException(iae);
     }
   }
 }
