@@ -195,11 +195,11 @@ public enum DataType {
         return javaType;
     }
     
-    public enum SupportedType {
+    public enum SupportedDatabase {
       MSSQL, HSQL, DERBY, JDBCID, JAVACLASS
     }
     
-    public Object getType(SupportedType type) {
+    public Object getType(SupportedDatabase type) {
       switch(type) {
         case MSSQL:
           return getMssqlType();
