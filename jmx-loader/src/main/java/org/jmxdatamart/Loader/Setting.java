@@ -145,10 +145,10 @@ public class Setting {
             }
         }
         catch (FileNotFoundException fe){
-            logger.error("Can't read the setting file:" + fe.getMessage());
+            logger.error("Can't read the setting file:" + fe.getMessage(), fe);
         }
         catch (IOException ie){
-            logger.error("Can't read the setting file:" + ie.getMessage());
+            logger.error("Can't read the setting file:" + ie.getMessage(), ie);
         }
         finally {
             try{

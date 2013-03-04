@@ -32,9 +32,6 @@ package org.jmxdatamart.common;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
 
 /**
  * Created with IntelliJ IDEA.
@@ -45,10 +42,11 @@ public class DerbyHandler extends DBHandler{
     private final org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
     private final String driver = "org.apache.derby.jdbc.EmbeddedDriver";
     private final String protocol = "jdbc:derby:";
-    private final String tableSchem = "public";
+    private final String tableSchema = "public";
 
+    @Override
     public String getTableSchema() {
-        return tableSchem;
+        return tableSchema;
     }
 
     public void shutdownDatabase(String databaseName){
@@ -74,18 +72,20 @@ public class DerbyHandler extends DBHandler{
         }
     }
 
+    @Override
     public Connection connectDatabase(String databaseName,java.util.Properties p) {
         try{
             return DriverManager.getConnection(protocol + databaseName + ";create=true", p);
         }
         catch (SQLException se){
-            logger.error("Can't create the Derby database:" + se.getMessage());
-            return null;
+            logger.error("Can't create the Derby database:" + se.getMessage(), se);
+            throw new RuntimeException(se);
         }
     }
 
 
 
+    @Override
     public boolean databaseExists(String databaseName,java.util.Properties p){
         //Maybe it is a dummy way to check if a db exits, need to improve
         try {

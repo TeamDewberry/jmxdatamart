@@ -64,10 +64,10 @@ public class Main {
             logger.info("\nData are successfully imported to DataMart from " + arg1);
         }
         catch (SQLException se){
-            logger.error("\nFail to import data from " + arg1 + ": \n" +se.getMessage());
+            logger.error("\nFail to import data from " + arg1 + ": \n" +se.getMessage(), se);
         }
         catch (DBException de){
-            logger.error("\nFail to import data from " + arg1);
+            logger.error("\nFail to import data from " + arg1, de);
         }
     }
 

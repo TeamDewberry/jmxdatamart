@@ -72,11 +72,11 @@ public class DB2DB {
             testId = DBHandler.getMaxTestID(dataMartConnection, mainTableName, testIDFieldName);
 
             if ((sourceConnection = connectToSourceDatabase(sourceDatabaseFile))==null){
-                logger.error("\n" +sourceDatabaseFile + " fail to import to DataMart: it might be an invalid database file.\n");
+                logger.error("\n" +sourceDatabaseFile + " fail to import to DataMart: it might be an invalid database file.");
                 continue;
             }
             else{
-                logger.info("\nStart loading database file: " + sourceDatabaseFile + ".");
+                logger.info("Start loading database file: " + sourceDatabaseFile + ".");
             }
 
             sourceDatabaseTables = DBHandler.getDatabaseSchema(sourceConnection,sourceTableSchem, sourceDatabaseType);
@@ -201,7 +201,7 @@ public class DB2DB {
             ps.executeUpdate();
         }
         catch (SQLException se){
-            logger.error(se.getMessage());
+            logger.error(se.getMessage(), se);
         }
         finally {
             DBHandler.releaseDatabaseResource(null,null,ps,null);

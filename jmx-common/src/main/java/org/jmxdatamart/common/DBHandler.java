@@ -88,9 +88,9 @@ public abstract class DBHandler {
       ps = conn.prepareStatement(sql.toString());
       ps.executeUpdate();
     } catch (DBException de) {
-      logger.error("Can't connect to database.");
+      logger.error("Can't connect to database.", de);
     } catch (SQLException se) {
-      logger.error("Can't create table:" + se.getMessage());
+      logger.error("Can't create table: " + se.getMessage(), se);
     } finally {
       releaseDatabaseResource(null, null, ps, null);
     }
@@ -123,7 +123,7 @@ public abstract class DBHandler {
       ps = conn.prepareStatement(sql.toString());
       ps.executeUpdate();
     } catch (SQLException se) {
-      logger.error("Can't create column:" + se.getMessage());
+      logger.error("Can't create column:" + se.getMessage(), se);
     } finally {
       releaseDatabaseResource(null, null, ps, null);
     }
@@ -230,7 +230,7 @@ public abstract class DBHandler {
       }
       return fields;
     } catch (DBException de) {
-      logger.error("Can't connect to database.");
+      logger.error("Can't connect to database.", de);
       return null;
     } catch (SQLException se) {
       return null;
@@ -262,7 +262,7 @@ public abstract class DBHandler {
         return 1;
       }
     } catch (SQLException se) {
-      logger.error(se.getMessage());
+      logger.error(se.getMessage(), se);
       return 0;
     } finally {
       releaseDatabaseResource(rs, null, ps, null);
@@ -297,7 +297,7 @@ public abstract class DBHandler {
       }
       return databaseSchema;
     } catch (DBException de) {
-      logger.error("Can't connect to database.");
+      logger.error("Can't connect to database.", de);
       return null;
     } catch (SQLException se) {
       return null;
@@ -461,12 +461,10 @@ public abstract class DBHandler {
       logger.error("Unable to load the JDBC driver " + driver, cnfe);
       throw new RuntimeException(cnfe);
     } catch (InstantiationException ie) {
-      logger.error(
-              "Unable to instantiate the JDBC driver " + driver, ie);
+      logger.error("Unable to instantiate the JDBC driver " + driver, ie);
       throw new RuntimeException(ie);
     } catch (IllegalAccessException iae) {
-      logger.error(
-              "Not allowed to access the JDBC driver " + driver, iae);
+      logger.error("Not allowed to access the JDBC driver " + driver, iae);
       throw new RuntimeException(iae);
     }
   }

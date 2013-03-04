@@ -63,11 +63,11 @@ public class MssqlHandler extends DBHandler {
             DriverManager.getConnection(this.jdbcurl, p);
         }
         catch (ClassNotFoundException ce){
-            logger.error("Can't connect to the server. Check JDBC driver.");
+            logger.error("Can't connect to the server. Check JDBC driver.", ce);
             return false;
         }
         catch (SQLException se){
-            logger.error("Can't connect to the server. Check username and password.");
+            logger.error("Can't connect to the server. Check username/password and connection", se);
             return false;
         }
         return true;
@@ -94,12 +94,12 @@ public class MssqlHandler extends DBHandler {
             return DriverManager.getConnection(this.jdbcurl+";database="+databasename, p);
         }
         catch (ClassNotFoundException ce){
-            logger.error("Can't loader the JDBC driver." + ce.getMessage());
-            return null;
+            logger.error("Can't loader the JDBC driver." + ce.getMessage(), ce);
+            throw new RuntimeException(ce);
         }
         catch (SQLException se){
-            logger.error(se.getMessage());
-            return null;
+            logger.error(se.getMessage(), se);
+            throw new RuntimeException(se);
         }
         finally {
             DBHandler.releaseDatabaseResource(rs,null,ps,null);
@@ -122,7 +122,7 @@ public class MssqlHandler extends DBHandler {
             return (rs.next() && rs.getInt(1)==1);
         }
         catch (ClassNotFoundException ce){
-            logger.error("Can't loader the JDBC driver");
+            logger.error("Can't loader the JDBC driver", ce);
             return false;
         }
         catch (SQLException e){

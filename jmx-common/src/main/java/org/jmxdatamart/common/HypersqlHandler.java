@@ -14,11 +14,11 @@ public class HypersqlHandler extends DBHandler {
   private final org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
   private final String driver = "org.hsqldb.jdbcDriver";
   private final String protocol = "jdbc:hsqldb:";
-  private final String tableSchem = "public";
+  private final String tableSchema = "public";
 
   @Override
   public String getTableSchema() {
-    return tableSchem;
+    return tableSchema;
   }
 
   public void shutdownDatabase(Connection conn) {
@@ -28,7 +28,7 @@ public class HypersqlHandler extends DBHandler {
       }
       conn.createStatement().execute("SHUTDOWN");
     } catch (SQLException se) {
-      logger.error("Can't shutdown the database:" + se.getMessage());
+      logger.error("Can't shutdown the database:" + se.getMessage(), se);
     }
   }
 
@@ -37,8 +37,8 @@ public class HypersqlHandler extends DBHandler {
     try {
       return DriverManager.getConnection(protocol + databaseName, p);
     } catch (SQLException se) {
-      logger.error("Can't create the HeyperSql database:" + se.getMessage());
-      return null;
+      logger.error("Can't create the HyperSql database:" + se.getMessage(), se);
+      throw new RuntimeException(se);
     }
   }
 
