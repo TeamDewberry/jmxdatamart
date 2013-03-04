@@ -26,34 +26,33 @@ package org.jmxdatamart.common;/*
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+
 public class FieldAttribute {
-    private String fieldName;
-    private DataType fieldType;
-    private boolean isPK;
 
-    public boolean isPK() {
-        return isPK;
-    }
+  private String fieldName;
+  private DataType fieldType;
+  private boolean isPrimaryKey;   //PK
 
-    public void setPK(boolean PK) {
-        isPK = PK;
-    }
+  public boolean isPrimaryKey() {
+    return isPrimaryKey;
+  }
 
-    public FieldAttribute(String fieldName, DataType fieldType, boolean PK) {
-        this.fieldName = fieldName;
-        this.fieldType = fieldType;
-        isPK = PK;
-    }
+  public void setPK(boolean PK) {
+    isPrimaryKey = PK;
+  }
 
-    public String getFieldName() {
+  public FieldAttribute(String fieldName, DataType fieldType, boolean PK) {
+    this.fieldName = fieldName;
+    this.fieldType = fieldType;
+    isPrimaryKey = PK;
+  }
 
-        return fieldName;
-    }
+  public String getFieldName() {
 
+    return fieldName;
+  }
 
-    public DataType getFieldType() {
-        return fieldType;
-    }
-
-
+  public DataType getFieldType() {
+    return fieldType;
+  }
 }

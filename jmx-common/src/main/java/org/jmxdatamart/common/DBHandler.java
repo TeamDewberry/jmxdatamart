@@ -84,7 +84,7 @@ public abstract class DBHandler {
       sql.append(column.getFieldName());
       sql.append(" ");
       sql.append(column.getFieldType().getType(databaseType).toString());
-      sql.append(column.isPK() ? addPK : ")");
+      sql.append(column.isPrimaryKey() ? addPK : ")");
       ps = conn.prepareStatement(sql.toString());
       ps.executeUpdate();
     } catch (DBException de) {
