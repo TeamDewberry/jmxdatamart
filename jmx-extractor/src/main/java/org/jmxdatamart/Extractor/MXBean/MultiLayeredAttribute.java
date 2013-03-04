@@ -70,7 +70,7 @@ public class MultiLayeredAttribute {
 
   private DataType getSupportedDataType(Object obj) {
     for (DataType dt : DataType.values()) {
-      if (dt.supportTypeOf(obj)) {
+      if (dt.supportsTypeOf(obj)) {
         return dt;
       }
     }
