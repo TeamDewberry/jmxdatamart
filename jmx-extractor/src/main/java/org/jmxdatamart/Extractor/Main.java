@@ -87,12 +87,12 @@ public class Main {
   private static void demo() throws MalformedObjectNameException, NotCompliantMBeanException, InstanceAlreadyExistsException, MBeanRegistrationException, InstanceNotFoundException {
     TestBean tb1 = new TestBean();
     tb1.setA(new Integer(42));
-    tb1.setB(new Integer(-1));
+    tb1.setB(new Long(-1));
     final ObjectName tbName1 = new ObjectName("com.personal.JMXTestServer:name=TestBean1");
 
     TestBean tb2 = new TestBean();
     tb2.setA(new Integer(55));
-    tb2.setB(new Integer(-99));
+    tb2.setB(new Long(-99));
     final ObjectName tbName2 = new ObjectName("com.personal.JMXTestServer:name=TestBean2");
 
     CarBean cb = new CarBean();

@@ -33,6 +33,7 @@ import java.lang.management.ManagementFactory;
 import java.net.MalformedURLException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Properties;
@@ -55,7 +56,7 @@ public final class Extractor {
   private MBeanServerConnection mbsc;
   private final org.slf4j.Logger logger = LoggerFactory.getLogger(Extractor.class);
   private final Bean2DB bd = new Bean2DB();
-  private final String dbname;
+  private final String dbName;
   private final HypersqlHandler hsql;
   private Connection conn;
   private final Lock connLock = new ReentrantLock();
@@ -88,15 +89,16 @@ public final class Extractor {
       }
     }
     
-    getDataType(configData);
+//    getDataType(configData);
 
     hsql = new HypersqlHandler();
-    try {
-      dbname = bd.generateMBeanDB(configData);
-    } catch (SQLException ex) {
-      logger.error("Error while creating Bean DB", ex);
-      throw new RuntimeException(ex);
-    }
+    dbName = configData.getFolderLocation() + "Extrator" + new SimpleDateFormat("yyyyMMddHHmmss").format(new java.util.Date());
+//    try {
+//      dbName = bd.generateMBeanDB(configData);
+//    } catch (SQLException ex) {
+//      logger.error("Error while creating Bean DB", ex);
+//      throw new RuntimeException(ex);
+//    }
     // print out all accessible beans, for debug
 //    try {
 //      for (ObjectInstance oi : mbsc.queryMBeans(null, null)) {
@@ -175,7 +177,7 @@ public final class Extractor {
 
     connLock.lock();
     try {
-        conn = hsql.connectDatabase(dbname, props);
+        conn = hsql.connectDatabase(dbName, props);
 
       for (MBeanData bdata : this.configData.getBeans()) {
         Map<Attribute, Object> result = null;
