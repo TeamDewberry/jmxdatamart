@@ -28,8 +28,6 @@
 package org.jmxdatamart.Extractor;
 
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import org.slf4j.LoggerFactory;
