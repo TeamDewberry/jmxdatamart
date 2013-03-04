@@ -113,53 +113,6 @@ public final class Extractor {
       extract();
     }
   }
-  
-  private void getDataType(Settings configData) {
-    ObjectName on;
-    ArrayList<MBeanData> bdToBeRemoved = new ArrayList<MBeanData>();
-    for (MBeanData bd : configData.getBeans()) {
-      if (bd.isPattern()) {
-        continue;
-      }
-      try {
-        on = new ObjectName(bd.getName());
-      } catch (MalformedObjectNameException ex) {
-        logger.error(bd.getName() + " is malformed and will be excluded from future extracts");
-        bdToBeRemoved.add(bd);
-        continue;
-      }
-      ArrayList<Attribute> attrToBeRemoved = new ArrayList<Attribute>();
-      for (Attribute a : bd.getAttributes()) {
-        if (a.isPattern()) {
-          continue;
-        }
-        Object obj;
-        try {
-          obj = mbsc.getAttribute(on, a.getName());
-        } catch (Exception ex) {
-          logger.error(a.getName() + " in " + bd.getName() + 
-                  " is inaccessible and will be excluded from future extracts", ex);
-          attrToBeRemoved.add(a);
-          continue;
-        }
-        DataType dt = DataType.getDataTypeFor(obj);
-        if (dt == DataType.UNKNOWN) {
-          logger.error(a.getName() + " in " + bd.getName() + 
-                  " is of unsupported type " + obj.getClass() + 
-                  " and will be excluded from future extracts");
-          attrToBeRemoved.add(a);
-          continue;
-        }
-        a.setDataType(dt);
-      }
-      for (Attribute a : attrToBeRemoved) {
-        bd.getAttributes().remove(a);
-      }
-    }
-    for (MBeanData mbd : bdToBeRemoved) {
-      configData.getBeans().remove(mbd);
-    }
-  }
 
   private void periodicallyExtract() {
     boolean isDaemon = true;
