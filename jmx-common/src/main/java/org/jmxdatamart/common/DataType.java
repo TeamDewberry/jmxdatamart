@@ -233,16 +233,6 @@ public enum DataType {
             return getJavaType();
         }
     }
- /*
-    public static DataType findCorrespondDataTypeByName(String currentTypeName,String sourceDatabaseType ) {
-        for (DataType type:DataType.values()) {
-            if (((String)type.getType(sourceDatabaseType)).equalsIgnoreCase(currentTypeName)){
-                return type;
-            }
-        }
-        return null;
-    }
-*/
 
     public static DataType findCorrespondDataTypeByID(int currentTypeID ) {
         for (DataType type:DataType.values()) {
