@@ -276,7 +276,7 @@ public enum DataType {
         return javaType.isAssignableFrom(obj.getClass());
     }
     
-    public static DataType getDataTypeFor(Object obj) {
+    public static DataType getDataType(Object obj) {
       for (DataType d : values()) {
         if (d.supportsTypeOf(obj)) {
           return d;
