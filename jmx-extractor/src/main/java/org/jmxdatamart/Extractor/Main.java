@@ -59,18 +59,18 @@ public class Main {
     Settings s = Settings.fromXML(
             new FileInputStream(args[0]));
 
-    final Extractor etor = new Extractor(s);
+    final Extractor extractor = new Extractor(s);
 
     Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
       @Override
       public void run() {
-        if (etor.isPeriodicallyExtract()) {
-          etor.stop();
+        if (extractor.isPeriodicallyExtract()) {
+          extractor.stop();
         }
       }
     }));
 
-    if (!etor.isPeriodicallyExtract()) {
+    if (!extractor.isPeriodicallyExtract()) {
       System.out.println("Extractor is set to run once only!");
       return;
     }
