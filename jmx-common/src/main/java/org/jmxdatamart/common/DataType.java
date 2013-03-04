@@ -114,7 +114,7 @@ public enum DataType {
                     "VARCHAR (32672)", // Derby max is Integer.Max_Value, not padded
                     "LONGVARCHAR"
             ),
-    DATETIME(
+    DATETIME(   // date type
                 java.util.Date.class,
                 Types.TIMESTAMP,
                 "datetime",
@@ -137,7 +137,7 @@ public enum DataType {
                     ps.setTimestamp(index, ts);
                 }
             },
-    UNKNOWN(
+    UNKNOWN(    // internal error type.
             null,
             -9999,
             null,
@@ -157,7 +157,7 @@ public enum DataType {
                 public String toString(Object obj) {
                     return toString();
                 }
-            }    // internal error type.
+            }    
     ;
 
     private  Class javaType;
