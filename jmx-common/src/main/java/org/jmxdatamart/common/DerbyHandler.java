@@ -47,7 +47,7 @@ public class DerbyHandler extends DBHandler{
     private final String protocol = "jdbc:derby:";
     private final String tableSchem = "public";
 
-    public String getTableSchem() {
+    public String getTableSchema() {
         return tableSchem;
     }
 

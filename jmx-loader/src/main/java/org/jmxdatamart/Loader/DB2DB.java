@@ -61,7 +61,7 @@ public class DB2DB {
         Connection sourceConnection = null;
         int testId;
         Map<String,Map> sourceDatabaseTables;
-        String sourceTableSchem = sources.getSourceDatabase().getTableSchem();
+        String sourceTableSchem = sources.getSourceDatabase().getTableSchema();
         String sourceDatabaseType = sources.getDbInfo().getDatabaseType();
         String mainTableName = dataMart.getMainTableName();
         String testIDFieldName = dataMart.getTestID().getFieldName();

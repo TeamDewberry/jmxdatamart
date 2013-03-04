@@ -46,7 +46,7 @@ public abstract class DBHandler {
 
   public abstract Connection connectDatabase(String databaseName, java.util.Properties p);
 
-  public abstract String getTableSchem();
+  public abstract String getTableSchema();
   protected String jdbcurl;
 
   /**
@@ -332,8 +332,8 @@ public abstract class DBHandler {
       tableNames.close();
       return false;
     } catch (DBException de) {
-      logger.error("Can't connect to database.");
-      return false;
+      logger.error("Can't connect to database.", de);
+      throw new RuntimeException(de);
     } catch (SQLException se) {
       return false;
     } finally {
@@ -375,7 +375,8 @@ public abstract class DBHandler {
   }
 
   /**
-   * Release all resources related to database operation
+   * Release all resources related to database operation - argument can be null
+   * in which case it will be ignored.
    *
    * @param rs
    * @param st
@@ -387,8 +388,9 @@ public abstract class DBHandler {
   }
 
   /**
-   * Release all resources related to database operation
-   *
+   * Release all resources related to database operation - argument can be null
+   * in which case it will be ignored.
+   * 
    * @param rs
    * @param st
    * @param ps

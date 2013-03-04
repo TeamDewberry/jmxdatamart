@@ -17,7 +17,7 @@ public class HypersqlHandler extends DBHandler {
   private final String tableSchem = "public";
 
   @Override
-  public String getTableSchem() {
+  public String getTableSchema() {
     return tableSchem;
   }
 

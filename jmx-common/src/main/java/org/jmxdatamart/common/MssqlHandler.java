@@ -52,7 +52,7 @@ public class MssqlHandler extends DBHandler {
         this.jdbcurl = jdbcurl;
     }
     @Override
-    public String getTableSchem() {
+    public String getTableSchema() {
         return tableSchem;
     }
 
