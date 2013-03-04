@@ -374,6 +374,14 @@ public abstract class DBHandler {
     }
   }
 
+  /**
+   * Release all resources related to database operation
+   *
+   * @param rs
+   * @param st
+   * @param ps
+   * @param conn
+   */
   public static void releaseDatabaseResource(ResultSet rs, Statement st, PreparedStatement ps, Connection conn) {
     disconnectDatabase(rs, st, ps, conn);
   }
@@ -392,7 +400,6 @@ public abstract class DBHandler {
     try {
       if (ps != null) {
         ps.close();
-        ps = null;
       }
     } catch (SQLException sqle) {
       logSQLException(sqle);
@@ -402,7 +409,6 @@ public abstract class DBHandler {
     try {
       if (rs != null) {
         rs.close();
-        rs = null;
       }
     } catch (SQLException sqle) {
       logSQLException(sqle);
@@ -412,7 +418,6 @@ public abstract class DBHandler {
     try {
       if (st != null) {
         st.close();
-        st = null;
       }
     } catch (SQLException sqle) {
       logSQLException(sqle);
@@ -422,7 +427,6 @@ public abstract class DBHandler {
     try {
       if (conn != null) {
         conn.close();
-        conn = null;
       }
     } catch (SQLException sqle) {
       logSQLException(sqle);
