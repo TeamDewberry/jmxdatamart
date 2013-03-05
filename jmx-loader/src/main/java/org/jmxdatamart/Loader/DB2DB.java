@@ -55,9 +55,10 @@ public class DB2DB {
      * @throws DBException
      * @throws SQLException
      */
-    public void importData() throws DBException,SQLException{
+    public void loadData() throws DBException,SQLException{
 
         Connection dataMartConnection = connectToDataMartDatabase();
+
         Connection sourceConnection = null;
         int testId;
         Map<String,Map> sourceDatabaseTables;
@@ -66,6 +67,7 @@ public class DB2DB {
         String mainTableName = dataMart.getMainTableName();
         String testIDFieldName = dataMart.getTestID().getFieldName();
         boolean bl = dataMartConnection.getAutoCommit();
+
         dataMartConnection.setAutoCommit(false);
 
         for(String sourceDatabaseFile : sources.getDatabaseFiles()){
