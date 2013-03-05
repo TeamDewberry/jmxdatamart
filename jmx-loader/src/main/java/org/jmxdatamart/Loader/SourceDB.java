@@ -61,7 +61,8 @@ public class SourceDB {
                 fileName= fileEntry.getName();
                 databaseName = fileName.split("\\.")[0];
                 if (databaseName.trim().length()>0)
-                    databaseFiles.add(folderLocation.getAbsolutePath()+"/"+databaseName);
+                    if ((fileName.split("\\.").length==2) && fileName.split("\\.")[1].equalsIgnoreCase("script"))
+                        databaseFiles.add(folderLocation.getAbsolutePath()+"/"+databaseName);
             }
         }
     }
