@@ -47,16 +47,18 @@ public abstract class DBHandler {
   public abstract Connection connectDatabase(String databaseName, java.util.Properties p);
 
   public abstract String getTableSchema();
+
   protected String jdbcurl;
 
-  /**
+
+    /**
    * Used default filed to build a table
    *
    * @param conn
    * @param tableName
    * @param databaseType
    */
-  public static void addTable(Connection conn, String tableName, String databaseType) {
+  public static void addTable(Connection conn, String tableName, DataType.SupportedDatabase databaseType) {
     FieldAttribute autoID = new FieldAttribute("AutoID", DataType.LONG, false);
     addTable(conn, tableName, autoID, databaseType);
   }
@@ -72,7 +74,7 @@ public abstract class DBHandler {
    * @param databaseType use to determine which dataType should be used to
    * create the column
    */
-  public static void addTable(Connection conn, String tableName, FieldAttribute column, String databaseType) {
+  public static void addTable(Connection conn, String tableName, FieldAttribute column, DataType.SupportedDatabase databaseType) {
     PreparedStatement ps = null;
     try {
       checkConnection(conn);
@@ -105,7 +107,7 @@ public abstract class DBHandler {
    * @param databaseType use to determine which dataType should be used to
    * create the column
    */
-  public static void addColumn(Connection conn, String tableName, FieldAttribute column, String databaseType) {
+  public static void addColumn(Connection conn, String tableName, FieldAttribute column, DataType.SupportedDatabase databaseType) {
     PreparedStatement ps = null;
     try {
       if (!tableExists(tableName, conn)) {
@@ -163,7 +165,7 @@ public abstract class DBHandler {
    * FieldAttribute object for that field
    * @throws SQLException
    */
-  private static Map<String, FieldAttribute> getTableFields(Connection conn, String tableName, String databaseType) {
+  private static Map<String, FieldAttribute> getTableFields(Connection conn, String tableName, DataType.SupportedDatabase databaseType) {
     ResultSet columns = null;
     try {
       checkConnection(conn);
@@ -176,7 +178,7 @@ public abstract class DBHandler {
 
         colName = columns.getString("COLUMN_NAME");
         typeId = columns.getInt("DATA_TYPE");
-        typeName = DataType.findCorrespondDataTypeByID(typeId);
+        typeName = DataType.getCorrespondDataTypeByID(typeId);
 
         FieldAttribute fieldinfo = new FieldAttribute(colName, typeName, false);
         fields.put(colName.toUpperCase(), fieldinfo);
@@ -231,7 +233,7 @@ public abstract class DBHandler {
    * map that holds the schema of that table
    * @throws SQLException
    */
-  public static Map<String, Map> getDatabaseSchema(Connection conn, String tableSchem, String databaseType) {
+  public static Map<String, Map> getDatabaseSchema(Connection conn, String tableSchem, DataType.SupportedDatabase databaseType) {
     ResultSet tables = null;
     try {
       checkConnection(conn);

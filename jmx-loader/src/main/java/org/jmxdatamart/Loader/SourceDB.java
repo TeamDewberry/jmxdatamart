@@ -49,10 +49,12 @@ public class SourceDB {
 
     public SourceDB(Setting.DBInfo dbInfo, File folderLocation) {
         this.dbInfo = dbInfo;
-        if (dbInfo.getDatabaseType().equalsIgnoreCase("hsqldb"))
+        if (dbInfo.getDatabaseType().equals(DataType.SupportedDatabase.HSQL))
             sourceDatabase = new HypersqlHandler();
-        else if (dbInfo.getDatabaseType().equalsIgnoreCase("derbydb"))
+        else if (dbInfo.getDatabaseType().equals(DataType.SupportedDatabase.DERBY))
             sourceDatabase = new DerbyHandler();
+        else
+            throw new RuntimeException("Doesn't support this source database type");
 
         databaseFiles = new TreeSet<String>();
         String fileName, databaseName;

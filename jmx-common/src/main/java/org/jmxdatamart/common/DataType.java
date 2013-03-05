@@ -216,27 +216,15 @@ public enum DataType {
       }
     }
 
-    public Object getType(String type){
-        if (type.equalsIgnoreCase("sqlserver")){
-            return getMssqlType();
-        }
-        else if (type.equalsIgnoreCase("hsqldb")){
-            return getHsqlType();
-        }
-        else if (type.equalsIgnoreCase("derbydb")){
-            return getDerbyType();
-        }
-        else if (type.equalsIgnoreCase("id")){
-            return getJdbcTypeID();
-        }
-        else{
-            return getJavaType();
-        }
-    }
-
-    public static DataType findCorrespondDataTypeByID(int currentTypeID ) {
+    /**
+     * Get the Datatype with a given JDBC type id.
+     * Used in Loader.
+     * @param currentTypeID is a JDBC data type ID.
+     * @return the dataType that corresponds to the given type id
+     */
+    public static DataType getCorrespondDataTypeByID(int currentTypeID ) {
         for (DataType type:DataType.values()) {
-            if ((type.getType("id")).equals(Integer.valueOf(currentTypeID))){
+            if ((type.getType(SupportedDatabase.JDBCID)).equals(Integer.valueOf(currentTypeID))){
                 return type;
             }
         }

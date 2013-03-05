@@ -63,7 +63,7 @@ public class DB2DB {
         int testId;
         Map<String,Map> sourceDatabaseTables;
         String sourceTableSchem = sources.getSourceDatabase().getTableSchema();
-        String sourceDatabaseType = sources.getDbInfo().getDatabaseType();
+        DataType.SupportedDatabase sourceDatabaseType = sources.getDbInfo().getDatabaseType();
         String mainTableName = dataMart.getMainTableName();
         String testIDFieldName = dataMart.getTestID().getFieldName();
         boolean bl = dataMartConnection.getAutoCommit();
@@ -141,7 +141,7 @@ public class DB2DB {
      */
     private void addMainTableScheme(Connection dataMartConnection){
         String mainTableName = dataMart.getMainTableName();
-        String databaseType = dataMart.getDbInfo().getDatabaseType();
+        DataType.SupportedDatabase databaseType = dataMart.getDbInfo().getDatabaseType();
         if (!DBHandler.tableExists(mainTableName,dataMartConnection)){
             DBHandler.addTable (dataMartConnection, mainTableName, dataMart.getTestID(), databaseType );
             DBHandler.addColumn(dataMartConnection, mainTableName, dataMart.getImportTime(), databaseType);
@@ -221,8 +221,8 @@ public class DB2DB {
         FieldAttribute testIDField = dataMart.getTestID();
         testIDField.setPK(false);
         String testIDFieldName = dataMart.getTestID().getFieldName();
-        String sourceDatabaseType = sources.getDbInfo().getDatabaseType();
-        String dataMartDatabaseType = dataMart.getDbInfo().getDatabaseType();
+        DataType.SupportedDatabase sourceDatabaseType = sources.getDbInfo().getDatabaseType();
+        DataType.SupportedDatabase dataMartDatabaseType = dataMart.getDbInfo().getDatabaseType();
         String tableName,columnName;
         Map<String,FieldAttribute>  fields;
         FieldAttribute attributes;

@@ -85,14 +85,15 @@ public class DataMartDB {
         importTime = new FieldAttribute("importTime",DataType.DATETIME,false);
         importedFile = new FieldAttribute("importFile",DataType.STRING,false);
 
-        if (dbInfo.getDatabaseType().equalsIgnoreCase("sqlserver")){
+        if (dbInfo.getDatabaseType().equals(DataType.SupportedDatabase.MSSQL)){
             targetDatabase = new MssqlHandler();
             ((MssqlHandler)targetDatabase).setJdbcurl(dbInfo.getJdbcUrl());
         }
-        else if (dbInfo.getDatabaseType().equalsIgnoreCase("hsqldb"))
+        else if (dbInfo.getDatabaseType().equals(DataType.SupportedDatabase.HSQL))
             targetDatabase = new HypersqlHandler();
-        else if (dbInfo.getDatabaseType().equalsIgnoreCase("derbydb"))
+        else if (dbInfo.getDatabaseType().equals(DataType.SupportedDatabase.DERBY))
             targetDatabase = new DerbyHandler();
+
 
     }
 }
