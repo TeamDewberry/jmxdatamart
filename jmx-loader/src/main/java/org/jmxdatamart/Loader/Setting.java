@@ -30,11 +30,12 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.util.Enumeration;
 import java.util.Properties;
+import org.jmxdatamart.common.DataType;
 
 public class Setting {
     private final org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
     public class DBInfo {
-        private String databaseType;
+        private DataType.SupportedDatabase databaseType;
         private String jdbcUrl=null;
         private String databaseName=null;
         private Properties userInfo;
@@ -48,11 +49,11 @@ public class Setting {
         }
 
 
-        public String getDatabaseType() {
+        public DataType.SupportedDatabase getDatabaseType() {
             return databaseType;
         }
 
-        public void setDatabaseType(String databaseType) {
+        public void setDatabaseType(DataType.SupportedDatabase databaseType) {
             this.databaseType = databaseType;
         }
 
@@ -71,7 +72,7 @@ public class Setting {
    };
 
     private DBInfo source, target;
-    private Properties required, optional;
+    private Properties additional;
 
     public DBInfo getSource() {
         return source;
@@ -82,23 +83,31 @@ public class Setting {
         return target;
     }
 
-
-    public Properties getRequired() {
-        return required;
+    public Properties getAdditional() {
+        return additional;
     }
 
-
-    public Properties getOptional() {
-        return optional;
+    public void setAdditional(Properties additional) {
+        this.additional = additional;
     }
 
+    private DataType.SupportedDatabase getSupportedDatabaseType(String type){
+        if (type.equalsIgnoreCase("derbydb"))
+            return DataType.SupportedDatabase.DERBY;
+        else if (type.equalsIgnoreCase("hsqldb"))
+            return DataType.SupportedDatabase.HSQL;
+        else if (type.equalsIgnoreCase("sqlserver"))
+            return DataType.SupportedDatabase.MSSQL;
+        else
+            throw new RuntimeException("Doesn't support this database type.");
 
+
+    }
 
     public Setting(String filePath) {
         source = new DBInfo();
         target = new DBInfo();
-        required =new Properties();
-        optional = new Properties();
+        additional =new Properties();
         source.userInfo = new Properties();
         target.userInfo = new Properties();
         Properties props = new Properties();
@@ -116,13 +125,11 @@ public class Setting {
                 section = key.split("\\.")[0];
                 keyname = key.split("\\.")[1];
 
-                if (section.equalsIgnoreCase("required"))
-                    required.put(keyname, property);
-                else if(section.equalsIgnoreCase("optional"))
-                    optional.put(keyname, property);
+                if (section.equalsIgnoreCase("additional"))
+                    additional.put(keyname, property);
                 else{
                     if (key.equalsIgnoreCase("source.type"))
-                        source.setDatabaseType(property);
+                        source.setDatabaseType(getSupportedDatabaseType(property));
                     else if(key.equalsIgnoreCase("source.JDBCurl"))
                         source.setJdbcUrl(property);
                     else if(key.equalsIgnoreCase("source.databasename"))
@@ -132,7 +139,7 @@ public class Setting {
                     else if(key.equalsIgnoreCase("source.password"))
                         source.userInfo.put("password", property);
                     else if (key.equalsIgnoreCase("target.type"))
-                        target.setDatabaseType(property);
+                        target.setDatabaseType(getSupportedDatabaseType(property));
                     else if(key.equalsIgnoreCase("target.JDBCurl"))
                         target.setJdbcUrl(property);
                     else if(key.equalsIgnoreCase("target.databasename"))

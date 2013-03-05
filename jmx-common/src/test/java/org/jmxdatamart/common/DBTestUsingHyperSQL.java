@@ -40,6 +40,7 @@ import static junit.framework.Assert.fail;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import org.jmxdatamart.common.*;
 
 public class DBTestUsingHyperSQL {
 
@@ -48,7 +49,7 @@ public class DBTestUsingHyperSQL {
     String dbname = "HyperSql/JunitTestDB" + new SimpleDateFormat("yyyyMMddHHmmss").format(new java.util.Date());
     String tablename = "mainTable";
     FieldAttribute newcol = new FieldAttribute("testcol", DataType.LONG, false);
-    String databaseType= "hsqldb";
+    DataType.SupportedDatabase databaseType= DataType.SupportedDatabase.MSSQL;
 
     public DBTestUsingHyperSQL(){
         p.put("username","sa");

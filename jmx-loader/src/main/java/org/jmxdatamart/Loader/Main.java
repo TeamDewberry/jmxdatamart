@@ -39,35 +39,35 @@ public class Main {
         Logger logger = LoggerFactory.getLogger(Main.class);
         if (args.length!=2){
             System.err.println("Must have two arguments.\nUsage: loader settingFile folderLocation");
-            //System.exit(1);
+            System.exit(1);
         }
 
-        String arg0 = "jmx-loader/src/main/java/org/jmxdatamart/Loader/loaderconfig.ini";
-        String arg1 = "HyperSql/";
+        //String arg0 = "jmx-loader/src/main/java/org/jmxdatamart/Loader/loaderconfig.ini";
+        //String arg1 = "HyperSql/";
 
-        File prop = new File(arg0);
-        if (!prop.isFile()){
+        File properties = new File(args[0]);
+        if (!properties.isFile()){
             System.err.println("Invalid file.");
             System.exit(1);
         }
-        File folder = new File(arg1) ;
+        File folder = new File(args[1]) ;
         if (!folder.isDirectory()){
             System.err.println("Invalid folder.");
             System.exit(1);
         }
 
-        Setting s = new Setting(arg0);
-        DB2DB d2d = new DB2DB(s,folder);
+        Setting setting = new Setting(args[0]);
+        DB2DB d2d = new DB2DB(setting,folder);
         try{
-            logger.info("\nLoadding data from " + arg1 + ".\n");
-            d2d.importData();
-            logger.info("\nData are successfully imported to DataMart from " + arg1);
+            logger.info("\nLoadding data from " + args[1] + ".\n");
+            d2d.loadData();
+            logger.info("\nData are successfully imported to DataMart from " + args[1]);
         }
         catch (SQLException se){
-            logger.error("\nFail to import data from " + arg1 + ": \n" +se.getMessage(), se);
+            logger.error("\nFail to import data from " + args[1] + ": \n" +se.getMessage(), se);
         }
         catch (DBException de){
-            logger.error("\nFail to import data from " + arg1, de);
+            logger.error("\nFail to import data from " + args[1], de);
         }
     }
 

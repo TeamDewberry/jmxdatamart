@@ -46,7 +46,7 @@ public class DB2DB {
      * @param folder
      */
     public DB2DB(Setting s, File folder){
-        dataMart = new DataMartDB(s.getTarget(),s.getRequired(),s.getOptional());
+        dataMart = new DataMartDB(s.getTarget(),s.getAdditional());
         sources = new SourceDB(s.getSource(), folder);
     }
 
@@ -55,17 +55,19 @@ public class DB2DB {
      * @throws DBException
      * @throws SQLException
      */
-    public void importData() throws DBException,SQLException{
+    public void loadData() throws DBException,SQLException{
 
         Connection dataMartConnection = connectToDataMartDatabase();
+
         Connection sourceConnection = null;
         int testId;
         Map<String,Map> sourceDatabaseTables;
         String sourceTableSchem = sources.getSourceDatabase().getTableSchema();
-        String sourceDatabaseType = sources.getDbInfo().getDatabaseType();
+        DataType.SupportedDatabase sourceDatabaseType = sources.getDbInfo().getDatabaseType();
         String mainTableName = dataMart.getMainTableName();
         String testIDFieldName = dataMart.getTestID().getFieldName();
         boolean bl = dataMartConnection.getAutoCommit();
+
         dataMartConnection.setAutoCommit(false);
 
         for(String sourceDatabaseFile : sources.getDatabaseFiles()){
@@ -139,7 +141,7 @@ public class DB2DB {
      */
     private void addMainTableScheme(Connection dataMartConnection){
         String mainTableName = dataMart.getMainTableName();
-        String databaseType = dataMart.getDbInfo().getDatabaseType();
+        DataType.SupportedDatabase databaseType = dataMart.getDbInfo().getDatabaseType();
         if (!DBHandler.tableExists(mainTableName,dataMartConnection)){
             DBHandler.addTable (dataMartConnection, mainTableName, dataMart.getTestID(), databaseType );
             DBHandler.addColumn(dataMartConnection, mainTableName, dataMart.getImportTime(), databaseType);
@@ -147,8 +149,7 @@ public class DB2DB {
         }
 
         Properties merged = new Properties();
-        merged.putAll(dataMart.getRequired());
-        merged.putAll(dataMart.getOptional());
+        merged.putAll(dataMart.getAdditional());
         Enumeration keys = merged.keys();
         FieldAttribute field;
         while (keys.hasMoreElements()) {
@@ -176,8 +177,7 @@ public class DB2DB {
         StringBuilder questionMarkList = new StringBuilder("?,?,?");
 
         Properties merged = new Properties();
-        merged.putAll(dataMart.getRequired());
-        merged.putAll(dataMart.getOptional());
+        merged.putAll(dataMart.getAdditional());
         Enumeration keys = merged.keys();
         String column;
         while (keys.hasMoreElements()) {
@@ -219,8 +219,8 @@ public class DB2DB {
         FieldAttribute testIDField = dataMart.getTestID();
         testIDField.setPK(false);
         String testIDFieldName = dataMart.getTestID().getFieldName();
-        String sourceDatabaseType = sources.getDbInfo().getDatabaseType();
-        String dataMartDatabaseType = dataMart.getDbInfo().getDatabaseType();
+        DataType.SupportedDatabase sourceDatabaseType = sources.getDbInfo().getDatabaseType();
+        DataType.SupportedDatabase dataMartDatabaseType = dataMart.getDbInfo().getDatabaseType();
         String tableName,columnName;
         Map<String,FieldAttribute>  fields;
         FieldAttribute attributes;

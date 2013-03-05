@@ -72,7 +72,7 @@ public class Bean2DB {
               conn,
               tableName,
               new FieldAttribute("time", DataType.DATETIME, false),
-              "hsqldb");
+              DataType.SupportedDatabase.HSQL);
     }
     String sql;
     boolean bl = conn.getAutoCommit();
