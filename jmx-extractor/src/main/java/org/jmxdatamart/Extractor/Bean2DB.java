@@ -197,7 +197,7 @@ public class Bean2DB {
       return null;
     } finally {
       hypersql.shutdownDatabase(conn); //we should shut down a Hsql DB
-      DBHandler.disconnectDatabase(null, st, null, conn);
+      DBHandler.releaseDatabaseResource(null, st, null, conn);
     }
 
     return dbName;

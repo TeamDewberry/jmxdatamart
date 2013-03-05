@@ -327,18 +327,6 @@ public abstract class DBHandler {
     }
   }
 
-  /**
-   * Release all resources related to database operation - argument can be null
-   * in which case it will be ignored.
-   *
-   * @param rs
-   * @param st
-   * @param ps
-   * @param conn
-   */
-  public static void releaseDatabaseResource(ResultSet rs, Statement st, PreparedStatement ps, Connection conn) {
-    disconnectDatabase(rs, st, ps, conn);
-  }
 
   /**
    * Release all resources related to database operation - argument can be null
@@ -349,7 +337,7 @@ public abstract class DBHandler {
    * @param ps
    * @param conn
    */
-  public static void disconnectDatabase(ResultSet rs, Statement st, PreparedStatement ps, Connection conn) {
+  public static void releaseDatabaseResource(ResultSet rs, Statement st, PreparedStatement ps, Connection conn) {
 
     // PrepareStatement
     try {

@@ -71,6 +71,10 @@ public class DBTestUsingHyperSQL {
         catch (DBException se){
            assertEquals("Can't connect to database.", se.getMessage());
         }
+        catch(SQLException se){
+            assertEquals("Can't connect to database.", se.getMessage());
+        }
+
 
         conn= db.connectDatabase(dbname,p);
         assertTrue(db.databaseExists(dbname,p));
@@ -79,6 +83,9 @@ public class DBTestUsingHyperSQL {
         }
         catch (DBException se){
             fail("Connection should valid.");
+        }
+        catch(SQLException se){
+            assertEquals("Can't connect to database.", se.getMessage());
         }
 
         assertFalse(DBHandler.tableExists(tablename, conn));

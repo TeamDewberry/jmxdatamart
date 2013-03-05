@@ -152,7 +152,7 @@ public final class Extractor {
 //        logger.error(e.getMessage(), e);
 //      }
 
-      HypersqlHandler.disconnectDatabase(null, null, null, conn);
+      HypersqlHandler.releaseDatabaseResource(null, null, null, conn);
       conn = null;
     } catch (SQLException ex) {
       logger.error("Error while importing to HSQL", ex);
@@ -172,7 +172,7 @@ public final class Extractor {
         connLock.lock();
         if (conn != null && !conn.isClosed()) {
               hsql.shutdownDatabase(conn);
-              HypersqlHandler.disconnectDatabase(null, null, null, conn);
+              HypersqlHandler.releaseDatabaseResource(null, null, null, conn);
             }
       } catch (SQLException ex) {
         LoggerFactory.getLogger(Extractor.class)
@@ -195,7 +195,7 @@ public final class Extractor {
             connLock.lock();
             if (conn != null && !conn.isClosed()) {
               hsql.shutdownDatabase(conn);
-              HypersqlHandler.disconnectDatabase(null, null, null, conn);
+              HypersqlHandler.releaseDatabaseResource(null, null, null, conn);
             }
           } catch (SQLException ex) {
             LoggerFactory.getLogger(Extractor.class)
