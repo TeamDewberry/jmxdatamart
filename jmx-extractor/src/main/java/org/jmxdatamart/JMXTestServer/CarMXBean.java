@@ -18,4 +18,6 @@ public interface CarMXBean {
     public int[] getIntList();
     
     public String[] getStrList();
+    
+    public Car[] getCarList();
 }

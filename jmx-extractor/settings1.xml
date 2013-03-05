@@ -1,33 +1,50 @@
+<!-- basic MBean extracting capacity -->
 <Settings>
-  <pollingRate>-1</pollingRate>
-  <folderLocation>extracted\\</folderLocation>
+  <pollingRate>-1</pollingRate> <!-- rate < 0 means extract will run once only -->
+  <folderLocation>extracted\\</folderLocation> <!-- output folder needs a separator at the end -->
   <BeanList>
-    <Bean>
+    <Bean>    
       <name>com.personal.JMXTestServer:name=TestBean1</name>
       <alias>TestBean1</alias>
       <AttributeList>
         <Attribute>
           <name>A</name>
           <alias>Alpha</alias>
+          <dataType>INT</dataType>
         </Attribute>
         <Attribute>
           <name>B</name>
-          <alias>Beta</alias>
+          <alias>Beta</alias>                   <!-- dataType field is not required but highly recommended -->
         </Attribute>
       </AttributeList>
       <enable>true</enable>
     </Bean>
     <Bean>
-      <name>com.personal.JMXTestServer:name=TestBean2</name>
-      <alias>TestBean2</alias>
+      <name>org.jmxdatamart:name=CarBean</name>
+      <alias>Cars</alias>
       <AttributeList>
         <Attribute>
-          <name>A</name>
-          <alias>Alpha</alias>
+          <name>Car.name</name>         <!-- second level attribute value 
+                                        notice the lower case even when the getter name is `getName' - mortals aren't meant to
+                                        question the gods http://docs.oracle.com/javase/6/docs/api/javax/management/MXBean.html -->
+          <alias>Dream</alias>                  
         </Attribute>
         <Attribute>
-          <name>B</name>
-          <alias>Beta</alias>
+          <name>Map."VL Automotive".name</name> <!-- map with String as key -->
+          <alias>VLAutomotive</alias>           <!-- alias can only be alphanumeric, starts with a character -->
+        </Attribute>
+        <Attribute>
+          <name>StrList</name>              <!-- entire array is also supported, -->
+          <alias>FibonaciList</alias>       <!-- result is comma-separated string of toString() values -->
+        </Attribute>
+        <Attribute>
+          <name>IntList.6</name>
+          <alias>Fib7</alias>        <!-- accessing value in array using index -->
+        </Attribute>
+        <Attribute>
+          <name>CarList.2.power</name>    <!-- secondary value from within array, can be nested ad infinitum -->
+                                          <!-- alias can be safely ignored, in which case column name is auto generated
+                                          by replacing all non-supported character in name by '_' -->
         </Attribute>
       </AttributeList>
       <enable>true</enable>

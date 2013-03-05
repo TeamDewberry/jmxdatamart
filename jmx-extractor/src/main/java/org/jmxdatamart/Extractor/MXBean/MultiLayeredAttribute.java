@@ -4,6 +4,7 @@
  */
 package org.jmxdatamart.Extractor.MXBean;
 
+import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,9 +57,9 @@ public class MultiLayeredAttribute {
                     mbai.getName() + ".",
                     resultSoFar);
           } catch (Exception ex) {
-            logger.error("Error while trying to access " +
-                    this.baseMbean.getCanonicalName() + " at " +
-                    mbai.getName(), ex);
+            logger.error("Error while trying to access "
+                    + this.baseMbean.getCanonicalName() + " at "
+                    + mbai.getName(), ex);
           }
         }
       }
@@ -89,18 +90,31 @@ public class MultiLayeredAttribute {
     } else if (currDepth == total) {
       DataType dt = getSupportedDataType(curr);
       if (dt == null) {
-        logger.error("Doesn't support type " + curr.getClass()
-                + " from " + currName);
-        return;
+        if (curr.getClass().isArray()) {
+          int len = Array.getLength(curr);
+          if (len > 0) {
+            StringBuilder sb = new StringBuilder(enclose(Array.get(curr, 0)));
+            for (int i = 1; i < len; ++i) {
+              sb.append(',').append(enclose(Array.get(curr, i)));
+            }
+            soFar.put(
+                    new Attribute(
+                      null,
+                      this.alias == null ? name2alias(currName) : this.alias,
+                      DataType.STRING),
+                    sb.toString());
+          }
+        } else {
+          logger.error("Doesn't support type " + curr.getClass()
+                  + " from " + currName);
+          return;
+        }
       } else {
         soFar.put(
                 new Attribute(
                   null,
-                    this.alias == null ?
-                  name2alias(currName):
-                  this.alias,
-                  dt
-                ),
+                  this.alias == null ? name2alias(currName) : this.alias,
+                  dt),
                 curr);
       }
     } else {
@@ -138,9 +152,24 @@ public class MultiLayeredAttribute {
             }
           }
         }
+      } else if (curr.getClass().isArray()) {
+        int index;
+        try {
+          index = Integer.valueOf(layers.get(currDepth));
+        } catch (NumberFormatException ex) {
+          logger.error("Array type found at " + currName + " with non-interger index");
+          return;
+        }
+        getAllHelper(
+                currDepth + 1,
+                total,
+                Array.get(curr, index),
+                currName + layers.get(currDepth) + ".",
+                soFar);
       } else {
         logger.error("Doesn't support type " + curr.getClass()
                 + " amid the MXBeanChain at " + currName.toString());
+        return;
       }
     }
   }
@@ -191,5 +220,11 @@ public class MultiLayeredAttribute {
         layers.set(i, sb.toString());
       }
     }
+  }
+
+  private StringBuilder enclose(Object obj) {
+    StringBuilder sb = new StringBuilder("\"");
+    sb.append(obj).append("\"");
+    return sb;
   }
 }
