@@ -72,7 +72,7 @@ public class Setting {
    };
 
     private DBInfo source, target;
-    private Properties required, optional;
+    private Properties additional;
 
     public DBInfo getSource() {
         return source;
@@ -83,14 +83,12 @@ public class Setting {
         return target;
     }
 
-
-    public Properties getRequired() {
-        return required;
+    public Properties getAdditional() {
+        return additional;
     }
 
-
-    public Properties getOptional() {
-        return optional;
+    public void setAdditional(Properties additional) {
+        this.additional = additional;
     }
 
     private DataType.SupportedDatabase getSupportedDatabaseType(String type){
@@ -109,8 +107,7 @@ public class Setting {
     public Setting(String filePath) {
         source = new DBInfo();
         target = new DBInfo();
-        required =new Properties();
-        optional = new Properties();
+        additional =new Properties();
         source.userInfo = new Properties();
         target.userInfo = new Properties();
         Properties props = new Properties();
@@ -128,10 +125,8 @@ public class Setting {
                 section = key.split("\\.")[0];
                 keyname = key.split("\\.")[1];
 
-                if (section.equalsIgnoreCase("required"))
-                    required.put(keyname, property);
-                else if(section.equalsIgnoreCase("optional"))
-                    optional.put(keyname, property);
+                if (section.equalsIgnoreCase("additional"))
+                    additional.put(keyname, property);
                 else{
                     if (key.equalsIgnoreCase("source.type"))
                         source.setDatabaseType(getSupportedDatabaseType(property));

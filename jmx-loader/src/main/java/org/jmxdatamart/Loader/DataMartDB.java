@@ -41,19 +41,15 @@ public class DataMartDB {
     private FieldAttribute importedFile; //use to check if the embedded database has been imported, avoid duplicated import.
     private Setting.DBInfo dbInfo;
     private DBHandler targetDatabase;
-    private Properties required, optional;
+    private Properties additional;
     private Connection targetConn;
 
     public Setting.DBInfo getDbInfo() {
         return dbInfo;
     }
 
-    public Properties getRequired() {
-        return required;
-    }
-
-    public Properties getOptional() {
-        return optional;
+    public Properties getAdditional() {
+        return additional;
     }
 
     public String getMainTableName() {
@@ -76,10 +72,9 @@ public class DataMartDB {
         return targetDatabase;
     }
 
-    public DataMartDB( Setting.DBInfo dbInfo, Properties re, Properties op){
+    public DataMartDB( Setting.DBInfo dbInfo, Properties ad){
         this.dbInfo = dbInfo;
-        this.required = re;
-        this.optional = op;
+        this.additional = ad;
 
         testID = new FieldAttribute("testId",DataType.LONG,true);
         importTime = new FieldAttribute("importTime",DataType.DATETIME,false);

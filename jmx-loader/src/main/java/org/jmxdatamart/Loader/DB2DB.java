@@ -46,7 +46,7 @@ public class DB2DB {
      * @param folder
      */
     public DB2DB(Setting s, File folder){
-        dataMart = new DataMartDB(s.getTarget(),s.getRequired(),s.getOptional());
+        dataMart = new DataMartDB(s.getTarget(),s.getAdditional());
         sources = new SourceDB(s.getSource(), folder);
     }
 
@@ -149,8 +149,7 @@ public class DB2DB {
         }
 
         Properties merged = new Properties();
-        merged.putAll(dataMart.getRequired());
-        merged.putAll(dataMart.getOptional());
+        merged.putAll(dataMart.getAdditional());
         Enumeration keys = merged.keys();
         FieldAttribute field;
         while (keys.hasMoreElements()) {
@@ -178,8 +177,7 @@ public class DB2DB {
         StringBuilder questionMarkList = new StringBuilder("?,?,?");
 
         Properties merged = new Properties();
-        merged.putAll(dataMart.getRequired());
-        merged.putAll(dataMart.getOptional());
+        merged.putAll(dataMart.getAdditional());
         Enumeration keys = merged.keys();
         String column;
         while (keys.hasMoreElements()) {
