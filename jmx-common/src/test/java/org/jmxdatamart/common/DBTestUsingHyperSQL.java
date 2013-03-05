@@ -93,7 +93,7 @@ public class DBTestUsingHyperSQL {
         assertTrue(DBHandler.columnExists("autoid",tablename,conn));
         assertTrue(DBHandler.columnExists("testcol",tablename,conn));
 
-        Map<String,Map> s = DBHandler.getDatabaseSchema(conn,db.getTableSchem(),databaseType);
+        Map<String,Map> s = DBHandler.getDatabaseSchema(conn,db.getTableSchema(),databaseType);
         assertTrue(s.containsKey(tablename.toUpperCase()));
 
         Map<String,FieldAttribute> f = s.get(tablename.toUpperCase());
