@@ -29,16 +29,14 @@ package org.jmxdatamart.Extractor;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.management.MBeanServerConnection;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
-import javax.management.openmbean.CompositeData;
+import org.jmxdatamart.Extractor.MXBean.MultiLayeredAttribute;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
+ * This class is used to get values out of a single, non-patterned MBean
  * @author Binh Tran <mynameisbinh@gmail.com>
  */
 public class MBeanExtract {
@@ -52,29 +50,16 @@ public class MBeanExtract {
             on = new ObjectName(mbd.getName());
         } catch (MalformedObjectNameException ex) {
             logger.error("Error while trying to attach to " + mbd.getName(), ex);
-            System.exit(1);
+            throw new RuntimeException(ex);
         }
+        
+        MultiLayeredAttribute mla = new MultiLayeredAttribute(mbsc);
     
         Map<Attribute, Object> retVal = new HashMap<Attribute, Object>();
         
         for (Attribute a : mbd.getAttributes()) {
             try{
-                String aName = a.getName();
-                if (!aName.contains(".")) {
-                    retVal.put(a, mbsc.getAttribute(on, aName));
-                } else {
-                    String[] mxAttribute = aName.split("\\.");
-                    if (mxAttribute.length != 2) {
-                        logger.error("MXBean attribute malformed " + aName);
-			System.exit(1);
-                    }
-                    CompositeData cd = (CompositeData)mbsc.getAttribute(on, mxAttribute[0]);
-                    Object value = cd.get(mxAttribute[1]);
-                    if (value.getClass().getCanonicalName().equals(a.getDataType().getJavaType()))
-                    	retVal.put(a, value);
-                    else
-                    	logger.error("Error while extracting " + a.getAlias() + " from " + on + ": Mismatched data type\n");
-                }
+                retVal.putAll(mla.getAll(on, a));
             } catch (Exception ex) {
                 logger.error("Error while extracting " 
                                 + a.getName() + " from " 

@@ -98,7 +98,7 @@ public class RandomValueDynamicMBean implements DynamicMBean {
 			try {
 				attributesList.add(new Attribute(attributes[i], getAttribute((String) attributes[i])));
 			} catch (AttributeNotFoundException e) {
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(), e);
 			}
 	    }
 	    
@@ -128,7 +128,7 @@ public class RandomValueDynamicMBean implements DynamicMBean {
 	            Object value = getAttribute(name); 
 	            attributesList.add(new Attribute(name, value));
 	        } catch(Exception e) {
-	        	logger.error(e.getMessage());
+	        	logger.error(e.getMessage(), e);
 	        }
 	    }
 	    return attributesList;
@@ -161,7 +161,7 @@ public class RandomValueDynamicMBean implements DynamicMBean {
     			throw(new InvalidAttributeValueException("Cannot set attribute due to incorrect data type"));
     		return;
    		} catch (ClassNotFoundException e) {
-   			logger.error(e.getMessage());
+   			logger.error(e.getMessage(), e);
    		}
     	throw(new AttributeNotFoundException("Attribute not found"));
     }

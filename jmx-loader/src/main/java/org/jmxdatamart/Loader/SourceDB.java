@@ -27,51 +27,46 @@ package org.jmxdatamart.Loader;/*
  */
 
 import org.jmxdatamart.common.*;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
+
 import java.io.File;
-import java.sql.SQLException;
+import java.util.*;
 
+public class SourceDB {
+    private Set<String> databaseFiles;
+    private DBHandler sourceDatabase;
+    private Setting.DBInfo dbInfo;
 
-public class Main {
+    public DBHandler getSourceDatabase() {
+        return sourceDatabase;
+    }
+    public Setting.DBInfo getDbInfo() {
+        return dbInfo;
+    }
 
-    public static void main(String[] args){
-        Logger logger = LoggerFactory.getLogger(Main.class);
-        if (args.length!=2){
-            System.err.println("Must have two arguments.\nUsage: loader settingFile folderLocation");
-            System.exit(1);
-        }
+    public Set<String> getDatabaseFiles() {
+        return databaseFiles;
+    }
 
-        //String arg0 = "jmx-loader/src/main/java/org/jmxdatamart/Loader/loaderconfig.ini";
-        //String arg1 = "HyperSql/";
+    public SourceDB(Setting.DBInfo dbInfo, File folderLocation) {
+        this.dbInfo = dbInfo;
+        if (dbInfo.getDatabaseType().equals(DataType.SupportedDatabase.HSQL))
+            sourceDatabase = new HypersqlHandler();
+        else if (dbInfo.getDatabaseType().equals(DataType.SupportedDatabase.DERBY))
+            sourceDatabase = new DerbyHandler();
+        else
+            throw new RuntimeException("Doesn't support this source database type");
 
-        File properties = new File(args[0]);
-        if (!properties.isFile()){
-            System.err.println("Invalid file.");
-            System.exit(1);
-        }
-        File folder = new File(args[1]) ;
-        if (!folder.isDirectory()){
-            System.err.println("Invalid folder.");
-            System.exit(1);
-        }
-
-        Setting setting = new Setting(args[0]);
-        DB2DB d2d = new DB2DB(setting,folder);
-        try{
-            logger.info("\nLoadding data from " + args[1] + ".\n");
-            d2d.loadData();
-            logger.info("\nData are successfully imported to DataMart from " + args[1]);
-        }
-        catch (SQLException se){
-            logger.error("\nFail to import data from " + args[1] + ": \n" +se.getMessage(), se);
-        }
-        catch (DBException de){
-            logger.error("\nFail to import data from " + args[1], de);
+        databaseFiles = new TreeSet<String>();
+        String fileName, databaseName;
+        for (final File fileEntry : folderLocation.listFiles()) {
+            if (fileEntry.isFile()) {
+                fileName= fileEntry.getName();
+                databaseName = fileName.split("\\.")[0];
+                if (databaseName.trim().length()>0)
+                    if ((fileName.split("\\.").length==2) && fileName.split("\\.")[1].equalsIgnoreCase("script"))
+                        databaseFiles.add(folderLocation.getAbsolutePath()+"/"+databaseName);
+            }
         }
     }
 
-
 }
-
-
