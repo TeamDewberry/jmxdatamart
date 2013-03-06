@@ -73,12 +73,16 @@ public class MultiLayeredAttributeTest {
         Attribute attr = new Attribute("*", null, null);
         Map<Attribute, Object> result = mla.getAll(mbeanName, attr);
         
-        assertEquals(2, result.size());
+        assertEquals(4, result.size());
         for (Map.Entry<Attribute, Object> entry : result.entrySet()) {
             if (entry.getKey().getAlias().equals("A")) {
                 assertThat(entry.getValue().toString(), equalTo("42"));
             } else if (entry.getKey().getAlias().equals("B")){
                 assertThat(entry.getValue().toString(), equalTo("8"));
+            } else if (entry.getKey().getAlias().equals("BoolVar")){
+              assertThat(entry.getValue().toString(), equalTo("true"));
+            } else if (entry.getKey().getAlias().equals("DateVal")){
+              assertThat(entry.getValue().toString(), equalTo("Thu Dec 25 04:42:41 PST 1969"));
             } else {
                 fail("Unknown attribute " + entry.getKey());
             }
