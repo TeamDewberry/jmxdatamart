@@ -6,7 +6,7 @@ The CreateMBeans fixture creates a new MBean by invoking its zero-argument const
 
 !| create MBeans |
 | bean class | bean name |
-| org.jmxdatamart.CarMBean | org.jmxdatamart.fitnesse:type=CarMBean |
+| org.jmxdatamart.JMXTestServer.CarMBean | org.jmxdatamart.fitnesse:type=CarMBean |
 
 The ConfigureMBeans fixture sets attributes of MBeans
 
