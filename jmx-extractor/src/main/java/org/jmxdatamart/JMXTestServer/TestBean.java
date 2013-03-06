@@ -28,6 +28,7 @@
 
 package org.jmxdatamart.JMXTestServer;
 
+import java.util.Date;
 import java.util.Random;
 
 /**
@@ -39,10 +40,14 @@ public class TestBean implements TestBeanMBean{
     Integer a;
     Long b;
     Random prng;
+    boolean aBool;
+    Date aDate;
 
     public TestBean() {
         a = new Integer(0);
         prng = new Random();
+        aBool = true;
+        aDate = new Date(0xdeadbeef);
     }
     
     @Override
@@ -77,5 +82,25 @@ public class TestBean implements TestBeanMBean{
             b = (Long) obj;
         }
     }
+
+  @Override
+  public boolean getBoolVar() {
+    return this.aBool;
+  }
+
+  @Override
+  public void setBoolVar(boolean aBool) {
+    this.aBool = aBool;
+  }
+
+  @Override
+  public Date getDateVal() {
+    return this.aDate;
+  }
+
+  @Override
+  public void setDateVal(Date aDate) {
+    this.aDate = aDate;
+  }
 
 }

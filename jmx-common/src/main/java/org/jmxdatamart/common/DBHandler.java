@@ -178,7 +178,7 @@ public abstract class DBHandler {
 
         colName = columns.getString("COLUMN_NAME");
         typeId = columns.getInt("DATA_TYPE");
-        typeName = DataType.getCorrespondDataTypeByID(typeId);
+        typeName = DataType.findCorrespondDataTypeByID(typeId);
 
         FieldAttribute fieldinfo = new FieldAttribute(colName, typeName, false);
         fields.put(colName.toUpperCase(), fieldinfo);

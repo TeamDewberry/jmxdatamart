@@ -27,8 +27,6 @@
  */
 package org.jmxdatamart.common;
 
-import java.sql.*;
-
 /**
  * Supported data types
  * @author Binh Tran <mynameisbinh@gmail.com>
@@ -37,7 +35,7 @@ public enum DataType {
     BYTE    // 8 bit integer
             (
                     java.lang.Byte.class,
-                    Types.SMALLINT,
+                    java.sql.Types.SMALLINT,
                     "SMALLINT", // 8bit data type in T-SQL is only 0-255
                     "SMALLINT", // Derby doesnt support 1Byte
                     "TINYINT" // -127 to 128 like Java
@@ -46,7 +44,7 @@ public enum DataType {
     SHORT   // 16 bit integer
             (
                     java.lang.Short.class,
-                    Types.SMALLINT,
+                    java.sql.Types.SMALLINT,
                     "SMALLINT",
                     "SMALLINT",
                     "SMALLINT"
@@ -55,7 +53,7 @@ public enum DataType {
     INT     // 32 bit integer
             (
                     java.lang.Integer.class,
-                    Types.INTEGER,
+                    java.sql.Types.INTEGER,
                     "INT",
                     "INT",
                     "INTEGER"
@@ -64,7 +62,7 @@ public enum DataType {
     LONG    // 64 bit integer
             (
                     java.lang.Long.class,
-                    Types.BIGINT,
+                    java.sql.Types.BIGINT,
                     "BIGINT",
                     "BIGINT",
                     "BIGINT"
@@ -73,7 +71,7 @@ public enum DataType {
     FLOAT   // 32 bit single precision
             (
                     java.lang.Float.class,
-                    Types.FLOAT,
+                    java.sql.Types.FLOAT,
                     "REAL", //T-SQL does not conform to standards but this is close 4Bytes
                     "REAL", //Derby has different limits than Java 4Bytes
                     "DOUBLE" //"REAL, FLOAT and DOUBLE values are all stored in the database as java.lang.Double objects"
@@ -82,7 +80,7 @@ public enum DataType {
     DOUBLE  // 64 bit double precision
             (
                     java.lang.Double.class,
-                    Types.DOUBLE,
+                    java.sql.Types.DOUBLE,
                     "FLOAT(53)", //T-SQL does not conform to standards but this is close 8Bytes
                     "DOUBLE",  //Derby limits are different than Java 8Bytes
                     "DOUBLE"
@@ -91,7 +89,7 @@ public enum DataType {
     BOOLEAN   // boolean variable
             (
                     java.lang.Boolean.class,
-                    Types.BOOLEAN,
+                    java.sql.Types.BOOLEAN,
                     "BIT",
                     "BOOLEAN",
                     "BOOLEAN"
@@ -100,7 +98,7 @@ public enum DataType {
     CHAR    // 16 bit UFT-8 character
             (
                     java.lang.Character.class,
-                    Types.CHAR,
+                    java.sql.Types.CHAR,
                     "NCHAR(1)",
                     "CHAR(1)",
                     "CHAR(1)"
@@ -109,33 +107,27 @@ public enum DataType {
     STRING  // unlimited-length character sequence type
             (
                     java.lang.String.class,
-                    Types.VARCHAR,
+                    java.sql.Types.VARCHAR,
                     "NVARCHAR(MAX)",
                     "VARCHAR (32672)", // Derby max is Integer.Max_Value, not padded
                     "LONGVARCHAR"
             ),
     DATETIME(   // date type
                 java.util.Date.class,
-                Types.TIMESTAMP,
+                java.sql.Types.TIMESTAMP,
                 "datetime",
                 "timestamp",
                 "timestamp"
             )
             {
                 @Override
-                public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) throws SQLException {
-                    Timestamp ts;
-                    if (Timestamp.class.equals(value.getClass())) {
-                      ts = (Timestamp) value;
-                    } else if (java.lang.Long.class.isAssignableFrom(value.getClass())){
-                      ts = new Timestamp((Long)value);
-                    } else if (java.util.Date.class.isAssignableFrom(value.getClass())) {
-                      ts = new Timestamp(((Date)value).getTime());
-                    } else {
-                      throw new SQLException("Timestamp doesn't support " + value);
-                    }
+                public void addToSqlPreparedStatement(java.sql.PreparedStatement ps, int index, Object value) throws java.sql.SQLException {
+                  if (java.util.Date.class.isAssignableFrom(value.getClass())) {
+                    java.util.Date d = (java.util.Date)value;
+                    java.sql.Timestamp ts = new java.sql.Timestamp(d.getTime());
                     ps.setTimestamp(index, ts);
-                }
+                  }
+                  }
             },
     UNKNOWN(    // internal error type.
             null,
@@ -146,7 +138,7 @@ public enum DataType {
     )
             {
                 @Override
-                public void addToSqlPreparedStatement(PreparedStatement ps, int index, Object value) {
+                public void addToSqlPreparedStatement(java.sql.PreparedStatement ps, int index, Object value) {
                     throw new UnsupportedOperationException("Type UNKNOWN doesn't support this operation");
                 }
                 @Override
@@ -216,15 +208,27 @@ public enum DataType {
       }
     }
 
-    /**
-     * Get the Datatype with a given JDBC type id.
-     * Used in Loader.
-     * @param currentTypeID is a JDBC data type ID.
-     * @return the dataType that corresponds to the given type id
-     */
-    public static DataType getCorrespondDataTypeByID(int currentTypeID ) {
+    public Object getType(String type){
+        if (type.equalsIgnoreCase("sqlserver")){
+            return getMssqlType();
+        }
+        else if (type.equalsIgnoreCase("hsqldb")){
+            return getHsqlType();
+        }
+        else if (type.equalsIgnoreCase("derbydb")){
+            return getDerbyType();
+        }
+        else if (type.equalsIgnoreCase("id")){
+            return getJdbcTypeID();
+        }
+        else{
+            return getJavaType();
+        }
+    }
+
+    public static DataType findCorrespondDataTypeByID(int currentTypeID ) {
         for (DataType type:DataType.values()) {
-            if ((type.getType(SupportedDatabase.JDBCID)).equals(Integer.valueOf(currentTypeID))){
+            if ((type.getType("id")).equals(Integer.valueOf(currentTypeID))){
                 return type;
             }
         }
@@ -264,9 +268,9 @@ public enum DataType {
     }
     
     public void addToSqlPreparedStatement(
-            PreparedStatement ps,
+            java.sql.PreparedStatement ps,
             int index,
-            Object value) throws SQLException
+            Object value) throws java.sql.SQLException
     {
       ps.setObject(index, value, jdbcTypeID);
     }
