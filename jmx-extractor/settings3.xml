@@ -1,0 +1,28 @@
+<Settings>
+  <pollingRate>-1</pollingRate>
+  <folderLocation>extracted\\</folderLocation>
+  <BeanList>
+    <Bean>
+      <name>org.jmxdatamart:name=CarBean</name>
+      <alias>Applesauce</alias>
+      <AttributeList>
+        <Attribute>
+          <name>Car.*</name>
+        </Attribute>
+        <Attribute>
+          <name>Map.*.*</name>
+        </Attribute>
+      </AttributeList>
+      <enable>true</enable>
+    </Bean>
+    <Bean>
+      <name>*.JMXTestServer:name=TestBean?</name>
+      <AttributeList>
+        <Attribute>
+          <name>*</name>
+        </Attribute>
+      </AttributeList>
+      <enable>true</enable>
+    </Bean>
+  </BeanList>
+</Settings>

@@ -67,10 +67,18 @@ public class MBeanExtractTest {
                                         Collections.singletonList(a), true);
         
         //Init MBeanExtract
-        Map result = MBeanExtract.extract(mbd, mbs);
+        Map<Attribute, Object> result = MBeanExtract.extract(mbd, mbs);
         assertEquals(1, result.size());
-        assertTrue(result.keySet().contains(a));
-        assertEquals(expected, result.get(a));
+        
+        Attribute found = null;
+        for (Map.Entry<Attribute, Object> entry : result.entrySet()) {
+          if (entry.getKey().getAlias().equals("Alpha")){
+            found = entry.getKey();
+            break;
+          }
+        }
+        assertNotNull(found);
+        assertEquals(expected, result.get(found));
         // TODO review the generated test code and remove the default call to fail.
         //fail("The test case is a prototype.");
         

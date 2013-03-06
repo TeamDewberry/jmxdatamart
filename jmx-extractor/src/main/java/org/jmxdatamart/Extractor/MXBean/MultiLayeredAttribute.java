@@ -4,22 +4,13 @@
  */
 package org.jmxdatamart.Extractor.MXBean;
 
+import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import javax.management.AttributeNotFoundException;
-import javax.management.InstanceNotFoundException;
-import javax.management.IntrospectionException;
 import javax.management.MBeanAttributeInfo;
-import javax.management.MBeanException;
-import javax.management.MBeanServer;
+import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
-import javax.management.ReflectionException;
 import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.TabularData;
 import org.jmxdatamart.Extractor.Attribute;
@@ -34,15 +25,15 @@ public class MultiLayeredAttribute {
 
   private List<String> layers;
   private MXNameParser mxnp;
-  private MBeanServer mbs;
+  private MBeanServerConnection mbsc;
   private ObjectName baseMbean;
   private Attribute attribute;
   private String alias;
   private final org.slf4j.Logger logger = LoggerFactory.getLogger(MultiLayeredAttribute.class);
 
-  public MultiLayeredAttribute(MBeanServer mbs) {
+  public MultiLayeredAttribute(MBeanServerConnection mbs) {
     mxnp = new MXNameParser();
-    this.mbs = mbs;
+    this.mbsc = mbs;
   }
 
   public Map<Attribute, Object> getAll(ObjectName baseMbean, Attribute attr) {
@@ -56,19 +47,19 @@ public class MultiLayeredAttribute {
     parseName(this.attribute.getName());
     Map<Attribute, Object> resultSoFar = new HashMap<Attribute, Object>();
     try {
-      for (MBeanAttributeInfo mbai : mbs.getMBeanInfo(this.baseMbean).getAttributes()) {
+      for (MBeanAttributeInfo mbai : mbsc.getMBeanInfo(this.baseMbean).getAttributes()) {
         if (mbai.getName().matches(layers.get(0))) {
           try {
             getAllHelper(
                     1,
                     layers.size(),
-                    mbs.getAttribute(this.baseMbean, mbai.getName()),
+                    mbsc.getAttribute(this.baseMbean, mbai.getName()),
                     mbai.getName() + ".",
                     resultSoFar);
           } catch (Exception ex) {
-            logger.error("Error while trying to access " +
-                    this.baseMbean.getCanonicalName() + " at " +
-                    mbai.getName(), ex);
+            logger.error("Error while trying to access "
+                    + this.baseMbean.getCanonicalName() + " at "
+                    + mbai.getName(), ex);
           }
         }
       }
@@ -80,7 +71,7 @@ public class MultiLayeredAttribute {
 
   private DataType getSupportedDataType(Object obj) {
     for (DataType dt : DataType.values()) {
-      if (dt.supportTypeOf(obj)) {
+      if (dt.supportsTypeOf(obj)) {
         return dt;
       }
     }
@@ -99,18 +90,31 @@ public class MultiLayeredAttribute {
     } else if (currDepth == total) {
       DataType dt = getSupportedDataType(curr);
       if (dt == null) {
-        logger.error("Doesn't support type " + curr.getClass()
-                + " from " + currName);
-        return;
+        if (curr.getClass().isArray()) {
+          int len = Array.getLength(curr);
+          if (len > 0) {
+            StringBuilder sb = new StringBuilder(enclose(Array.get(curr, 0)));
+            for (int i = 1; i < len; ++i) {
+              sb.append(',').append(enclose(Array.get(curr, i)));
+            }
+            soFar.put(
+                    new Attribute(
+                      null,
+                      this.alias == null ? name2alias(currName) : this.alias,
+                      DataType.STRING),
+                    sb.toString());
+          }
+        } else {
+          logger.error("Doesn't support type " + curr.getClass()
+                  + " from " + currName);
+          return;
+        }
       } else {
         soFar.put(
                 new Attribute(
                   null,
-                    this.alias == null ?
-                  name2alias(currName):
-                  this.alias,
-                  dt
-                ),
+                  this.alias == null ? name2alias(currName) : this.alias,
+                  dt),
                 curr);
       }
     } else {
@@ -148,9 +152,24 @@ public class MultiLayeredAttribute {
             }
           }
         }
+      } else if (curr.getClass().isArray()) {
+        int index;
+        try {
+          index = Integer.valueOf(layers.get(currDepth));
+        } catch (NumberFormatException ex) {
+          logger.error("Array type found at " + currName + " with non-interger index");
+          return;
+        }
+        getAllHelper(
+                currDepth + 1,
+                total,
+                Array.get(curr, index),
+                currName + layers.get(currDepth) + ".",
+                soFar);
       } else {
         logger.error("Doesn't support type " + curr.getClass()
                 + " amid the MXBeanChain at " + currName.toString());
+        return;
       }
     }
   }
@@ -159,7 +178,7 @@ public class MultiLayeredAttribute {
     return name.contains("?") || name.contains("*");
   }
 
-  private String name2alias(CharSequence name) {
+  public static String name2alias(CharSequence name) {
     StringBuilder sb = new StringBuilder(name.length());
     for (int i = 0; i < name.length(); ++i) {
       if (Character.isLetterOrDigit(name.charAt(i))) {
@@ -201,5 +220,11 @@ public class MultiLayeredAttribute {
         layers.set(i, sb.toString());
       }
     }
+  }
+
+  private StringBuilder enclose(Object obj) {
+    StringBuilder sb = new StringBuilder("\"");
+    sb.append(obj).append("\"");
+    return sb;
   }
 }

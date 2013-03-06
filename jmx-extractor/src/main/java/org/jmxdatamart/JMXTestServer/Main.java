@@ -30,8 +30,6 @@ package org.jmxdatamart.JMXTestServer;
 import java.lang.management.ManagementFactory;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-import java.io.FileWriter;
-import org.jmxdatamart.Extractor.*;
 
 /**
  *
@@ -44,28 +42,33 @@ public class Main {
      */
     public static void main(String[] args) throws Exception {
 
-        TestBean tb = new TestBean();
+        TestBean tb1 = new TestBean();
+        tb1.setA(new Integer(42));
+        tb1.setB(new Integer(-1));
+        ObjectName tbName1 = new ObjectName("com.personal.JMXTestServer:name=TestBean1");
+        
+        TestBean tb2 = new TestBean();
+        tb2.setA(new Integer(55));
+        tb2.setB(new Integer(-99));
+        ObjectName tbName2 = new ObjectName("com.personal.JMXTestServer:name=TestBean2");
+        
+        CarBean cb = new CarBean();
+        ObjectName cbName = new ObjectName("org.jmxdatamart:name=CarBean");
+        
         MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
-        ObjectName mbeanName = new ObjectName("com.personal.JMXTestServer:type=TestBean");
-        mbs.registerMBean(tb, mbeanName);
-
-        FileWriter writer = new FileWriter(System.getProperty("user.dir") + "/JMXTestServer.txt");
-        writer.write("Start exporting on " + new java.util.Date()+"\n");
-        try {
-            while (true) {
-                tb.randomize();
-                System.out.println(tb.toString());
-                writer.write(tb.toString()+"\n");
-                writer.flush();
-                Thread.sleep(2000);
-            }
+        mbs.registerMBean(tb1, tbName1);
+        mbs.registerMBean(cb, cbName);
+        mbs.registerMBean(tb2, tbName2);
+        
+        if (args.length == 0) {
+          System.out.println("Press Enter to terminate...");
+          System.in.read();
+        } else {  // a random argument will cause it to pause for 10s only
+          Thread.sleep(10000);
         }
-        catch (Exception e){
-            System.err.println(e.getStackTrace());
-            System.exit(1);
-        }
-        finally {
-            writer.close();
-        }
+        
+        mbs.unregisterMBean(tbName1);
+        mbs.unregisterMBean(tbName2);
+        mbs.unregisterMBean(cbName);
     }
 }

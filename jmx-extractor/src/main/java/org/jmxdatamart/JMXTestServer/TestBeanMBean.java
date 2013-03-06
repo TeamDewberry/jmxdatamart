@@ -33,6 +33,8 @@
  */
 package org.jmxdatamart.JMXTestServer;
 
+import java.util.Date;
+
 /**
  * Interface TestBeanMBean
  *
@@ -47,4 +49,10 @@ public interface TestBeanMBean {
     Object getB();
     
     void setB(Object obj);
+    
+    boolean getBoolVar();
+    void setBoolVar(boolean aBool);
+    
+    Date getDateVal();
+    void setDateVal(Date aDate);
 }

@@ -28,6 +28,8 @@
 
 package org.jmxdatamart.common;
 
+import org.slf4j.LoggerFactory;
+
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -39,75 +41,40 @@ import java.util.Properties;
  * To change this template use File | Settings | File Templates.
  */
 public class MssqlHandler extends DBHandler {
+    private final org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
     private final String driver = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
     private String jdbcurl ;
-    private final String timeType = "datetime";
-
-    public String getTimeType() {
-        return timeType;
+    private final String tableSchem = "dbo";
+    public String getJdbcurl() {
+        return jdbcurl;
+    }
+    public void setJdbcurl(String jdbcurl) {
+        this.jdbcurl = jdbcurl;
+    }
+    @Override
+    public String getTableSchema() {
+        return tableSchem;
     }
 
-    public boolean connectServer( Properties p) throws SQLException{
+    @Override
+    public boolean connectServer( Properties p){
         try {
             Class.forName(this.driver);
             DriverManager.getConnection(this.jdbcurl, p);
         }
         catch (ClassNotFoundException ce){
+            logger.error("Can't connect to the server. Check JDBC driver.", ce);
+            return false;
+        }
+        catch (SQLException se){
+            logger.error("Can't connect to the server. Check username/password and connection", se);
             return false;
         }
         return true;
     }
 
-    public Map<String, Map> getDatabaseSchema(Connection conn) throws SQLException{
-
-
-        Map<String, Map> databaseSchema =  new HashMap<String,Map>();
-
-        String[] names = { "TABLE"};
-        ResultSet tables = conn.getMetaData().getTables(null, null, null, names), columns =null;
-
-        while( tables.next())
-        {
-            String tab = tables.getString( "TABLE_NAME");
-            String schem = tables.getString("table_schem");
-            if (!schem.equalsIgnoreCase("dbo")) continue;
-            //System.out.println(tab);
-            columns = conn.getMetaData().getColumns(null, null, tab.toUpperCase(), null);
-            Map<String, FieldAttribute> fields = new HashMap<String, FieldAttribute>();
-            while (columns.next()){
-                String col = columns.getString("COLUMN_NAME");
-                String typename = columns.getString("TYPE_NAME");
-                int type = columns.getInt("DATA_TYPE");
-                int size = columns.getInt("COLUMN_SIZE") ;
-                DataType myType ;
-                switch (type){
-                    case Types.VARCHAR:
-                        myType = DataType.STRING;
-                        break;
-                    case Types.INTEGER:
-                        myType = DataType.INT;
-                        break;
-                    case Types.FLOAT:
-                    case Types.DOUBLE:
-                        myType = DataType.FLOAT;
-                        break;
-                    default:
-                        myType = DataType.STRING;
-                        break;
-                }
-                FieldAttribute fieldinfo = new FieldAttribute(myType,typename,size);
-                fields.put(col,fieldinfo);
-            }
-            databaseSchema.put(tab,fields);
-        }
-
-        if (columns!=null) columns.close();
-        if (tables!=null) tables.close();
-
-        return databaseSchema;
-
-    }
-    public Connection connectDatabase(String databasename, Properties p) throws SQLException {
+    @Override
+    public Connection connectDatabase(String databasename, Properties p){
         Connection conn =null;
         PreparedStatement ps = null;
         ResultSet rs =  null;
@@ -121,23 +88,27 @@ public class MssqlHandler extends DBHandler {
             rs = ps.executeQuery();
             if (rs.next() && rs.getInt(1)==0){
                 sql = "CREATE DATABASE " + databasename;
-
-                conn.createStatement().executeUpdate(sql);
+                ps = conn.prepareStatement(sql);
+                ps.executeUpdate();
             }
             return DriverManager.getConnection(this.jdbcurl+";database="+databasename, p);
         }
         catch (ClassNotFoundException ce){
-            return null;
+            logger.error("Can't loader the JDBC driver." + ce.getMessage(), ce);
+            throw new RuntimeException(ce);
+        }
+        catch (SQLException se){
+            logger.error(se.getMessage(), se);
+            throw new RuntimeException(se);
         }
         finally {
-            if (rs!=null) rs.close();
-            if (ps!=null) ps.close();
+            DBHandler.releaseDatabaseResource(rs,null,ps,null);
         }
     }
 
 
-
-    public boolean databaseExists(String databaseName,Properties p) throws SQLException{
+    @Override
+    public boolean databaseExists(String databaseName,Properties p){
         Connection conn =null;
         PreparedStatement ps = null;
         ResultSet rs =  null;
@@ -151,19 +122,16 @@ public class MssqlHandler extends DBHandler {
             return (rs.next() && rs.getInt(1)==1);
         }
         catch (ClassNotFoundException ce){
+            logger.error("Can't loader the JDBC driver", ce);
             return false;
         }
         catch (SQLException e){
             return false;
         }
         finally {
-            if (ps != null) {ps.close();}
-            if (rs != null) {rs.close();}
-            if (conn != null) {conn.close();}
+            DBHandler.releaseDatabaseResource(rs,null,ps,conn);
         }
     }
 
-    public void setJdbcurl(String jdbcurl) {
-        this.jdbcurl = jdbcurl;
-    }
+
 }
