@@ -66,6 +66,15 @@ public class Bean2DB {
     return tablename.replaceAll("___", "=").replaceAll("__", ":").replaceAll("_", "\\.");
   }
 
+  /**
+   * This function creates new tables for beans that appears the first time, and
+   * create columns for attributes that appears the first time
+   * @param conn
+   * @param tableName
+   * @param result
+   * @throws SQLException
+   * @throws DBException 
+   */
   private void dealWithDynamicBean(Connection conn, String tableName, Map<Attribute, Object> result) throws SQLException, DBException {
     if (!DBHandler.tableExists(tableName, conn)) {
       HypersqlHandler.addTable(

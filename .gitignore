@@ -15,6 +15,3 @@
 # Maven build artifacts should not be committed #
 target
 */target
-
-#output files
-*Extractor*
