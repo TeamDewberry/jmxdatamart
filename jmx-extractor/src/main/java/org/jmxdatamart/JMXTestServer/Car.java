@@ -32,32 +32,48 @@ package org.jmxdatamart.JMXTestServer;
  * @author Binh Tran <mynameisbinh@gmail.com>
  */
 public class Car {
-    private String name;
-    private String year;
-    private int engine;
-    private int power;
 
-    public Car(String name, String year, int engine, int power) {
-        this.name = name;
-        this.year = year;
-        this.engine = engine;
-        this.power = power;
-    }
+  private String name;
+  private String year;
+  private int engine;
+  private int power;
 
-    public String getName() {
-        return name;
-    }
+  public Car(String name, String year, int engine, int power) {
+    this.name = name;
+    this.year = year;
+    this.engine = engine;
+    this.power = power;
+  }
 
-    public String getYear() {
-        return year;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public int getEngine() {
-        return engine;
-    }
+  public String getYear() {
+    return year;
+  }
 
-    public int getPower() {
-        return power;
-    }
-    
+  public int getEngine() {
+    return engine;
+  }
+
+  public int getPower() {
+    return power;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public void setYear(String year) {
+    this.year = year;
+  }
+
+  public void setEngine(int engine) {
+    this.engine = engine;
+  }
+
+  public void setPower(int power) {
+    this.power = power;
+  }
 }

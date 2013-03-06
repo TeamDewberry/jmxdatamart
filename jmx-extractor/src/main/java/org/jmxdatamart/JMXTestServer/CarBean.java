@@ -58,14 +58,26 @@ public class CarBean implements CarMXBean{
   public int[] getIntList() {
     return intArr;
   }
+  
+  public void setIntList(int index, int value) {
+    intArr[index] = value;
+  }
 
   @Override
   public String[] getStrList() {
     return strArr;
   }
+  
+  public void setStrList(int index, String value) {
+    strArr[index] = value;
+  }
 
   @Override
   public Car[] getCarList() {
     return cars;
+  }
+  
+  public void setCarList(int index, String name, String year, int engine, int power) {
+    cars[index] = new Car(name, year, engine, power);
   }
 }
