@@ -151,23 +151,6 @@ public class Settings {
         xstream.alias("Attribute", Attribute.class);
     }
     
-    /**
-     * Check if the setting is well formatted.
-     * @return true if setting is well formatted, false if not
-     * @throws MalformedObjectNameException if a MBean name in setting is malformated
-     */
-    // Task 3041
-	/*
-    public boolean checkForValidAlias() throws MalformedObjectNameException {
-        for (MBeanData mbd : this.beans) {
-            if (!mbd.checkForValidAlias()) {
-                return false;
-            }
-            mbd.isPattern();
-        }
-        return true;
-    }
-    */
     public String toXML() {
         XStream xstream = new XStream(new DomDriver());
         xstream.aliasField("BeanList", Settings.class, "beans");
