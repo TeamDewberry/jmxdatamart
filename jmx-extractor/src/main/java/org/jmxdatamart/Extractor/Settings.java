@@ -33,7 +33,6 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 import org.jmxdatamart.common.DataType;
 import java.io.*;
 import java.util.*;
-import javax.management.MalformedObjectNameException;
 import org.slf4j.LoggerFactory;
 
 

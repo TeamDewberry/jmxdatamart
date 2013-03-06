@@ -1,0 +1,27 @@
+!contents
+
+There are a couple of FitNesse fixtures that manipulate MBeans.  These tests test those fixtures.
+
+The CreateMBeans fixture creates a new MBean by invoking its zero-argument constructor and registers the MBean with the given name
+
+!| create MBeans |
+| bean class | bean name |
+| org.jmxdatamart.CarMBean | org.jmxdatamart.fitnesse:type=CarMBean |
+
+The ConfigureMBeans fixture sets attributes of MBeans
+
+!| configure MBeans |
+| bean name | attribute | value |
+| org.jmxdatamart.fitnesse:type=CarMBean | NAME | 2014 Chevy Corvette Stingray |
+| org.jmxdatamart.fitnesse:type=CarMBean | YEAR | 2013 Detroit auto show |
+| org.jmxdatamart.fitnesse:type=CarMBean | ENGINE | 8 |
+| org.jmxdatamart.fitnesse:type=CarMBean | POWER | 450 |
+
+The ValidateMBeans fixture tests to make sure that MBeans have the expected values
+
+!| validate MBeans |
+| bean name | attribute | value? |
+| org.jmxdatamart.fitnesse:type=CarMBean | NAME | 2014 Chevy Corvette Stingray |
+| org.jmxdatamart.fitnesse:type=CarMBean | YEAR | 2013 Detroit auto show |
+| org.jmxdatamart.fitnesse:type=CarMBean | ENGINE | 8 |
+| org.jmxdatamart.fitnesse:type=CarMBean | POWER | 450 |
