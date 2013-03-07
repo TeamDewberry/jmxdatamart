@@ -53,9 +53,9 @@ public class Main {
 
     if (args.length != 1) {
       System.out.println("Program need only 1 argument to the setting file");
-      return;
+      //return;
     }
-
+    args = new String[] {"settings3.xml"};
     Settings s = Settings.fromXML(
             new FileInputStream(args[0]));
 
@@ -75,12 +75,8 @@ public class Main {
       return;
     }
 
-    System.out.println("Ctrl-C to cancel the extracting process...");
-
-    while (true) {
-      Thread.sleep(10000);
-    }
-
+    System.out.println("Enter to stop the extract...");
+    System.in.read();
 
   }
 

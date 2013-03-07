@@ -1,5 +1,5 @@
 <Settings>
-  <pollingRate>-1</pollingRate>
+  <pollingRate>200</pollingRate>
   <folderLocation>extracted\\</folderLocation>
   <BeanList>
     <Bean>

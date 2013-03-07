@@ -2,11 +2,14 @@
 
 There are a couple of FitNesse fixtures that manipulate MBeans.  These tests test those fixtures.
 
+| Import |
+| org.jmxdatamart.fixtures |
+
 The CreateMBeans fixture creates a new MBean by invoking its zero-argument constructor and registers the MBean with the given name
 
 !| create MBeans |
 | bean class | bean name |
-| org.jmxdatamart.JMXTestServer.CarMBean | org.jmxdatamart.fitnesse:type=CarMBean |
+| org.jmxdatamart.CarMBean | org.jmxdatamart.fitnesse:type=CarMBean |
 
 The ConfigureMBeans fixture sets attributes of MBeans
 
