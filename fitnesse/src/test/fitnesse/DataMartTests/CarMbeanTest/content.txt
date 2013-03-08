@@ -22,6 +22,9 @@ The ConfigureMBeans fixture sets attributes of MBeans
 
 The ValidateMBeans fixture tests to make sure that MBeans have the expected values
 
+|Extract And Load Everything|
+|extract Using Settings|settings2.xml|
+
 !| validate MBeans |
 | bean name | attribute | value? |
 | org.jmxdatamart.fitnesse:type=CarMBean | NAME | 2014 Chevy Corvette Stingray |

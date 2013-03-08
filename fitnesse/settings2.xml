@@ -1,0 +1,15 @@
+<Settings>
+  <pollingRate>-1</pollingRate>
+  <folderLocation>extracted\\</folderLocation>
+  <BeanList>
+    <Bean>
+      <name>org.jmxdatamart.fitnesse:type=CarMBean</name>
+      <AttributeList>
+        <Attribute>
+          <name>*</name>
+        </Attribute>
+      </AttributeList>
+      <enable>true</enable>
+    </Bean>
+  </BeanList>
+</Settings>

@@ -70,7 +70,7 @@ public class Bean2DB {
    */
   public void export2DB(Connection conn, MBeanData mbd, Map<Attribute, Object> result) throws SQLException, DBException {
 
-    String tablename = convertIllegalTableName(mbd.getAlias());
+    String tablename = mbd.getAlias() == null ? convertIllegalTableName(mbd.getName()) : mbd.getAlias();
     //deal with dynamic bean
     dealWithDynamicBean(conn, tablename, result);
 

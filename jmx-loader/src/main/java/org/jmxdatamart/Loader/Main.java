@@ -1,4 +1,5 @@
-package org.jmxdatamart.Loader;/*
+package org.jmxdatamart.Loader;
+/*
  * Copyright (c) 2013, Tripwire, Inc.
  * All rights reserved.
  *
