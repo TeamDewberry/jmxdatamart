@@ -9,6 +9,8 @@ import java.util.Map;
  */
 public class CarBean implements CarMXBean{
     private Car dream;
+    private int index;
+    private Car tempCar;
     
     public static final String NAME = "2014 Chevy Corvette Stingray";
     public static final String YEAR = "2013 Detroit auto show";
@@ -19,6 +21,7 @@ public class CarBean implements CarMXBean{
     
     public static final int[] intArr = {1,2,3,5,8,13,21};
     public static final String[] strArr = new String[intArr.length];
+    public static final String[] strArr2 = new String[50];
     
     public CarBean() {
         dream = new Car(NAME , YEAR, ENGINE, POWER);
@@ -75,6 +78,35 @@ public class CarBean implements CarMXBean{
   @Override
   public Car[] getCarList() {
     return cars;
+  }
+  
+  public void setIndex(int index){
+      this.index = index;
+  }
+  
+  public void setStrArr(String s){
+      strArr2[index] = s;
+  }
+  
+  public void setCar(Car car){
+      tempCar = car;
+  }
+  
+  public void setCarName(String name){
+      tempCar.setName(name);
+  }
+  
+  public void setCarYear(String year){
+      tempCar.setYear(year);
+  }
+  
+  public void setCarEngine(int eng){
+      tempCar.setEngine(eng);
+      
+  }
+  
+  public void setCarPower(int pow){
+      tempCar.setPower(pow);
   }
   
   public void setCarList(int index, String name, String year, int engine, int power) {
