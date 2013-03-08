@@ -53,9 +53,13 @@ public class Main {
 
     if (args.length != 1) {
       System.out.println("Program need only 1 argument to the setting file");
-      //return;
+      if (!demo){
+        //return;
+      }
     }
-    args = new String[] {"settings3.xml"};
+    if (demo) {
+      args = new String[] {"settings1.xml"};
+    }
     Settings s = Settings.fromXML(
             new FileInputStream(args[0]));
 
