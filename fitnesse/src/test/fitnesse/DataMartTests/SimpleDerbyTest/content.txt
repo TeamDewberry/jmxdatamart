@@ -6,7 +6,7 @@ This tests uses fitnesse "flow mode" so the first fixture must be a !-DoFixture-
 
 Connect to the database
 
-!|Connect|${derby.url};user=${derby.username};password=${derby.username}|
+!|Connect|jdbc:derby:${derby.url};user=${derby.username};password=${derby.username}|
 
 Make sure that the table that we expect to be there is actually in the database.
 

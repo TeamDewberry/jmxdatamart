@@ -4,6 +4,7 @@
   <BeanList>
     <Bean>
       <name>org.jmxdatamart.fitnesse:type=CarMBean</name>
+      <alias>CarMBean</alias>
       <AttributeList>
         <Attribute>
           <name>*</name>
