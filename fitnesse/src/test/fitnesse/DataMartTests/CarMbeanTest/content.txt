@@ -1,4 +1,4 @@
-!contents -R2 -g -p -f -h
+!contents
 
 There are a couple of FitNesse fixtures that manipulate MBeans.  These tests test those fixtures.
 
@@ -9,27 +9,16 @@ The CreateMBeans fixture creates a new MBean by invoking its zero-argument const
 
 !| create MBeans |
 | bean class | bean name |
-| org.jmxdatamart.CarMBean | org.jmxdatamart.fitnesse:type=CarMBean |
+| org.jmxdatamart.SimpleMBean | org.jmxdatamart.fitnesse:type=SimpleMBean,forTest=CarMBean |
 
 The ConfigureMBeans fixture sets attributes of MBeans
 
 !| configure MBeans |
 | bean name | attribute | value |
-| org.jmxdatamart.fitnesse:type=CarMBean | NAME | 2014 Chevy Corvette Stingray |
-| org.jmxdatamart.fitnesse:type=CarMBean | YEAR | 2013 Detroit auto show |
-| org.jmxdatamart.fitnesse:type=CarMBean | ENGINE | 8 |
-| org.jmxdatamart.fitnesse:type=CarMBean | POWER | 450 |
+| org.jmxdatamart.fitnesse:type=SimpleMBean,forTest=CarMBean | IntAttribute | 42 |
 
 The ValidateMBeans fixture tests to make sure that MBeans have the expected values
 
 |Extract And Load Everything|
 |Extract Using Settings|settings2.xml|
 |Load With Settings| loaderConfig.ini | From | extracted\ | URL | ${derby.url} | User Name | ${derby.username} | Password | ${derby.username}|
-
-!|dbfit.DerbyTest|
-
-!|Connect|jdbc:derby:${derby.url};user=${derby.username};password=${derby.username}|
-
-!|Query|SELECT POWER,YEAR,ENGINE,NAME FROM CARMBEAN|
-|POWER|YEAR|ENGINE|NAME|
-|450|2013 Detroit auto show|8|2014 Chevy Covette Stingray|

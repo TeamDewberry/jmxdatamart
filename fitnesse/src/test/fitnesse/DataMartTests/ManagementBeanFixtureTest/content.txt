@@ -18,6 +18,7 @@ The ConfigureMBeans fixture sets attributes of MBeans
 | org.jmxdatamart.fitnesse:type=SimpleMBean | StringAttribute | Hello |
 | org.jmxdatamart.fitnesse:type=SimpleMBean | IntAttribute | 4 |
 | org.jmxdatamart.fitnesse:type=SimpleMBean | LongAttribute | 10000 |
+| org.jmxdatamart.fitnesse:type=SimpleMBean | A | 30 |
 
 The ValidateMBeans fixture tests to make sure that MBeans have the expected values
 
@@ -26,3 +27,4 @@ The ValidateMBeans fixture tests to make sure that MBeans have the expected valu
 | org.jmxdatamart.fitnesse:type=SimpleMBean | StringAttribute | Hello |
 | org.jmxdatamart.fitnesse:type=SimpleMBean | IntAttribute | 4 |
 | org.jmxdatamart.fitnesse:type=SimpleMBean | LongAttribute | 10000 |
+| org.jmxdatamart.fitnesse:type=SimpleMBean | A | 30 |
