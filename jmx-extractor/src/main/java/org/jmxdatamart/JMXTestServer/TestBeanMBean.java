@@ -42,13 +42,13 @@ import java.util.Date;
  */
 public interface TestBeanMBean {
     
-    Object getA();
+    int getA();
     
-    void setA(Object obj);
+    void setA(int obj);
     
-    Object getB();
+    long getB();
     
-    void setB(Object obj);
+    void setB(long obj);
     
     boolean getBoolVar();
     void setBoolVar(boolean aBool);

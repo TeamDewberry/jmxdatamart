@@ -52,15 +52,13 @@ public class TestBean implements TestBeanMBean{
     }
     
     @Override
-    public Object getA() {
+    public int getA() {
         return a;
     }
 
     @Override
-    public void setA(Object obj) {
-        if (obj instanceof Integer) {
-            a = (Integer)obj;
-        }
+    public void setA(int obj) {
+        a = obj;
     }
 
     public void randomize() {
@@ -73,15 +71,13 @@ public class TestBean implements TestBeanMBean{
     }
 
     @Override
-    public Object getB() {
+    public long getB() {
         return b;
     }
 
     @Override
-    public void setB(Object obj) {
-        if (obj instanceof Long) {
-            b = (Long) obj;
-        }
+    public void setB(long obj) {
+        b = obj;
     }
 
   @Override
