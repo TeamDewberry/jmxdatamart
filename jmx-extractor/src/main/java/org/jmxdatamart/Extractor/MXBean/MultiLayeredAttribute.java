@@ -48,7 +48,7 @@ public class MultiLayeredAttribute {
     Map<Attribute, Object> resultSoFar = new HashMap<Attribute, Object>();
     try {
       for (MBeanAttributeInfo mbai : mbsc.getMBeanInfo(this.baseMbean).getAttributes()) {
-        if (mbai.getName().matches(layers.get(0))) {
+        if (mbai.isReadable() && mbai.getName().matches(layers.get(0))) {
           try {
             getAllHelper(
                     1,
@@ -105,7 +105,7 @@ public class MultiLayeredAttribute {
                     sb.toString());
           }
         } else {
-          logger.error("Doesn't support type " + curr.getClass()
+          logger.info("Doesn't support type " + curr.getClass()
                   + " from " + currName);
           return;
         }
@@ -157,7 +157,7 @@ public class MultiLayeredAttribute {
         try {
           index = Integer.valueOf(layers.get(currDepth));
         } catch (NumberFormatException ex) {
-          logger.error("Array type found at " + currName + " with non-interger index");
+          logger.info("Array type found at " + currName + " with non-interger index");
           return;
         }
         getAllHelper(
@@ -167,7 +167,7 @@ public class MultiLayeredAttribute {
                 currName + layers.get(currDepth) + ".",
                 soFar);
       } else {
-        logger.error("Doesn't support type " + curr.getClass()
+        logger.info("Doesn't support type " + curr.getClass()
                 + " amid the MXBeanChain at " + currName.toString());
         return;
       }

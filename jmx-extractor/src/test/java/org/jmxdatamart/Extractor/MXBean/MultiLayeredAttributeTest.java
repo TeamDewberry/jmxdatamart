@@ -40,7 +40,7 @@ public class MultiLayeredAttributeTest {
         for (Map.Entry<Attribute, Object> entry : result.entrySet()) {
             if (entry.getKey().getAlias().equals("Car_name")) {
                 assertThat(entry.getValue().toString(), equalTo(Car.NAME));
-            } else if (entry.getKey().getAlias().equals("Car_year")) {
+            } else if (entry.getKey().getAlias().equals("Car_autoShow")) {
                 assertThat(entry.getValue().toString(), equalTo(Car.AUTOSHOW));
             } else if (entry.getKey().getAlias().equals("Car_engine")) {
                 assertThat(entry.getValue().toString(), 
