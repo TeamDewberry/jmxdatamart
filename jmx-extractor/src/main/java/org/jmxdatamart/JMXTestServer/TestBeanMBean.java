@@ -53,6 +53,6 @@ public interface TestBeanMBean {
     boolean getBoolVar();
     void setBoolVar(boolean aBool);
     
-    Date getDateVal();
-    void setDateVal(Date aDate);
+    Date getDateVar();
+    void setDateVar(Date aDate);
 }

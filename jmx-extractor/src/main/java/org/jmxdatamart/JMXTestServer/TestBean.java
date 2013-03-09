@@ -45,6 +45,7 @@ public class TestBean implements TestBeanMBean{
 
     public TestBean() {
         a = new Integer(0);
+        b = new Long(-1);
         prng = new Random();
         aBool = true;
         aDate = new Date(0xdeadbeef);
@@ -94,12 +95,12 @@ public class TestBean implements TestBeanMBean{
   }
 
   @Override
-  public Date getDateVal() {
+  public Date getDateVar() {
     return this.aDate;
   }
 
   @Override
-  public void setDateVal(Date aDate) {
+  public void setDateVar(Date aDate) {
     this.aDate = aDate;
   }
 
