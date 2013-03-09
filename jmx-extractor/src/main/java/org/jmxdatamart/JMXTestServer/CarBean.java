@@ -132,37 +132,28 @@ public class CarBean implements CarMXBean {
   @Override
   public void setKey(String key) {
     this.key = key;
+    if (!this.map.containsKey(key)) {
+      this.map.put(key, new Car());
+    }
   }
 
   @Override
   public void setKeyedName(String name) {
-    if (!this.map.containsKey(key)) {
-    this.map.put(key, new Car());
-    }
     this.map.get(key).setName(name);
   }
 
   @Override
   public void setKeyedAutoShow(String autoShow) {
-    if (!this.map.containsKey(key)) {
-      this.map.put(key, new Car());
-    }
     this.map.get(key).setAutoShow(autoShow);
   }
 
   @Override
   public void setKeyedPower(int power) {
-    if (!this.map.containsKey(key)) {
-      this.map.put(key, new Car());
-    }
     this.map.get(key).setPower(power);
   }
 
   @Override
   public void setKeyedEngine(int engine) {
-    if (!this.map.containsKey(key)) {
-      this.map.put(key, new Car());
-    }
     this.map.get(key).setEngine(engine);
   }
 }
