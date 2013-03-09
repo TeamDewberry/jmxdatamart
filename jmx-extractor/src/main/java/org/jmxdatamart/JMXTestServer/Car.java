@@ -32,15 +32,27 @@ package org.jmxdatamart.JMXTestServer;
  * @author Binh Tran <mynameisbinh@gmail.com>
  */
 public class Car {
+  
+  public static final String NAME = "2014 Chevy Corvette Stingray";
+  public static final String AUTOSHOW = "2013 Detroit";
+  public static final int ENGINE = 8;
+  public static final int POWER = 450;
 
   private String name;
-  private String year;
+  private String autoShow;
   private int engine;
   private int power;
 
-  public Car(String name, String year, int engine, int power) {
+  public Car() {
+    this.name = NAME;
+    this.autoShow = AUTOSHOW;
+    this.engine = ENGINE;
+    this.power = POWER;
+  }
+
+  public Car(String name, String autoShow, int engine, int power) {
     this.name = name;
-    this.year = year;
+    this.autoShow = autoShow;
     this.engine = engine;
     this.power = power;
   }
@@ -49,8 +61,8 @@ public class Car {
     return name;
   }
 
-  public String getYear() {
-    return year;
+  public String getAutoShow() {
+    return autoShow;
   }
 
   public int getEngine() {
@@ -65,8 +77,8 @@ public class Car {
     this.name = name;
   }
 
-  public void setYear(String year) {
-    this.year = year;
+  public void setAutoShow(String autoShow) {
+    this.autoShow = autoShow;
   }
 
   public void setEngine(int engine) {

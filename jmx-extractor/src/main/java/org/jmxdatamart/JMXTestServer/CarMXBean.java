@@ -20,4 +20,26 @@ public interface CarMXBean {
     public String[] getStrList();
     
     public Car[] getCarList();
+    
+    public void setIndex(int newIndex);
+    
+    public void setIndexedInt(int newInt);
+    
+    public void setIndexedStr(String newStr);
+    
+    public void setDreamName(String name);
+    
+    public void setDreamAutoShow(String name);
+    
+    public void setDreamPower(int power);
+    
+    public void setDreamEngine(int engine);
+    
+    public void setIndexedName(String name);
+    
+    public void setIndexedAutoShow(String autoShow);
+    
+    public void setIndexedPower(int power);
+    
+    public void setIndexedEngine(int engine);
 }
