@@ -148,6 +148,7 @@ public class Settings {
         xstream.alias("Settings", Settings.class);
         xstream.alias("Bean", MBeanData.class);
         xstream.alias("Attribute", Attribute.class);
+        beans = new ArrayList<MBeanData>();
     }
     
     public String toXML() {
