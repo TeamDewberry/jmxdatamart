@@ -81,7 +81,7 @@ public class MultiLayeredAttributeTest {
                 assertThat(entry.getValue().toString(), equalTo("8"));
             } else if (entry.getKey().getAlias().equals("BoolVar")){
               assertThat(entry.getValue().toString(), equalTo("true"));
-            } else if (entry.getKey().getAlias().equals("DateVal")){
+            } else if (entry.getKey().getAlias().equals("DateVar")){
               assertTrue(entry.getValue().getClass().isAssignableFrom(java.util.Date.class));
             } else {
                 fail("Unknown attribute " + entry.getKey());
