@@ -25,21 +25,31 @@ public interface CarMXBean {
     
     public void setIndexedInt(int newInt);
     
-    public void setIndexedStr(String newStr);
+    public void setIndexedString(String newStr);
     
-    public void setDreamName(String name);
+    public void setCarName(String name);
     
-    public void setDreamAutoShow(String name);
+    public void setCarAutoShow(String name);
     
-    public void setDreamPower(int power);
+    public void setCarPower(int power);
     
-    public void setDreamEngine(int engine);
+    public void setCarEngine(int engine);
     
-    public void setIndexedName(String name);
+    public void setIndexedCarName(String name);
     
-    public void setIndexedAutoShow(String autoShow);
+    public void setIndexedCarAutoShow(String autoShow);
     
-    public void setIndexedPower(int power);
+    public void setIndexedCarPower(int power);
     
-    public void setIndexedEngine(int engine);
+    public void setIndexedCarEngine(int engine);
+    
+    public void setKey(String key);
+    
+    public void setKeyedName(String name);
+    
+    public void setKeyedAutoShow(String autoShow);
+    
+    public void setKeyedPower(int power);
+    
+    public void setKeyedEngine(int engine);
 }
