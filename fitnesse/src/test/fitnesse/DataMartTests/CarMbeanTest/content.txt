@@ -20,5 +20,5 @@ The ConfigureMBeans fixture sets attributes of MBeans
 The ValidateMBeans fixture tests to make sure that MBeans have the expected values
 
 |Extract And Load Everything|
-|Extract Using Settings|settings2.xml|
-|Load With Settings| loaderConfig.ini | From | extracted\ | URL | ${derby.url} | User Name | ${derby.username} | Password | ${derby.username}|
+|Extract Using Settings|fitnesse\\settings2.xml|
+|Load With Settings| fitnesse\\loaderConfig.ini | From | extracted\\ | URL | ${derby.url} | User Name | ${derby.username} | Password | ${derby.username}|

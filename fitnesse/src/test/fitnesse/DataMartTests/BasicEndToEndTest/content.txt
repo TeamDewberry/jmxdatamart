@@ -41,7 +41,7 @@ Finally, we verify that the statistics were loaded as expected
 
 Connect to the JMX Data Mart database
 
-!|Connect|${derby.url};user=${derby.username};password=${derby.username}|
+!|Connect|jdbc:derby:${derby.url};user=${derby.username};password=${derby.username}|
 
 Make sure that the expected schema was created.  This query will have to be updated when the extractor fixture is fully implemented.
 

@@ -1,12 +1,22 @@
 package org.jmxdatamart.fixtures;
 
 import fitlibrary.DoFixture;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 /**
  *
  * @author Binh Tran <mynameisbinh@gmail.com>
  */
 public class ExtractAndLoadEverything extends DoFixture{
+  
+  public void findFolder(String folder) throws IOException {
+    FileWriter fw = new FileWriter("3141692");
+    fw.write("123");
+    fw.close();
+  }
+  
   public void extractUsingSettings(String settings) {
     org.jmxdatamart.Extractor.Main.main(new String[] {settings});
   }
