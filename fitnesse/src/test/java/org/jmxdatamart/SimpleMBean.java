@@ -33,6 +33,7 @@ public class SimpleMBean implements SimpleMXBean {
   private String stringAttribute;
   private int intAttribute;
   private long longAttribute;
+  private long A;
 
   public String getStringAttribute() {
     return stringAttribute;
@@ -56,5 +57,13 @@ public class SimpleMBean implements SimpleMXBean {
 
   public void setLongAttribute(long longAttribute) {
     this.longAttribute = longAttribute;
+  }
+  
+  public long getA() {
+    return A;
+  }
+
+  public void setA(long A) {
+    this.A = A;
   }
 }

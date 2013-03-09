@@ -3,11 +3,11 @@
   <folderLocation>extracted\\</folderLocation>
   <BeanList>
     <Bean>
-      <name>org.jmxdatamart.fitnesse:type=CarMBean</name>
-      <alias>CarMBean</alias>
+      <name>org.jmxdatamart.fitnesse:type=SimpleMBean,forTest=BasicEndToEndTest</name>
+      <alias>SimpleMBean</alias>
       <AttributeList>
         <Attribute>
-          <name>*</name>
+          <name>IntAttribute</name>
         </Attribute>
       </AttributeList>
       <enable>true</enable>
