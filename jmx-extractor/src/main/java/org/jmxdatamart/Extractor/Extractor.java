@@ -28,6 +28,7 @@
 package org.jmxdatamart.Extractor;
 
 import com.google.inject.Inject;
+import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.MalformedURLException;
@@ -88,7 +89,7 @@ public final class Extractor {
     }
 
     hsql = new HypersqlHandler();
-    dbName = configData.getFolderLocation() + "Extrator" + new SimpleDateFormat("yyyyMMddHHmmss").format(new java.util.Date());
+    dbName = configData.getFolderLocation() + File.separator + "Extrator" + new SimpleDateFormat("yyyyMMddHHmmss").format(new java.util.Date());
 
     if (isPeriodicallyExtract()) {
       periodicallyExtract();
