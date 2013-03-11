@@ -1,0 +1,44 @@
+<!--
+Garbage Collecting Example
+based on David's example
+-->
+<Settings>
+  <pollingRate>2</pollingRate>
+  <folderLocation>extracted\\</folderLocation>
+  <url></url>
+  <BeanList>
+    <Bean>
+      <name>java.lang:type=GarbageCollector,name=PS MarkSweep</name>
+      <alias>PSMarkSweepGCExample</alias>
+      <AttributeList>
+        <Attribute>
+          <name>CollectionCount</name>
+        </Attribute>
+        <Attribute>
+          <name>CollectionTime</name>
+        </Attribute>
+		<!-- Null pointer possible
+        <Attribute>
+          <name>LastGcInfo.GcThreadCount</name> 
+        </Attribute>
+        <Attribute>
+		  <name>LastGcInfo.duration</name>
+        </Attribute>
+        <Attribute>
+          <name>LastGcInfo.memoryUsageAfterGc.PS Old Gen.committed</name>
+        </Attribute>
+        <Attribute>
+          <name>LastGcInfo.memoryUsageAfterGc.PS Old Gen.committed</name>
+        </Attribute>
+        <Attribute>
+          <name>LastGcInfo.memoryUsageAfterGc.PS Old Gen.max</name>
+        </Attribute>
+        <Attribute>
+          <name>LastGcInfo.memoryUsageAfterGc.SS Old Gen.used</name>
+        </Attribute>
+		-->
+      </AttributeList>
+      <enable>true</enable>
+    </Bean>
+  </BeanList>
+</Settings>

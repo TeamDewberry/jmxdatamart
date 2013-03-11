@@ -1,0 +1,60 @@
+<!--
+OperatingSystem Example
+
+java.lang:type=OperatingSystem
+-->
+<Settings>
+  <pollingRate>2</pollingRate>
+  <folderLocation>extracted\\</folderLocation>
+  <url></url>
+  <BeanList>
+    <Bean>
+      <name>java.lang:type=OperatingSystem</name>
+      <alias>AllOperatingSystemExample</alias>
+      <AttributeList>
+        <Attribute>
+          <name>Arch</name>
+        </Attribute>
+		<Attribute>
+          <name>AvailableProcessors</name>
+        </Attribute>
+		<Attribute>
+          <name>CommittedVirtualMemorySize</name>
+        </Attribute>
+		<Attribute>
+          <name>FreePhysicalMemorySize</name>
+        </Attribute>
+		<Attribute>
+          <name>Name</name>
+        </Attribute>
+		<!-- not supported at the moment
+		<Attribute>
+          <name>ObjectName</name>
+        </Attribute>
+		-->
+		<Attribute>
+          <name>ProcessCpuLoad</name>
+        </Attribute>
+		<Attribute>
+          <name>ProcessCpuTime</name>
+        </Attribute>
+		<Attribute>
+          <name>SystemCpuLoad</name>
+        </Attribute>
+		<Attribute>
+          <name>SystemLoadAverage</name>
+        </Attribute>
+		<Attribute>
+          <name>TotalPhysicalMemorySize</name>
+        </Attribute>
+		<Attribute>
+          <name>TotalSwapSpaceSize</name>
+        </Attribute>
+		<Attribute>
+          <name>Version</name>
+        </Attribute>
+      </AttributeList>
+      <enable>true</enable>
+    </Bean>
+  </BeanList>
+</Settings>
