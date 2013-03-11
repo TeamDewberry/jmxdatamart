@@ -39,7 +39,7 @@ public class Main {
     public static void main(String[] args){
         Logger logger = LoggerFactory.getLogger(Main.class);
         if (args.length!=2){
-            System.err.println("Must have two arguments.\nUsage: loader settingFile folderLocation");
+            logger.error("Must have two arguments.\nUsage: loader settingFile folderLocation");
             System.exit(1);
         }
 
@@ -48,12 +48,12 @@ public class Main {
 
         File properties = new File(args[0]);
         if (!properties.isFile()){
-            System.err.println("Invalid file.");
+            logger.error("Invalid file.");
             System.exit(1);
         }
         File folder = new File(args[1] + File.separator) ;
         if (!folder.isDirectory()){
-            System.err.println("Invalid folder.");
+            logger.error("Invalid folder.");
             System.exit(1);
         }
 
