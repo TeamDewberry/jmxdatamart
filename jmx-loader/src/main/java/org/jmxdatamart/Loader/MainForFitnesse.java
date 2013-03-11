@@ -51,7 +51,7 @@ public class MainForFitnesse {
             System.err.println("Invalid file.");
             System.exit(1);
         }
-        File folder = new File(args[1]) ;
+        File folder = new File(args[1] + File.separator) ;
         if (!folder.isDirectory()){
             System.err.println("Invalid folder.");
             System.exit(1);
