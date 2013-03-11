@@ -28,6 +28,7 @@
 package org.jmxdatamart.Extractor;
 
 import com.google.inject.Inject;
+import java.io.File;
 import org.jmxdatamart.Extractor.MXBean.MultiLayeredAttribute;
 import org.jmxdatamart.common.DBException;
 import org.jmxdatamart.common.HypersqlHandler;
@@ -93,7 +94,7 @@ public final class Extractor {
 
     hsql = new HypersqlHandler();
     hsql.loadDriver(hsql.getDriver());
-    dbName = configData.getFolderLocation() + "Extractor" + new SimpleDateFormat("yyyyMMddHHmmss").format(new java.util.Date());
+    dbName = configData.getFolderLocation() + File.separator + "Extractor" + new SimpleDateFormat("yyyyMMddHHmmss").format(new java.util.Date());
 
     if (isPeriodicallyExtract()) {
       periodicallyExtract();
