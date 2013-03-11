@@ -37,16 +37,6 @@
         <!--<enabled>true</enabled>-->
         <!--</releases>-->
         <!--</pluginRepository>-->
-<!--        <pluginRepository>
-            <id>apache-snapshot</id>
-            <url>https://repository.apache.org/content/groups/snapshots</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </pluginRepository>-->
     </pluginRepositories>
 
     <build>

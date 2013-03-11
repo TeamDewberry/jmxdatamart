@@ -58,12 +58,4 @@ public class SimpleMBean implements SimpleMXBean {
   public void setLongAttribute(long longAttribute) {
     this.longAttribute = longAttribute;
   }
-  
-  public long getA() {
-    return A;
-  }
-
-  public void setA(long A) {
-    this.A = A;
-  }
 }

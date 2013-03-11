@@ -11,12 +11,6 @@ import java.io.IOException;
  */
 public class ExtractAndLoadEverything extends DoFixture{
   
-  public void findFolder(String folder) throws IOException {
-    FileWriter fw = new FileWriter("3141692");
-    fw.write("123");
-    fw.close();
-  }
-  
   public void extractUsingSettings(String settings) {
     org.jmxdatamart.Extractor.Main.main(new String[] {settings});
   }
