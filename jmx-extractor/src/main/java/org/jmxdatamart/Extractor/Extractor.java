@@ -28,7 +28,17 @@
 package org.jmxdatamart.Extractor;
 
 import com.google.inject.Inject;
-import java.io.File;
+import org.jmxdatamart.Extractor.MXBean.MultiLayeredAttribute;
+import org.jmxdatamart.common.DBException;
+import org.jmxdatamart.common.HypersqlHandler;
+import org.slf4j.LoggerFactory;
+
+import javax.management.MBeanServerConnection;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectInstance;
+import javax.management.ObjectName;
+import javax.management.remote.JMXConnectorFactory;
+import javax.management.remote.JMXServiceURL;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.MalformedURLException;
@@ -41,13 +51,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import javax.management.*;
-import javax.management.remote.JMXConnectorFactory;
-import javax.management.remote.JMXServiceURL;
-import org.jmxdatamart.Extractor.MXBean.MultiLayeredAttribute;
-import org.jmxdatamart.common.DBException;
-import org.jmxdatamart.common.HypersqlHandler;
-import org.slf4j.LoggerFactory;
 
 public final class Extractor {
 
@@ -89,7 +92,8 @@ public final class Extractor {
     }
 
     hsql = new HypersqlHandler();
-    dbName = configData.getFolderLocation() + File.separator + "Extrator" + new SimpleDateFormat("yyyyMMddHHmmss").format(new java.util.Date());
+    hsql.loadDriver(hsql.getDriver());
+    dbName = configData.getFolderLocation() + "Extractor" + new SimpleDateFormat("yyyyMMddHHmmss").format(new java.util.Date());
 
     if (isPeriodicallyExtract()) {
       periodicallyExtract();
