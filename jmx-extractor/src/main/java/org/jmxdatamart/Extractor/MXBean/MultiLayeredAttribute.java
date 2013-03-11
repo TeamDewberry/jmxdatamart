@@ -164,19 +164,6 @@ public class MultiLayeredAttribute {
                     resultSoFar);
           }
         }
-//        int index;
-//        try {
-//          index = Integer.valueOf(layers.get(currDepth));
-//        } catch (NumberFormatException ex) {
-//          logger.info("Array type found at " + currName + " with non-interger index");
-//          return;
-//        }
-//        getAllHelper(
-//                currDepth + 1,
-//                total,
-//                Array.get(curr, index),
-//                currName + layers.get(currDepth) + ".",
-//                resultSoFar);
       } else {
         logger.info("Doesn't support type " + curr.getClass()
                 + " amid the MXBeanChain at " + currName.toString());

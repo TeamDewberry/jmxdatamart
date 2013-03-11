@@ -40,10 +40,10 @@ public class Main {
 //    if (demo) {
 //      demo();
 //    }
-    System.out.println("extract");
+    logger.info("extract");
 
     if (args.length != 1) {
-      System.out.println("Program need only 1 argument to the setting file");
+      logger.error("Program need only 1 argument to the setting file");
       return;
 //      if (!demo){
 //        //return;
@@ -73,15 +73,16 @@ public class Main {
     }));
 
     if (!extractor.isPeriodicallyExtract()) {
-      System.out.println("Extractor is set to run once only!");
+      logger.info("Extractor is set to run once only!");
       return;
     }
 
-    System.out.print("Ctrl-C to stop extracting...");
+    logger.info("Ctrl-C to stop extracting...");
+    System.out.println("Ctrl-C to stop extracting...");   // in case of NOP logger, still display the usage
     
     while(true) {
       try {
-        Thread.sleep(10000);
+        Thread.sleep(10000);    // nighty, princess.
       } catch (InterruptedException ex) {
         return;
       }
