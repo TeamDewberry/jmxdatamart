@@ -99,6 +99,7 @@ public class MBeanData {
         name = "";
         alias = "";
         enable = true;
+        attributes = new ArrayList<Attribute>();
     }
     
     @Override

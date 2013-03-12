@@ -48,7 +48,7 @@ public class MultiLayeredAttribute {
     Map<Attribute, Object> resultSoFar = new HashMap<Attribute, Object>();
     try {
       for (MBeanAttributeInfo mbai : mbsc.getMBeanInfo(this.baseMbean).getAttributes()) {
-        if (mbai.getName().matches(layers.get(0))) {
+        if (mbai.isReadable() && mbai.getName().matches(layers.get(0))) {
           try {
             getAllHelper(
                     1,
@@ -83,7 +83,7 @@ public class MultiLayeredAttribute {
           int total,
           Object curr,
           String currName,
-          Map<Attribute, Object> soFar) {
+          Map<Attribute, Object> resultSoFar) {
     if (curr == null) {
       logger.error("Null pointer in MX chain at " + currName);
       return;
@@ -97,24 +97,24 @@ public class MultiLayeredAttribute {
             for (int i = 1; i < len; ++i) {
               sb.append(',').append(enclose(Array.get(curr, i)));
             }
-            soFar.put(
+            resultSoFar.put(
                     new Attribute(
-                      null,
-                      this.alias == null ? name2alias(currName) : this.alias,
-                      DataType.STRING),
+                    null,
+                    this.alias == null ? name2alias(currName) : this.alias,
+                    DataType.STRING),
                     sb.toString());
           }
         } else {
-          logger.error("Doesn't support type " + curr.getClass()
-                  + " from " + currName);
+          logger.info("Doesn't support extracting directly from type " + curr.getClass()
+                  + " in " + currName);
           return;
         }
       } else {
-        soFar.put(
+        resultSoFar.put(
                 new Attribute(
-                  null,
-                  this.alias == null ? name2alias(currName) : this.alias,
-                  dt),
+                null,
+                this.alias == null ? name2alias(currName) : this.alias,
+                dt),
                 curr);
       }
     } else {
@@ -127,7 +127,7 @@ public class MultiLayeredAttribute {
                     total,
                     cd.get(s),
                     currName + s + ".",
-                    soFar);
+                    resultSoFar);
           }
         }
       } else if (TabularData.class.isAssignableFrom(curr.getClass())) {
@@ -147,27 +147,25 @@ public class MultiLayeredAttribute {
                         total,
                         td.get(new Object[]{s}).get("value"), // magic -|-> more magic
                         currName + s + ".",
-                        soFar);
+                        resultSoFar);
               }
             }
           }
         }
       } else if (curr.getClass().isArray()) {
-        int index;
-        try {
-          index = Integer.valueOf(layers.get(currDepth));
-        } catch (NumberFormatException ex) {
-          logger.error("Array type found at " + currName + " with non-interger index");
-          return;
+        int len = Array.getLength(curr);
+        for (int i = 0; i < len; ++i) {
+          if (Integer.toString(i).matches(layers.get(currDepth))) {
+            getAllHelper(
+                    currDepth + 1,
+                    total,
+                    Array.get(curr, i),
+                    currName + i + ".",
+                    resultSoFar);
+          }
         }
-        getAllHelper(
-                currDepth + 1,
-                total,
-                Array.get(curr, index),
-                currName + layers.get(currDepth) + ".",
-                soFar);
       } else {
-        logger.error("Doesn't support type " + curr.getClass()
+        logger.info("Doesn't support type " + curr.getClass()
                 + " amid the MXBeanChain at " + currName.toString());
         return;
       }

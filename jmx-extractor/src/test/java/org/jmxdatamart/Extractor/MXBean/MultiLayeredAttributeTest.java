@@ -39,15 +39,15 @@ public class MultiLayeredAttributeTest {
         
         for (Map.Entry<Attribute, Object> entry : result.entrySet()) {
             if (entry.getKey().getAlias().equals("Car_name")) {
-                assertThat(entry.getValue().toString(), equalTo(CarBean.NAME));
-            } else if (entry.getKey().getAlias().equals("Car_year")) {
-                assertThat(entry.getValue().toString(), equalTo(CarBean.YEAR));
+                assertThat(entry.getValue().toString(), equalTo(Car.NAME));
+            } else if (entry.getKey().getAlias().equals("Car_autoShow")) {
+                assertThat(entry.getValue().toString(), equalTo(Car.AUTOSHOW));
             } else if (entry.getKey().getAlias().equals("Car_engine")) {
                 assertThat(entry.getValue().toString(), 
-                        equalTo((new Integer(CarBean.ENGINE)).toString()));
+                        equalTo((new Integer(Car.ENGINE)).toString()));
             } else if (entry.getKey().getAlias().equals("Car_power")) {
                 assertThat(entry.getValue().toString(),
-                        equalTo((new Integer(CarBean.POWER)).toString()));
+                        equalTo((new Integer(Car.POWER)).toString()));
             } else {
                 fail("Unknown attribute " + entry.getKey().toString());
             }
@@ -81,7 +81,7 @@ public class MultiLayeredAttributeTest {
                 assertThat(entry.getValue().toString(), equalTo("8"));
             } else if (entry.getKey().getAlias().equals("BoolVar")){
               assertThat(entry.getValue().toString(), equalTo("true"));
-            } else if (entry.getKey().getAlias().equals("DateVal")){
+            } else if (entry.getKey().getAlias().equals("DateVar")){
               assertTrue(entry.getValue().getClass().isAssignableFrom(java.util.Date.class));
             } else {
                 fail("Unknown attribute " + entry.getKey());

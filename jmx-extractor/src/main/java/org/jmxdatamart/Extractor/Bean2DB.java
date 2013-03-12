@@ -11,52 +11,12 @@ import java.util.*;
  *            * GenerateMBeanDB skips disable & pattern beans, as well as pattern attributes
  *            * dealWIthDynamicBean creates missing table instead of throwing exception
  *            * export2DB now uses DataType's PrepareStatement mechanism
+ *            * add schema to allow check table/column existance faster
  */
 public class Bean2DB {
+  
+  private Map<String, Set<String>> schema = new TreeMap<String, Set<String>>();
 
-//    public static void main(String[] args) throws Exception {
-//        // TODO code application logic here
-//        int expected = 42;
-//        //Create new test MBean
-//        TestBean tb = new TestBean();
-//        tb.setA(new Integer(expected));
-//        MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
-//        String mbName = "org.jmxdatamart.JMXTestServer:type=TestBean";
-//        ObjectName mbeanName = new ObjectName(mbName);
-//        mbs.registerMBean(tb, mbeanName);
-//
-//        //Create test MBean's MBeanData
-//        Attribute a = new Attribute("A", "Alpha", DataType.INT);
-//
-//        MBeanData mbd = new MBeanData(mbName, "testMBean", Collections.singletonList(a), true);
-//
-//        //Init MBeanExtract
-//        MBeanExtract instance = new MBeanExtract(mbd, mbs);
-//        Map result = instance.extract();
-//
-//        Settings s = new Settings();
-//        s.setBeans(Collections.singletonList((BeanData)mbd));
-//        s.setFolderLocation("HyperSQL/");
-//        s.setPollingRate(2);
-//        s.setUrl("service:jmx:rmi:///jndi/rmi://:9999/jmxrmi");
-//        Properties props = new Properties();
-//        props.put("username", "sa");
-//        props.put("password", "whatever");
-//
-//        Bean2DB bd = new Bean2DB();
-//        String dbname = bd.generateMBeanDB(s);
-//        HypersqlHandler hsql = new HypersqlHandler();
-//        Connection conn= hsql.connectDatabase(dbname, props);
-//
-//        bd.export2DB(conn,mbd,result);
-//
-//        ResultSet rs = conn.createStatement().executeQuery("select * from org_jmxdatamart_JMXTestServer__type___TestBean");
-//        while(rs.next()){
-//            System.out.println(rs.getObject(1) + "\t" + rs.getObject(2));
-//        }
-//        hsql.shutdownDatabase(conn);
-//        DBHandler.disconnectDatabase(rs, null, null, conn);
-//    }
   //get rid of the . : =, which are illegal for a table name
   public String convertIllegalTableName(String tablename) {
     return tablename.replaceAll("\\.", "_").replaceAll(":", "__").replaceAll("=", "___");
@@ -76,20 +36,22 @@ public class Bean2DB {
    * @throws DBException 
    */
   private void dealWithDynamicBean(Connection conn, String tableName, Map<Attribute, Object> result) throws SQLException, DBException {
-    if (!DBHandler.tableExists(tableName, conn)) {
+    if (!tableExists(tableName)) {
       HypersqlHandler.addTable(
               conn,
               tableName,
               new FieldAttribute("time", DataType.DATETIME, false),
               DataType.SupportedDatabase.HSQL);
+      schema.put(tableName, new TreeSet<String>());
     }
     String sql;
     boolean bl = conn.getAutoCommit();
     conn.setAutoCommit(false);
     for (Map.Entry<Attribute, Object> m : result.entrySet()) {
-      if (!DBHandler.columnExists(m.getKey().getAlias(), tableName, conn)) {
+      if (!columnExists(m.getKey().getAlias(), tableName)) {
         sql = "Alter table " + tableName + " add " + m.getKey().getAlias() + " " + m.getKey().getDataType().getHsqlType();  // BUG: not a portable solution
         conn.createStatement().executeUpdate(sql);
+        schema.get(tableName).add(m.getKey().getAlias());
       }
     }
     conn.commit();
@@ -108,7 +70,7 @@ public class Bean2DB {
    */
   public void export2DB(Connection conn, MBeanData mbd, Map<Attribute, Object> result) throws SQLException, DBException {
 
-    String tablename = convertIllegalTableName(mbd.getAlias());
+    String tablename = mbd.getAlias() == null ? convertIllegalTableName(mbd.getName()) : mbd.getAlias();
     //deal with dynamic bean
     dealWithDynamicBean(conn, tablename, result);
 
@@ -210,5 +172,13 @@ public class Bean2DB {
     }
 
     return dbName;
+  }
+
+  private boolean tableExists(String tableName) {
+    return schema.containsKey(tableName);
+  }
+
+  private boolean columnExists(String alias, String tableName) {
+    return schema.get(tableName).contains(alias);
   }
 }

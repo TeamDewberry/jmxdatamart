@@ -32,32 +32,60 @@ package org.jmxdatamart.JMXTestServer;
  * @author Binh Tran <mynameisbinh@gmail.com>
  */
 public class Car {
-    private String name;
-    private String year;
-    private int engine;
-    private int power;
+  
+  public static final String NAME = "2014 Chevy Corvette Stingray";
+  public static final String AUTOSHOW = "2013 Detroit";
+  public static final int ENGINE = 8;
+  public static final int POWER = 450;
 
-    public Car(String name, String year, int engine, int power) {
-        this.name = name;
-        this.year = year;
-        this.engine = engine;
-        this.power = power;
-    }
+  private String name;
+  private String autoShow;
+  private int engine;
+  private int power;
 
-    public String getName() {
-        return name;
-    }
+  public Car() {
+    this.name = NAME;
+    this.autoShow = AUTOSHOW;
+    this.engine = ENGINE;
+    this.power = POWER;
+  }
 
-    public String getYear() {
-        return year;
-    }
+  public Car(String name, String autoShow, int engine, int power) {
+    this.name = name;
+    this.autoShow = autoShow;
+    this.engine = engine;
+    this.power = power;
+  }
 
-    public int getEngine() {
-        return engine;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public int getPower() {
-        return power;
-    }
-    
+  public String getAutoShow() {
+    return autoShow;
+  }
+
+  public int getEngine() {
+    return engine;
+  }
+
+  public int getPower() {
+    return power;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public void setAutoShow(String autoShow) {
+    this.autoShow = autoShow;
+  }
+
+  public void setEngine(int engine) {
+    this.engine = engine;
+  }
+
+  public void setPower(int power) {
+    this.power = power;
+  }
 }

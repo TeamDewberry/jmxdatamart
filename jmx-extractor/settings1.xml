@@ -1,6 +1,6 @@
 <!-- basic MBean extracting capacity -->
 <Settings>
-  <pollingRate>-1</pollingRate> <!-- rate < 0 means extract will run once only -->
+  <pollingRate>2</pollingRate> <!-- rate < 0 means extract will run once only -->
   <folderLocation>extracted\\</folderLocation> <!-- output folder needs a separator at the end -->
   <BeanList>
     <Bean>    

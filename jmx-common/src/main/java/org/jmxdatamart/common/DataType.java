@@ -208,27 +208,9 @@ public enum DataType {
       }
     }
 
-    public Object getType(String type){
-        if (type.equalsIgnoreCase("sqlserver")){
-            return getMssqlType();
-        }
-        else if (type.equalsIgnoreCase("hsqldb")){
-            return getHsqlType();
-        }
-        else if (type.equalsIgnoreCase("derbydb")){
-            return getDerbyType();
-        }
-        else if (type.equalsIgnoreCase("id")){
-            return getJdbcTypeID();
-        }
-        else{
-            return getJavaType();
-        }
-    }
-
     public static DataType findCorrespondDataTypeByID(int currentTypeID ) {
         for (DataType type:DataType.values()) {
-            if ((type.getType("id")).equals(Integer.valueOf(currentTypeID))){
+            if ((type.getType(SupportedDatabase.JDBCID)).equals(Integer.valueOf(currentTypeID))){
                 return type;
             }
         }
