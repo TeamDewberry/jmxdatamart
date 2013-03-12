@@ -16,6 +16,7 @@ The ConfigureMBeans fixture sets attributes of MBeans. You can configurate the n
 !| configure MBeans |
 | bean name | attribute | value |
 | org.jmxdatamart.fitnesse:type=SimpleMBean,forTest=EndToEnd | A | 42 |
+| org.jmxdatamart.fitnesse:type=SimpleMBean,forTest=EndToEnd | B | 1337 |
 
 For the MXBean, things get a little more interesting. For composite type, you can just call the built-in backdoor to change the name directly
 
