@@ -158,13 +158,6 @@ Query for new table
 |TESTID|ALPHA|BETA|
 |1|42|1337|
 
-I think we should use !DbFit (http://fitnesse.info/dbfit) for this which provides !FitNesse fixtures for configuring the connection to and querying databases
-
-First, we'd configure a connection to the database as described in http://fitnesse.info/dbfit:reference:databaseunittests:helloworld:connecttothedatabase
-   * Although, this does beg the question as to what database we use to test.  I wonder if it is feasible to use Derby, the database that is embedded with the JDK (http://www.oracle.com/technetwork/java/javadb/overview/index.html) for the !FitNesse tests.
-
-Then we'd query the database and verify that the expect results were returned like in http://fitnesse.info/dbfit:reference:databaseunittests:helloworld:testingasimplequery
-
 Finally unregister all the beans
 
 | unregister MBeans |
