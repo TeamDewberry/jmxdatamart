@@ -34,12 +34,12 @@ import java.io.File;
 import java.sql.SQLException;
 
 
-public class Main {
+public class MainForFitnesse {
 
     public static void main(String[] args){
-        Logger logger = LoggerFactory.getLogger(Main.class);
-        if (args.length!=2){
-            logger.error("Must have two arguments.\nUsage: loader settingFile folderLocation");
+        Logger logger = LoggerFactory.getLogger(MainForFitnesse.class);
+        if (args.length!=5){
+            logger.error("Must have 5 arguments.\nUsage: loader settingFile folderLocation JDBCurl user password");
             System.exit(1);
         }
 
@@ -58,6 +58,9 @@ public class Main {
         }
 
         Setting setting = new Setting(args[0]);
+        setting.getTarget().setDatabaseName(args[2]); // need to make it work with Derby
+        setting.getTarget().getUserInfo().setProperty("user", args[3]);
+        setting.getTarget().getUserInfo().setProperty("password", args[4]);
         DB2DB d2d = new DB2DB(setting,folder);
         try{
             logger.info("\nLoadding data from " + args[1] + ".\n");
