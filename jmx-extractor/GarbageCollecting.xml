@@ -3,7 +3,7 @@ Garbage Collecting Example
 based on David's example
 -->
 <Settings>
-  <pollingRate>-1</pollingRate><!-- for fitness testing -->
+  <pollingRate>2</pollingRate>
   <folderLocation>extracted\\</folderLocation>
   <url></url>
   <BeanList>

@@ -4,7 +4,7 @@ OperatingSystem Example
 java.lang:type=OperatingSystem
 -->
 <Settings>
-  <pollingRate>-1</pollingRate><!-- for fitness testing -->
+  <pollingRate>2</pollingRate>
   <folderLocation>extracted\\</folderLocation>
   <url></url>
   <BeanList>
