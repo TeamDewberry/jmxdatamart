@@ -156,7 +156,7 @@ Query for new table
 
 !|Query| select * from SIMPLEMBEAN|
 |TESTID|ALPHA|BETA|
-|1|42|-1|
+|1|42|1337|
 
 I think we should use !DbFit (http://fitnesse.info/dbfit) for this which provides !FitNesse fixtures for configuring the connection to and querying databases
 
