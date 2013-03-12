@@ -8,34 +8,47 @@ First we set up a simple JMX MBean with one attribute.
 
 | create MBeans |
 | bean class | bean name |
-| org.jmxdatamart.SimpleMBean | org.jmxdatamart.fitnesse:type=SimpleMBean,forTest=BasicEndToEndTest |
+| org.jmxdatamart.JMXTestServer.TestBean | org.jmxdatamart.fitnesse:type=SimpleMBean,forTest=EndToEnd |
+| org.jmxdatamart.JMXTestServer.CarBean | org.jmxdatamart.fitnesse:type=CarMXBean,forTest=EndToEnd|
+
+The ConfigureMBeans fixture sets attributes of MBeans. You can configurate the number directly with the SimpleMBean
 
 !| configure MBeans |
 | bean name | attribute | value |
-| org.jmxdatamart.fitnesse:type=SimpleMBean,forTest=BasicEndToEndTest | IntAttribute | 42 |
+| org.jmxdatamart.fitnesse:type=SimpleMBean,forTest=EndToEnd | A | 42 |
 
-Then we configure the extractor (note that this extractor extracts from the local VM, not an RMI URL)
-   * What beans should it extractor?
-   * How often should it extract them?
-   * Where should it write the statistics file?
+For the MXBean, things get a little more interesting. For composite type, you can just call the built-in backdoor to change the name directly
 
-!| configure extractor |
-| extract statistics every | 500 | milliseconds |
-| write statistics to directory | BasicEndToEndTest/statistics |
+!| configure MBeans |
+| bean name | attribute | value |
+| org.jmxdatamart.fitnesse:type=CarMXBean,forTest=EndToEnd | CarName | My Dream Call |
+| org.jmxdatamart.fitnesse:type=CarMXBean,forTest=EndToEnd | CarEngine | 16 |
 
-!| configure MBeans to be extracted |
-| bean name | bean alias | attribute | attribute alias |
-| org.jmxdatamart.fitnesse:type=SimpleMBean,forTest=BasicEndToEndTest | BasicEndToEndTest | intAttribute | simpleInteger |
+For Array type, first invoke setIndex to select what index to change (0..6), then invoke the corresponding function.
 
-Then we give the collector some time to do its thing
+!| configure MBeans |
+| bean name | attribute | value |
+| org.jmxdatamart.fitnesse:type=CarMXBean,forTest=EndToEnd | Index | 3 |
+| org.jmxdatamart.fitnesse:type=CarMXBean,forTest=EndToEnd | IndexedInt | 1337 |
+| org.jmxdatamart.fitnesse:type=CarMXBean,forTest=EndToEnd | IndexedString | BOOM headshot |
+| org.jmxdatamart.fitnesse:type=CarMXBean,forTest=EndToEnd | IndexedCarName | Aston Martin DB5 |
 
-| collect statistics for | 2 | seconds |
+In the above example I just changed intArr[3] to 1337, StrArr[3] to "BOOM headshot", and the name of the car in the index 3 to "Aston Martin DB5".
 
-Then we load the statistics file into the data mart
+Finally, for Tabular type, first invoke setKey to select the key of the mapping, then invoke setKeyed(...) to actually change the value (new mapping will be created if not yet exists)
 
-!| load statistics |
-| from file | BasicEndToEndTest/statistics.dat |
-| into database with url | ${derby.url};user=${derby.username};password=${derby.username} |
+!| configure MBeans |
+| bean name | attribute | value |
+| org.jmxdatamart.fitnesse:type=CarMXBean,forTest=EndToEnd | Key | Aston Martin |
+| org.jmxdatamart.fitnesse:type=CarMXBean,forTest=EndToEnd | KeyedName | DBS V12 |
+
+Just like that. Notice that if you add more mapping into Tabular data, the amount of columns in the final table would also change, and some tests may fail.
+
+Then we use the settings2.xml to load these beans (settings2.xml is configurated to load every 1st, 2nd, and 3rd level attributes) and load the collected statistics to derby.
+
+|Extract And Load Everything|
+|Extract Using Settings|settings2.xml|
+|Load With Settings| loaderConfig.ini | From | . | URL | ${derby.url} | User Name | ${derby.username} | Password | ${derby.username}|
 
 Finally, we verify that the statistics were loaded as expected
 
@@ -43,21 +56,106 @@ Connect to the JMX Data Mart database
 
 !|Connect|jdbc:derby:${derby.url};user=${derby.username};password=${derby.username}|
 
-Make sure that the expected schema was created.  This query will have to be updated when the extractor fixture is fully implemented.
+Query for new table
 
-!|Query|SELECT COLUMNNAME, COLUMNDATATYPE FROM SYS.SYSCOLUMNS WHERE REFERENCEID = (SELECT TABLEID FROM SYS.SYSTABLES WHERE TABLENAME = 'EXAMPLE_TABLE')|
+!|Query|SELECT tablename  FROM SYS.SYStables WHERE tabletype = 'T'|
+|tablename|
+|MAINTABLE|
+|EXAMPLE_TABLE|
+|SIMPLEMBEAN|
+|CARMXBEAN|
+
+!|Query|SELECT COLUMNNAME, COLUMNDATATYPE FROM SYS.SYSCOLUMNS WHERE REFERENCEID = (SELECT TABLEID FROM SYS.SYSTABLES WHERE TABLENAME = 'MAINTABLE')|
 |COLUMNNAME|COLUMNDATATYPE|
-|ID|INTEGER NOT NULL|
-|WHO|VARCHAR(20) NOT NULL|
-|WHEN_DONE|TIMESTAMP NOT NULL|
-|PLACE|VARCHAR(20)|
-|IMPLEMENT|VARCHAR(20)|
+|DESCRIPTION |VARCHAR(32672)|
+|IMPORTFILE |VARCHAR(32672)|
+|IMPORTTIME |TIMESTAMP|
+|OWNER |VARCHAR(32672)|
+|REMARK |VARCHAR(32672)|
+|TESTID | BIGINT|
+|VERSION |VARCHAR(32672)|
 
-Until the load fixture is hooked up to the real code, let's just query the other data
+!|Query|SELECT COLUMNNAME, COLUMNDATATYPE FROM SYS.SYSCOLUMNS WHERE REFERENCEID = (SELECT TABLEID FROM SYS.SYSTABLES WHERE TABLENAME = 'SIMPLEMBEAN')|
+|COLUMNNAME|COLUMNDATATYPE|
+|TESTID |BIGINT|
+|TIME |TIMESTAMP|
+|ALPHA|INTEGER|
+|DATEVARIABLE |TIMESTAMP|
+|BETA|BIGINT|
 
-!|Query| select * from example_table|
-|id|who|place|implement|
-|1|Prof Plum|Library|Candlestick|
+!|Query|SELECT COLUMNNAME, COLUMNDATATYPE FROM SYS.SYSCOLUMNS WHERE REFERENCEID = (SELECT TABLEID FROM SYS.SYSTABLES WHERE TABLENAME = 'CARMXBEAN')|
+|COLUMNNAME|COLUMNDATATYPE|
+|TESTID |BIGINT|
+|TIME |TIMESTAMP|
+|CARLIST |VARCHAR(32672)|
+|CARLIST_0_AUTOSHOW|VARCHAR(32672)|
+|CARLIST_0_ENGINE|INTEGER|
+|CARLIST_0_NAME|VARCHAR(32672)|
+|CARLIST_0_POWER|INTEGER|
+|CARLIST_1_AUTOSHOW|VARCHAR(32672)|
+|CARLIST_1_ENGINE|INTEGER|
+|CARLIST_1_NAME|VARCHAR(32672)|
+|CARLIST_1_POWER|INTEGER|
+|CARLIST_2_AUTOSHOW|VARCHAR(32672)|
+|CARLIST_2_ENGINE |INTEGER|
+|CARLIST_2_NAME |VARCHAR(32672)|
+|CARLIST_2_POWER|INTEGER|
+|CAR_AUTOSHOW|VARCHAR(32672)|
+|CAR_ENGINE|INTEGER|
+|CAR_NAME|VARCHAR(32672)|
+|CAR_POWER|INTEGER|
+|INTLIST |VARCHAR(32672)|
+|INTLIST_0|INTEGER|
+|INTLIST_1 |INTEGER|
+|INTLIST_2 |INTEGER|
+|INTLIST_3 |INTEGER|
+|INTLIST_4|INTEGER|
+|INTLIST_5|INTEGER|
+|INTLIST_6|INTEGER|
+|MAP_AUDI_AUTOSHOW|VARCHAR(32672)|
+|MAP_AUDI_ENGINE|INTEGER|
+|MAP_AUDI_NAME|VARCHAR(32672)|
+|MAP_AUDI_POWER|INTEGER|
+|MAP_STINGRAY_AUTOSHOW |VARCHAR(32672)|
+|MAP_STINGRAY_ENGINE |INTEGER|
+|MAP_STINGRAY_NAME  |VARCHAR(32672)|
+|MAP_STINGRAY_POWER  |INTEGER|
+|MAP_VL_AUTOMOTIVE_AUTOSHOW  |	VARCHAR(32672)|
+|MAP_VL_AUTOMOTIVE_ENGINE  |INTEGER|
+|MAP_VL_AUTOMOTIVE_NAME  |VARCHAR(32672)|
+|MAP_VL_AUTOMOTIVE_POWER  |INTEGER|
+|STRLIST  |VARCHAR(32672)|
+|STRLIST_0  |VARCHAR(32672)|
+|STRLIST_1  |VARCHAR(32672)|
+|STRLIST_2  |VARCHAR(32672)|
+|STRLIST_3  |VARCHAR(32672)|
+|STRLIST_4  |VARCHAR(32672)|
+|STRLIST_5  |VARCHAR(32672)|
+|STRLIST_6  |VARCHAR(32672)|
+|CARLIST_3_AUTOSHOW | VARCHAR(32672)|
+|CARLIST_3_ENGINE | INTEGER|
+|CARLIST_3_NAME | VARCHAR(32672)|
+|CARLIST_3_POWER | INTEGER|
+|CARLIST_4_AUTOSHOW | VARCHAR(32672)|
+|CARLIST_4_ENGINE | INTEGER|
+|CARLIST_4_NAME | VARCHAR(32672)|
+|CARLIST_4_POWER | INTEGER|
+|CARLIST_5_AUTOSHOW | VARCHAR(32672)|
+|CARLIST_5_ENGINE | INTEGER|
+|CARLIST_5_NAME | VARCHAR(32672)|
+|CARLIST_5_POWER | INTEGER|
+|CARLIST_6_AUTOSHOW | VARCHAR(32672)|
+|CARLIST_6_ENGINE | INTEGER|
+|CARLIST_6_NAME  | VARCHAR(32672)|
+|CARLIST_6_POWER | INTEGER|
+|MAP_ASTON_MARTIN_AUTOSHOW | VARCHAR(32672)|
+|MAP_ASTON_MARTIN_ENGINE | INTEGER|
+|MAP_ASTON_MARTIN_NAME  | VARCHAR(32672)|
+|MAP_ASTON_MARTIN_POWER | INTEGER|
+
+!|Query| select * from SIMPLEMBEAN|
+|TESTID|ALPHA|BETA|
+|1|42|-1|
 
 I think we should use !DbFit (http://fitnesse.info/dbfit) for this which provides !FitNesse fixtures for configuring the connection to and querying databases
 
@@ -65,3 +163,10 @@ First, we'd configure a connection to the database as described in http://fitnes
    * Although, this does beg the question as to what database we use to test.  I wonder if it is feasible to use Derby, the database that is embedded with the JDK (http://www.oracle.com/technetwork/java/javadb/overview/index.html) for the !FitNesse tests.
 
 Then we'd query the database and verify that the expect results were returned like in http://fitnesse.info/dbfit:reference:databaseunittests:helloworld:testingasimplequery
+
+Finally unregister all the beans
+
+| unregister MBeans |
+| bean name |
+| org.jmxdatamart.fitnesse:type=SimpleMBean,forTest=EndToEnd |
+| org.jmxdatamart.fitnesse:type=CarMXBean,forTest=EndToEnd |
