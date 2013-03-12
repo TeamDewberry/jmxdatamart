@@ -1,0 +1,70 @@
+<!--
+Memory Example
+
+
+java.lang:type=Memory
+
+ObjectPendingFinalizationCount
+HeapMemoryUsage.committed
+HeapMemoryUsage.init
+HeapMemoryUsage.max
+HeapMemoryUsage.used
+NonHeapMemoryUsage.committed
+NonHeapMemoryUsage.init
+NonHeapMemoryUsage.max
+NonHeapMemoryUsage.used
+-->
+<Settings>
+  <pollingRate>2</pollingRate>
+  <folderLocation>extracted\\</folderLocation>
+  <url></url>
+  <BeanList>
+    <Bean>
+      <name>java.lang:type=Memory</name>
+      <alias>MemoryExample</alias>
+      <AttributeList>
+        <Attribute>
+			<name>ObjectPendingFinalizationCount</name>
+		</Attribute>
+		<Attribute>
+			<name>HeapMemoryUsage.committed</name>
+			<alias>HeapCommitted</alias>
+		</Attribute>
+		<Attribute>
+			<name>HeapMemoryUsage.init</name>
+			<alias>HeapInit</alias>
+		</Attribute>
+		<Attribute>
+			<name>HeapMemoryUsage.max</name>
+			<alias>HeapMax</alias>
+		</Attribute>
+		<Attribute>
+			<name>HeapMemoryUsage.used</name>
+			<alias>HeapUsed</alias>
+		</Attribute>
+		<Attribute>
+			<name>NonHeapMemoryUsage.*</name>
+		</Attribute>
+		<!-- or the above can be explicitly named with alias
+		<Attribute>
+			<name>NonHeapMemoryUsage.committed</name>
+			<alias>NonHeapCommitted</alias>
+		</Attribute>
+		<Attribute>
+			<name>NonHeapMemoryUsage.init</name>
+			<alias>NonHeapInit</alias>
+		</Attribute>
+		<Attribute>
+			<name>NonHeapMemoryUsage.max</name>
+			<alias>NonHeapMax</alias>
+		</Attribute>
+		<Attribute>
+			<name>NonHeapMemoryUsage.used</name>
+			<alias>NonHeapUsed</alias>
+		</Attribute>
+		-->
+      </AttributeList>
+      <enable>true</enable>
+    </Bean>
+  </BeanList>
+</Settings>
