@@ -33,7 +33,6 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 import org.jmxdatamart.common.DataType;
 import java.io.*;
 import java.util.*;
-import javax.management.MalformedObjectNameException;
 import org.slf4j.LoggerFactory;
 
 
@@ -149,6 +148,7 @@ public class Settings {
         xstream.alias("Settings", Settings.class);
         xstream.alias("Bean", MBeanData.class);
         xstream.alias("Attribute", Attribute.class);
+        beans = new ArrayList<MBeanData>();
     }
     
     public String toXML() {

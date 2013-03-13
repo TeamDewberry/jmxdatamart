@@ -7,19 +7,13 @@
       <alias>Applesauce</alias>
       <AttributeList>
         <Attribute>
-          <name>Car.*</name>
-        </Attribute>
-        <Attribute>
-          <name>Map.*.*</name>
-        </Attribute>
-      </AttributeList>
-      <enable>true</enable>
-    </Bean>
-    <Bean>
-      <name>*.JMXTestServer:name=TestBean?</name>
-      <AttributeList>
-        <Attribute>
           <name>*</name>
+        </Attribute>
+        <Attribute>
+          <name>*.*</name>
+        </Attribute>
+        <Attribute>
+          <name>*.*.*</name>
         </Attribute>
       </AttributeList>
       <enable>true</enable>

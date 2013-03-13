@@ -20,7 +20,7 @@
         <fitnesse.working>${project.build.directory}/fitnesse</fitnesse.working>
         <fitnesse.root>FitNesseRoot</fitnesse.root>
         <derby.driver>org.apache.derby.jdbc.ClientDriver</derby.driver>
-        <derby.url>jdbc:derby://localhost:1527/${project.build.directory}/derbyDB;create=true</derby.url>
+        <derby.url>//localhost:1527/${project.build.directory}/derbyDB</derby.url>
         <derby.username>derbyuser</derby.username>
         <derby.password>derbyuser</derby.password>
         <derby.version>10.4.1.3</derby.version>
@@ -203,7 +203,7 @@
                         </goals>
                         <configuration>
                             <driver>${derby.driver}</driver>
-                            <url>${derby.url}</url>
+                            <url>jdbc:derby:${derby.url};create=true</url>
                             <username>${derby.username}</username>
                             <password>${derby.password}</password>
                             <srcFiles>
@@ -299,6 +299,11 @@
         <dependency>
             <groupId>org.jmxdatamart</groupId>
             <artifactId>jmx-extractor</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jmxdatamart</groupId>
+            <artifactId>jmx-loader</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Tripwire, Inc.
+ * Copyright (c) 2012 Tripwire, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,37 +25,54 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.jmxdatamart;
 
-public class SimpleMBean implements SimpleMXBean {
+import org.jmxdatamart.JMXTestServer.Car;
 
-  private String stringAttribute;
-  private int intAttribute;
-  private long longAttribute;
-  private long A;
 
-  public String getStringAttribute() {
-    return stringAttribute;
+/**
+ *
+ * @author ayayakura
+ */
+public class CarMBean implements CarMXBean{
+    
+    public static String NAME;
+    public static String YEAR;
+    public static int ENGINE;
+    public static int POWER;
+    
+
+  public void setNAME(String NAME) {
+    this.NAME = NAME;
   }
 
-  public void setStringAttribute(String stringAttribute) {
-    this.stringAttribute = stringAttribute;
+  public String getNAME() {
+    return NAME;
   }
 
-  public int getIntAttribute() {
-    return intAttribute;
+  public void setYEAR(String YEAR) {
+    this.YEAR = YEAR;
   }
 
-  public void setIntAttribute(int intAttribute) {
-    this.intAttribute = intAttribute;
+  public String getYEAR() {
+    return YEAR;
   }
 
-  public long getLongAttribute() {
-    return longAttribute;
+  public void setENGINE(int ENGINE) {
+    this.ENGINE = ENGINE;
+  }
+  
+  public int getENGINE(){
+    return ENGINE;
+  }
+  
+  public void setPOWER(int POWER) {
+    this.POWER = POWER;
   }
 
-  public void setLongAttribute(long longAttribute) {
-    this.longAttribute = longAttribute;
+  public int getPOWER() {
+    return POWER;
   }
+    
+  
 }

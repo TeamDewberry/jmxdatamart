@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, Tripwire, Inc.
+ * Copyright (c) 2012 Tripwire, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,17 +25,31 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package org.jmxdatamart;
 
+import org.jmxdatamart.JMXTestServer.Car;
+
 /**
- * Hello world!
  *
+ * @author ayayakura
  */
-public class App 
-{
-    public static void main( String[] args )
-    {
-        System.out.println( "Hello World!" );
-    }
+public interface CarMXBean {
+    
+  public void setNAME(String NAME);
+
+  public String getNAME();
+
+  public void setYEAR(String YEAR);
+
+  public String getYEAR();
+
+  public void setENGINE(int ENGINE);
+  
+  public int getENGINE();
+  
+  public void setPOWER(int POWER);
+
+  public int getPOWER();
+    
+  
 }

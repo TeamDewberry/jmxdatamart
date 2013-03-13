@@ -16,20 +16,12 @@ public class ExtractAndLoadTest extends DerbyTest {
     return new ConfigureMBeans();
   }
 
-  public ConfigureExtractor configureExtractor() {
-    return new ConfigureExtractor();
+  public ExtractAndLoadEverything extractAndLoadEverything() {
+    return new ExtractAndLoadEverything();
   }
-
-  public ConfigureMBeansToBeExtracted configureMBeansToBeExtracted() {
-    return new ConfigureMBeansToBeExtracted();
-  }
-
-  public void collectStatisticsFor(int collectTime, String timeUnit) {
-
-  }
-
-  public LoadStatistics loadStatistics() {
-    return new LoadStatistics();
+  
+  public UnregisterMBeans unregisterMBeans() {
+    return new UnregisterMBeans();
   }
 
   public ExtractAndLoadTest getOrgDotJmxdatamartDotFixturesDotExtractAndLoadTest() {

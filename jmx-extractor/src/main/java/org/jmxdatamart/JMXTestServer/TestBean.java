@@ -45,21 +45,20 @@ public class TestBean implements TestBeanMBean{
 
     public TestBean() {
         a = new Integer(0);
+        b = new Long(-1);
         prng = new Random();
         aBool = true;
         aDate = new Date(0xdeadbeef);
     }
     
     @Override
-    public Object getA() {
+    public int getA() {
         return a;
     }
 
     @Override
-    public void setA(Object obj) {
-        if (obj instanceof Integer) {
-            a = (Integer)obj;
-        }
+    public void setA(int obj) {
+        a = obj;
     }
 
     public void randomize() {
@@ -72,15 +71,13 @@ public class TestBean implements TestBeanMBean{
     }
 
     @Override
-    public Object getB() {
+    public long getB() {
         return b;
     }
 
     @Override
-    public void setB(Object obj) {
-        if (obj instanceof Long) {
-            b = (Long) obj;
-        }
+    public void setB(long obj) {
+        b = obj;
     }
 
   @Override
@@ -94,12 +91,12 @@ public class TestBean implements TestBeanMBean{
   }
 
   @Override
-  public Date getDateVal() {
+  public Date getDateVar() {
     return this.aDate;
   }
 
   @Override
-  public void setDateVal(Date aDate) {
+  public void setDateVar(Date aDate) {
     this.aDate = aDate;
   }
 
