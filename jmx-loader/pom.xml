@@ -39,7 +39,61 @@
   <artifactId>jmx-loader</artifactId>
   <version>1.0-SNAPSHOT</version>
   <name>jmx-loader</name>
-  <url>http://maven.apache.org</url>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>appassembler-maven-plugin</artifactId>
+                <version>1.3</version>
+                <configuration>
+                    <daemons>
+                        <daemon>
+                            <id>jmx-loader</id>
+                            <mainClass>org.jmxdatamart.Loader.Main</mainClass>
+                            <platforms>
+                                <platform>booter-unix</platform>
+                                <platform>booter-windows</platform>
+                            </platforms>
+                        </daemon>
+                    </daemons>
+                    <licenseHeaderFile>${basedir}/../LICENSE</licenseHeaderFile>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate-daemons</goal>
+                            <goal>create-repository</goal>
+                        </goals>
+                        <phase>package</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.3</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <descriptor>src/main/assembly/bin.xml</descriptor>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <showDeprecation>true</showDeprecation>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -52,5 +106,10 @@
           <artifactId>jmx-common</artifactId>
           <version>1.0-SNAPSHOT</version>
       </dependency>
+        <dependency>
+            <groupId>org.codehaus.mojo.appassembler</groupId>
+            <artifactId>appassembler-booter</artifactId>
+            <version>1.3</version>
+        </dependency>
   </dependencies>
 </project>
