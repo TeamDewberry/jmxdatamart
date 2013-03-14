@@ -42,7 +42,7 @@ import java.util.Properties;
  */
 public class MssqlHandler extends DBHandler {
     private final org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
-    private final String driver = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
+    private final String driver = "net.sourceforge.jtds.jdbc.Driver";
     private String jdbcurl ;
     private final String tableSchem = "dbo";
     public String getJdbcurl() {
