@@ -58,6 +58,9 @@ public class Main {
         }
 
         LoaderSetting setting = new LoaderSetting(args[0]);
+        setting.getSource().setDatabaseType(DataType.SupportedDatabase.HSQL);
+        setting.getSource().getUserInfo().setProperty("user", "sa");
+        setting.getSource().getUserInfo().setProperty("password", "whatever");
         DB2DB d2d = new DB2DB(setting,folder);
         try{
             logger.info("\nLoadding data from " + args[1] + ".\n");
