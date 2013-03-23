@@ -57,7 +57,7 @@ public class MainForFitnesse {
             System.exit(1);
         }
 
-        Setting setting = new Setting(args[0]);
+        LoaderSetting setting = new LoaderSetting(args[0]);
         setting.getTarget().setDatabaseName(args[2]); // need to make it work with Derby
         setting.getTarget().getUserInfo().setProperty("user", args[3]);
         setting.getTarget().getUserInfo().setProperty("password", args[4]);

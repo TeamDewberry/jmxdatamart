@@ -32,7 +32,7 @@ import java.util.Enumeration;
 import java.util.Properties;
 import org.jmxdatamart.common.DataType;
 
-public class Setting {
+public class LoaderSetting {
     private final org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
     public class DBInfo {
         private DataType.SupportedDatabase databaseType;
@@ -104,7 +104,7 @@ public class Setting {
 
     }
 
-    public Setting(String filePath) {
+    public LoaderSetting(String filePath) {
         source = new DBInfo();
         target = new DBInfo();
         additional =new Properties();

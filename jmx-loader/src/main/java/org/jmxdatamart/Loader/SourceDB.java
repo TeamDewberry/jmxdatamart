@@ -34,12 +34,12 @@ import java.util.*;
 public class SourceDB {
     private Set<String> databaseFiles;
     private DBHandler sourceDatabase;
-    private Setting.DBInfo dbInfo;
+    private LoaderSetting.DBInfo dbInfo;
 
     public DBHandler getSourceDatabase() {
         return sourceDatabase;
     }
-    public Setting.DBInfo getDbInfo() {
+    public LoaderSetting.DBInfo getDbInfo() {
         return dbInfo;
     }
 
@@ -47,7 +47,7 @@ public class SourceDB {
         return databaseFiles;
     }
 
-    public SourceDB(Setting.DBInfo dbInfo, File folderLocation) {
+    public SourceDB(LoaderSetting.DBInfo dbInfo, File folderLocation) {
         this.dbInfo = dbInfo;
         if (dbInfo.getDatabaseType().equals(DataType.SupportedDatabase.HSQL))
             sourceDatabase = new HypersqlHandler();

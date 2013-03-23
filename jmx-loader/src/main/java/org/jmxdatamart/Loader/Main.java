@@ -57,7 +57,7 @@ public class Main {
             System.exit(1);
         }
 
-        Setting setting = new Setting(args[0]);
+        LoaderSetting setting = new LoaderSetting(args[0]);
         DB2DB d2d = new DB2DB(setting,folder);
         try{
             logger.info("\nLoadding data from " + args[1] + ".\n");

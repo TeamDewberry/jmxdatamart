@@ -45,7 +45,7 @@ public class DB2DB {
      * @param s
      * @param folder
      */
-    public DB2DB(Setting s, File folder){
+    public DB2DB(LoaderSetting s, File folder){
         dataMart = new DataMartDB(s.getTarget(),s.getAdditional());
         sources = new SourceDB(s.getSource(), folder);
     }
