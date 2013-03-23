@@ -29,22 +29,13 @@ package org.jmxdatamart.Extractor;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import org.jmxdatamart.common.DataType;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PushbackInputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * This class contains settings for the extractor : polling rate, output file(s) location, JMX server URL and what bean
@@ -323,6 +314,11 @@ public class ExtractorSettings {
    * @return output string that has all system.properties keys replaced with their variables.
    */
   String expandFromSystemProperties(String input) {
+    
+    if (input == null) {
+      return null;
+    }
+    
     StringBuilder sb = new StringBuilder(input.length() * 2);   // just a wild guess
 
     ByteArrayInputStream is = new ByteArrayInputStream(input.getBytes());

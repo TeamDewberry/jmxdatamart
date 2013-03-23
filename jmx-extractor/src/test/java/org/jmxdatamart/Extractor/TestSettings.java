@@ -57,6 +57,8 @@ public class TestSettings extends TestCase {
   public void testExpandSysProp() {
     ExtractorSettings s = new ExtractorSettings();
     
+    assertNull(s.expandFromSystemProperties(null));     // 0th, do nothing
+    
     String primum = "Primum non nocere - First, do no harm";
     assertEquals(primum, s.expandFromSystemProperties(primum));
     
