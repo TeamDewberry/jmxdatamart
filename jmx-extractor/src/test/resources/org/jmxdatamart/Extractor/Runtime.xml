@@ -1,0 +1,32 @@
+<!--
+Runtime Example
+
+java.lang:type=Runtime
+
+StartTime
+SystemProperties.key=java.class.version (This is something new because it is TabularData. I'm not sure if this notation will work or not.)
+Uptime
+-->
+<Settings>
+  <pollingRate>2</pollingRate>
+  <folderLocation>extracted\\</folderLocation>
+  <url></url>
+  <BeanList>
+    <Bean>
+      <name>java.lang:type=Runtime</name>
+      <alias>AllRuntimeExample</alias>
+      <AttributeList>
+        <Attribute>
+          <name>StartTime</name>
+        </Attribute>
+		<Attribute>
+          <name>SystemProperties.key</name>
+        </Attribute>
+		<Attribute>
+          <name>Uptime</name>
+        </Attribute>
+      </AttributeList>
+      <enable>true</enable>
+    </Bean>
+  </BeanList>
+</Settings>

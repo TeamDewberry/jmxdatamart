@@ -1,0 +1,73 @@
+<!--
+Threading Example
+
+java.lang:type=Threading
+All attributes except for AllThreadIds (which is a long[]) should be extractable and loadable
+-->
+<Settings>
+  <pollingRate>2</pollingRate>
+  <folderLocation>extracted\\</folderLocation>
+  <url></url>
+  <BeanList>
+    <Bean>
+      <name>java.lang:type=Threading</name>
+      <alias>AllThreadingExample</alias>
+      <AttributeList>
+		<Attribute>
+          <name>AllThreadIds</name>
+        </Attribute>
+        <Attribute>
+          <name>CurrentThreadCpuTime</name>
+        </Attribute>
+		<Attribute>
+          <name>CurrentThreadCpuTimeSupported</name>
+        </Attribute>
+		<Attribute>
+          <name>CurrentThreadUserTime</name>
+        </Attribute>
+		<Attribute>
+          <name>DaemonThreadCount</name>
+        </Attribute>
+		<Attribute>
+          <name>ObjectMonitorUsageSupported</name>
+        </Attribute>
+		<!-- not supported at the moment
+		<Attribute>
+          <name>ObjectName</name>
+        </Attribute>
+		-->
+		<Attribute>
+          <name>PeakThreadCount</name>
+        </Attribute>
+		<Attribute>
+          <name>SynchronizerUsageSupported</name>
+        </Attribute>
+		<Attribute>
+          <name>ThreadAllocatedMemoryEnabled</name>
+        </Attribute>
+		<Attribute>
+          <name>ThreadAllocatedMemorySupported</name>
+        </Attribute>
+		<Attribute>
+          <name>ThreadContentionMonitoringEnabled</name>
+        </Attribute>
+		<Attribute>
+          <name>ThreadContentionMonitoringSupported</name>
+        </Attribute>
+		<Attribute>
+          <name>ThreadCount</name>
+        </Attribute>
+		<Attribute>
+          <name>ThreadCpuTimeEnabled</name>
+        </Attribute>
+		<Attribute>
+          <name>ThreadCpuTimeSupported</name>
+        </Attribute>
+		<Attribute>
+          <name>TotalStartedThreadCount</name>
+        </Attribute>
+      </AttributeList>
+      <enable>true</enable>
+    </Bean>
+  </BeanList>
+</Settings>

@@ -301,7 +301,7 @@ public class ExtractorSettings {
         for(char c : compCharArray){ 
             if (!Character.isLetterOrDigit(c)){
                 //System.out.println("Attribute " + compString + " contains non-alphanumeric character."); 
-                throw new IllegalArgumentException("Attribute " + compString + " contains non-alphanumeric character."); //***throw exception
+                throw new IllegalArgumentException("Attribute " + compString + " contains non-alphanumeric character: " + c); //***throw exception
                 //break; //*comment this out if throwing exception* if there was one non-alphanumeric character, no need to check the rest of the string    
             }
         }

@@ -5,7 +5,7 @@
   <BeanList>
     <Bean>
       <name>com.example:type=Hello</name>
-      <alias>com.example:type=Hello</alias>
+      <alias>Hello</alias>
       <AttributeList>
         <Attribute>
           <dataType>STRING</dataType>
