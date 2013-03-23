@@ -28,29 +28,18 @@
 package org.jmxdatamart.Extractor;
 
 import com.google.inject.Inject;
+import org.jmxdatamart.Extractor.MXBean.MultiLayeredAttribute;
+import org.jmxdatamart.common.DBException;
+import org.jmxdatamart.common.HypersqlHandler;
+import org.slf4j.LoggerFactory;
+
+import javax.management.MBeanServerConnection;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectInstance;
+import javax.management.ObjectName;
+import javax.management.remote.JMXConnectorFactory;
+import javax.management.remote.JMXServiceURL;
 import java.io.File;
-import org.jmxdatamart.Extractor.MXBean.MultiLayeredAttribute;
-import org.jmxdatamart.common.DBException;
-import org.jmxdatamart.common.HypersqlHandler;
-import org.slf4j.LoggerFactory;
-
-import javax.management.MBeanServerConnection;
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectInstance;
-import javax.management.ObjectName;
-import javax.management.remote.JMXConnectorFactory;
-import javax.management.remote.JMXServiceURL;
-import org.jmxdatamart.Extractor.MXBean.MultiLayeredAttribute;
-import org.jmxdatamart.common.DBException;
-import org.jmxdatamart.common.HypersqlHandler;
-import org.slf4j.LoggerFactory;
-
-import javax.management.MBeanServerConnection;
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectInstance;
-import javax.management.ObjectName;
-import javax.management.remote.JMXConnectorFactory;
-import javax.management.remote.JMXServiceURL;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.MalformedURLException;
@@ -66,7 +55,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public final class Extractor {
 
-  private final Settings configData;
+  private final ExtractorSettings configData;
   private MBeanServerConnection mbsc;
   private final org.slf4j.Logger logger = LoggerFactory.getLogger(Extractor.class);
   private final Bean2DB bd = new Bean2DB();
@@ -78,7 +67,7 @@ public final class Extractor {
   private final Properties props = new Properties();
 
   @Inject
-  public Extractor(Settings configData) {
+  public Extractor(ExtractorSettings configData) {
     timer = null;
     this.configData = configData;
     props.put("username", "sa");

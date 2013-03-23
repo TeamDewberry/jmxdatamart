@@ -52,10 +52,10 @@ public class Main {
 //    if (demo) {
 //      args = new String[] {"settings1.xml"};
 //    }
-    Settings s;
+    ExtractorSettings s;
     try {
-      s = Settings.fromXML(
-     new FileInputStream(args[0]));
+      s = ExtractorSettings.fromXML(
+        new FileInputStream(args[0]));
     } catch (FileNotFoundException ex) {
       logger.error("Can not open setting files", ex);
       return;

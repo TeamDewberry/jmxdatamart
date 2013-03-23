@@ -35,7 +35,7 @@ import org.jmxdatamart.common.DataType;
 public class TestSettings extends TestCase {
 
   public void testWriteSettingsAsXml() {
-    Settings settings = new Settings();
+    ExtractorSettings settings = new ExtractorSettings();
     settings.setPollingRate(10);
     settings.setFolderLocation("jmx-statistics");
 
@@ -50,7 +50,7 @@ public class TestSettings extends TestCase {
 
     String s = settings.toXML();
     
-    Settings newSettings = Settings.fromXML(s);
+    ExtractorSettings newSettings = ExtractorSettings.fromXML(s);
     assertEquals(settings, newSettings);
   }
   

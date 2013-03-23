@@ -121,7 +121,7 @@ public class Bean2DB {
    * @throws SQLException when something wrong(?) happens
    *
    */
-  public String generateMBeanDB(Settings s) throws SQLException {
+  public String generateMBeanDB(ExtractorSettings s) throws SQLException {
     Connection conn = null;
     Statement st = null;
 

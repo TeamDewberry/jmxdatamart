@@ -31,7 +31,7 @@ package org.jmxdatamart.webapp;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import org.jmxdatamart.Extractor.Extractor;
-import org.jmxdatamart.Extractor.Settings;
+import org.jmxdatamart.Extractor.ExtractorSettings;
 
 import javax.management.MBeanServerConnection;
 import javax.management.remote.JMXConnectorFactory;
@@ -50,7 +50,7 @@ public class ExtractorWebAppModule extends AbstractModule {
   }
 
   @Provides
-  public MBeanServerConnection provideMBeanServerConnection(Settings settings) throws IOException {
+  public MBeanServerConnection provideMBeanServerConnection(ExtractorSettings settings) throws IOException {
     String jmxUrl = settings.getUrl();
     if (jmxUrl == null) {
       return ManagementFactory.getPlatformMBeanServer();
@@ -66,8 +66,8 @@ public class ExtractorWebAppModule extends AbstractModule {
   }
 
   @Provides
-  public Settings provideSettings(SettingsFileProvider settingsFile) throws FileNotFoundException {
-    return Settings.fromXML(new FileInputStream(settingsFile.get()));
+  public ExtractorSettings provideSettings(SettingsFileProvider settingsFile) throws FileNotFoundException {
+    return ExtractorSettings.fromXML(new FileInputStream(settingsFile.get()));
   }
 
 }
