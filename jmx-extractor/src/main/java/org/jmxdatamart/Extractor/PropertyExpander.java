@@ -55,7 +55,7 @@ public class PropertyExpander {
           // Two dollar signs together
           appendToExpandedOrPropertyName('$');
 
-        } else if (c == '$' && !inPropertyName && !maybeInPropertyName) {
+        } else if (c == '$' && !inPropertyName) {
           maybeInPropertyName = true;
 
         } else if (c == '{' && maybeInPropertyName && !inPropertyName) {
