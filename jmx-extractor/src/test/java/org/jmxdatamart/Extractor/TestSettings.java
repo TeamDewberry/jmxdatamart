@@ -54,4 +54,23 @@ public class TestSettings extends TestCase {
     assertEquals(settings, newSettings);
   }
   
+  public void testExpandSysProp() {
+    ExtractorSettings s = new ExtractorSettings();
+    
+    String primum = "Primum non nocere - First, do no harm";
+    assertEquals(primum, s.expandFromSystemProperties(primum));
+    
+    System.setProperty("ankel.pi", "3.14169");
+    System.setProperty("ankel.ee", "2.71828");
+    
+    String str = s.expandFromSystemProperties("Area of a circle is ${ankel.pi} * radius * radius");
+    assertEquals("Area of a circle is 3.14169 * radius * radius", str);
+    
+    str = s.expandFromSystemProperties("When radius is ${ankel.ee} then area is ${ankel.pi} * ${ankel.ee}^2");
+    assertEquals("When radius is 2.71828 then area is 3.14169 * 2.71828^2", str);
+    
+    System.clearProperty("ankel.pi");
+    System.clearProperty("ankel.ee");
+  }
+  
 }

@@ -369,7 +369,17 @@ public class ExtractorSettings {
   }
   
   private void replaceWithSysProp() {
+    this.setFolderLocation(expandFromSystemProperties(this.folderLocation));
+    this.setUrl(expandFromSystemProperties(this.url));
     
+    for (MBeanData mbd : this.beans) {
+      mbd.setAlias(expandFromSystemProperties(mbd.getAlias()));
+      mbd.setName(expandFromSystemProperties(mbd.getName()));
+      for (Attribute a : mbd.getAttributes()) {
+        a.setAlias(expandFromSystemProperties(a.getAlias()));
+        a.setName(expandFromSystemProperties(a.getName()));
+      }
+    }
   }
 
   @Override
