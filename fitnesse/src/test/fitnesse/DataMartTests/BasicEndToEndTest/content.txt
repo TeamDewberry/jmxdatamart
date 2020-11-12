@@ -158,6 +158,12 @@ Query for new table
 |TESTID|ALPHA|BETA|
 |1|42|1337|
 
+Test metadata from the loadConfig.ini
+
+!|Query| select * from MAINTABLE|
+|TESTID|OWNER|VERSION|DESCRIPTION|
+|1|Tripwire1|3.1415926c|For test purpose2|
+
 Finally unregister all the beans
 
 | unregister MBeans |
