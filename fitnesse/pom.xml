@@ -23,7 +23,7 @@
         <derby.url>//localhost:1527/${project.build.directory}/derbyDB</derby.url>
         <derby.username>derbyuser</derby.username>
         <derby.password>derbyuser</derby.password>
-        <derby.version>10.14.2.0</derby.version>
+        <derby.version>10.17.1.0</derby.version>
     </properties>
 
     <pluginRepositories>
